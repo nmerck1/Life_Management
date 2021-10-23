@@ -36,13 +36,13 @@ include '../includes/autoloader.inc.php';
 
 <div class="container-fluid text-center">
   <div class="row content">
-    <!--
-      <div class="col-sm-2 sidenav">
-        <p class="bi-card-list" style="font-size: 1rem; color: white;"><a href="#"> Plans</a></p>
-        <p class="bi-list-check" style="font-size: 1rem; color: white;"><a href="#"> Goals</a></p>
-        <p class="bi-lightbulb" style="font-size: 1rem; color: white;"><a href="#"> Ideas</a></p>
-      </div>
-    -->
+  <!--
+    <div class="col-sm-2 sidenav">
+      <p class="bi-card-list" style="font-size: 1rem; color: white;"><a href="#"> Plans</a></p>
+      <p class="bi-list-check" style="font-size: 1rem; color: white;"><a href="#"> Goals</a></p>
+      <p class="bi-lightbulb" style="font-size: 1rem; color: white;"><a href="#"> Ideas</a></p>
+    </div>
+  -->
     <div class="col-sm-8 text-left">
       <?php
 
