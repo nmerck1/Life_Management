@@ -78,6 +78,78 @@ VALUES ('Planet Fitness', 'Gym Black Card Membership', 23.04, '2021-10-23', '');
 INSERT INTO finance_bills (fb_company, fb_name, fb_amount, fb_date, fb_notes)
 VALUES ('Microsoft', 'Additional 1TB OneDrive Storage', 1.99, '2021-10-23', '');
 
+CREATE TABLE users (
+  user_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  user_role int(11),      -- 1=Admin, 2=Member, 3=Guest, 4=Uknown
+  user_name varchar(255),
+  user_fname varchar(255),
+  user_lname varchar(255),
+  user_dob datetime,
+  user_notes varchar(255),
+  is_active int(11) DEFAULT 1
+);
+INSERT INTO users (user_role, user_name, user_fname, user_lname, user_dob, user_notes)
+VALUES (1, 'nmerck', 'Nathaniel', 'Merck', '1997-11-19 04:00:00', '');
+
+/* this table is for basic needs that need to be maintained in my life in order to survive and thrive */
+CREATE TABLE needs (
+  need_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  need_name varchar(255),
+  is_active int(11) DEFAULT 1
+);
+INSERT INTO needs(need_name) VALUES('Food');
+INSERT INTO needs(need_name) VALUES('Shower');
+INSERT INTO needs(need_name) VALUES('Bathroom');
+INSERT INTO needs(need_name) VALUES('Water');
+INSERT INTO needs(need_name) VALUES('Exercise');
+INSERT INTO needs(need_name) VALUES('Laundry');
+
+/* this table is for attaching these pros and cons to an asset so these pros and cons need to be somewhat broad */
+CREATE TABLE pros_cons (
+  pc_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  pc_name varchar(255), /* Examples: Cost Effective, Closer to Job, Closer to Family, More Money, Further from family, Further from friends, etc. */
+  pc_type varchar(255), /* Either Pro or Con */
+  pc_notes varchar(255),
+  is_active int(11) DEFAULT 1
+);
+INSERT INTO pros_cons(pc_name, pc_type, pc_notes) VALUES('Closer to Job', 'Pro', '-Distance, -Gas, -Vehicle Miles, +Free Time');
+INSERT INTO pros_cons(pc_name, pc_type, pc_notes) VALUES('Further from Job', 'Con', '+Distance, +Gas, +Vehicle Miles, -Free Time');
+INSERT INTO pros_cons(pc_name, pc_type, pc_notes) VALUES('Peaceful Atmosphere', 'Pro', '-Stress, +Harmony');
+INSERT INTO pros_cons(pc_name, pc_type, pc_notes) VALUES('Congested City/Town Area', 'Con', '+Stress, -Harmony');
+
+CREATE TABLE projects (
+  proj_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  proj_name varchar(255),
+  proj_notes varchar(255),
+  is_active int(11) DEFAULT 1
+);
+
+CREATE TABLE project_steps (
+  ps_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  ps_project_id int(11),
+  ps_name varchar(255),
+  ps_desc varchar(255),
+  is_active int(11) DEFAULT 1
+);
+
+CREATE TABLE current_bills (
+  bill_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  bill_name varchar(255),
+  bill_amount decimal(18, 2),
+  bill_freq char(1),  /* This will be either W=Weekly, M=Monthly, D=Daily, BW=Bi-Weekly, Y=Yearly, etc. */
+  bill_desc varchar(255),
+  is_active int(11) DEFAULT 1
+);
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Gas', 100.00, 'M', '');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Vehicle Insurance', 90.00, 'M', '');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Gym Membership', 23.04, 'M', '');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Phone Bill', 22.97, 'M', '');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Microsoft OneDrive 1GB Storage', 1.99, 'M', '');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Food', 100.00, 'M', '');
+
+
+
+
 /* selections */
 SELECT pa.plan_asset_id,
        a.asset_id,

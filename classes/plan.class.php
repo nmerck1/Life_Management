@@ -30,11 +30,15 @@ class Plan extends Dbh {
                          a.asset_owned,
                          a.asset_mthly_finance,
                          a.asset_price,
+                         a.url_link,
+                         a.is_active,
                          pa.is_active
                   FROM plan_assets pa
                   LEFT JOIN plans p ON pa.id_plan = p.plan_id
                   LEFT JOIN assets a ON pa.id_asset = a.asset_id
-                  WHERE p.plan_id = '$plan_id';";
+                  WHERE p.plan_id = '$plan_id';
+                  AND pa.is_active = 1 AND a.is_active = 1
+                  ";
     $stmt = $this->connect()->query($sql_assets);
 
     // display table
@@ -42,8 +46,9 @@ class Plan extends Dbh {
     echo '<table class="table table-dark" style="background-color:#3a5774;">
             <tr>
               <th>Name</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th>Type</th>';
+              //<th>Description</th>
+        echo '<th>URL</th>
               <th>Owned?</th>
               <th>Financing</th>
               <th>Total Price</th>';
@@ -61,7 +66,8 @@ class Plan extends Dbh {
         echo '<tr>';
           echo '<td>' .$row['asset_name']. '</td>';
           echo '<td style="color:grey;">' .$row['asset_type']. '</td>';
-          echo '<td>' .$row['asset_desc']. '</td>';
+          //echo '<td>' .$row['asset_desc']. '</td>';
+          echo '<td><a href="'.$row['url_link'].'" style="">'.$row['url_link'].'</a></td>';
           echo '<td>';
             if ($row['asset_owned'] == 1){
               echo '<p class="bi-check2" style="color:#69d369; text-align:center;"></p>';
