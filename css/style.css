@@ -36,17 +36,31 @@ a:hover {
   background: rgb(25, 29, 32);
   /* color: white; */
   height: 100%;
+  width: 10%;
 }
 
 #left_sidenav {
+  padding-top: 20px;
   background: rgb(47, 115, 152);
   height: 100%;
+  width: 20%;
 }
 
 #right_sidenav {
+  padding-top: 20px;
   background: rgb(25, 29, 32);
   /* border: 2px solid rgb(25, 29, 32); */
   height: 100%;
+  width: 20%;
+}
+
+/* these class styles below are for the coloring of finances and each type */
+.incomes {
+  color: rgb(77, 255, 77);
+
+}
+.expenses {
+  color: rgb(68, 68, 255);
 }
 
 

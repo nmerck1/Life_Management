@@ -39,7 +39,7 @@ INSERT INTO plan_assets (id_plan, id_asset) VALUES (1, 3);
 INSERT INTO plan_assets (id_plan, id_asset) VALUES (1, 1);
 
 CREATE TABLE finance_incomes (
-  finance_income_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  fi_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
   fi_company varchar(255),
   fi_name varchar(255),
   fi_amount decimal(18, 2),
@@ -49,21 +49,24 @@ CREATE TABLE finance_incomes (
 );
 INSERT INTO finance_incomes (fi_company, fi_name, fi_amount, fi_date, fi_notes)
 VALUES ('OnGen', 'Current Job', 1500.00, '2021-10-29 09:00:00', '');
-
+INSERT INTO finance_incomes (fi_company, fi_name, fi_amount, fi_date, fi_notes)
+VALUES ('eBay', 'Sold book', 1.23, '2021-10-30', '');
 
 CREATE TABLE finance_expenses (
-  finance_expense_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  fe_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
   fe_company varchar(255),
   fe_name varchar(255),
+  fe_category varchar(255), /* Food, Clothing, Entertainment, Work, Vehicle, etc. */
   fe_amount decimal(18, 2),
   fe_date datetime,
   fe_notes varchar(255),
   is_active int(11) DEFAULT 1
 );
-INSERT INTO finance_expenses (fe_company, fe_name, fe_amount, fe_date, fe_notes)
-VALUES ('Ingles', 'Got drinks for weekend.', 7.79, '2021-10-23', 'Central, SC');
-
-
+INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
+VALUES ('Ingles', 'Got drinks for weekend.', 'Food', 7.79, '2021-10-23', 'Central, SC');
+INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
+VALUES ('QT', 'Gas', 'Gas', 30.71, '2021-10-30', 'Easley, SC');
+/*
 CREATE TABLE finance_bills (
   finance_bill_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
   fb_company varchar(255),
@@ -77,6 +80,7 @@ INSERT INTO finance_bills (fb_company, fb_name, fb_amount, fb_date, fb_notes)
 VALUES ('Planet Fitness', 'Gym Black Card Membership', 23.04, '2021-10-23', '');
 INSERT INTO finance_bills (fb_company, fb_name, fb_amount, fb_date, fb_notes)
 VALUES ('Microsoft', 'Additional 1TB OneDrive Storage', 1.99, '2021-10-23', '');
+*/
 
 CREATE TABLE users (
   user_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -138,17 +142,38 @@ CREATE TABLE current_bills (
   bill_amount decimal(18, 2),
   bill_freq char(1),  /* This will be either W=Weekly, M=Monthly, D=Daily, BW=Bi-Weekly, Y=Yearly, etc. */
   bill_desc varchar(255),
+  bill_created datetime,
   is_active int(11) DEFAULT 1
 );
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Gas', 100.00, 'M', '');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Vehicle Insurance', 90.00, 'M', '');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Gym Membership', 23.04, 'M', '');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Phone Bill', 22.97, 'M', '');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Microsoft OneDrive 1GB Storage', 1.99, 'M', '');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc) VALUES ('Food', 100.00, 'M', '');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Gas', 100.00, 'M', '', '2021-10-28');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Vehicle Insurance', 90.00, 'M', '', '2021-10-28');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Gym Membership', 23.04, 'M', '', '2021-10-28');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Phone Bill', 22.97, 'M', '', '2021-10-28');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Microsoft OneDrive 1GB Storage', 1.99, 'M', '', '2021-10-28');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Food', 100.00, 'M', '', '2021-10-28');
+
+CREATE TABLE passive_incomes (
+  pi_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  pi_name varchar(255),
+  pi_amount decimal(18, 2),
+  pi_freq char(1),  /* This will be either W=Weekly, M=Monthly, D=Daily, BW=Bi-Weekly, Y=Yearly, etc. */
+  pi_desc varchar(255),
+  pi_created datetime,
+  is_active int(11) DEFAULT 1
+);
+INSERT INTO passive_incomes (pi_name, pi_amount, pi_freq, pi_desc, pi_created) VALUES ('Roblox Game Development: Janitor Simulator', 0.01, 'M', '', '2021-10-28');
 
 
-
+CREATE TABLE budgets (
+  bud_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  bud_name varchar(255),
+  bud_amount decimal(18, 2),
+  bud_freq char(1),  /* This will be either W=Weekly, M=Monthly, D=Daily, BW=Bi-Weekly, Y=Yearly, etc. */
+  bud_desc varchar(255),
+  bud_created datetime,
+  is_active int(11) DEFAULT 1
+);
+INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Food/Snacks', 250.00, 'M', '2021-10-27', '');
 
 /* selections */
 SELECT pa.plan_asset_id,
@@ -163,3 +188,11 @@ FROM plan_assets pa
 LEFT JOIN plans p ON pa.id_plan = p.plan_id
 LEFT JOIN assets a ON pa.id_asset = a.asset_id
 WHERE p.plan_id = 3;
+
+
+SELECT bills.bill_name,
+       bills.bill_amount,
+       bills.bill_freq,
+       SUM(bills.bill_amount) AS 'total_bills_amount'
+FROM current_bills bills
+WHERE is_active = 1;
