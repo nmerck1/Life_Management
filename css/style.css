@@ -13,13 +13,13 @@ h1 {
   color: rgb(47, 115, 152);
 }
 
-.table-dark th, .table-dark tr, .table-dark td {
+.table-dark th {
   background: rgb(47, 115, 152);
   border: none;
 }
 
 .table-dark td {
-  background: rgb(25, 29, 32);
+  background: rgb(33, 37, 46); /* rgb(25, 29, 32);  */
   border: none;
 }
 

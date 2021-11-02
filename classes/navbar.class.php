@@ -10,12 +10,12 @@ class Navbar {
 		     	echo ' <a class="navbar-brand" href="home.php">';
 			        echo '<p class="bi-yin-yang"></p>';
 		      echo '</a>';
-            echo '<a class="navbar-brand" href="home.php">Home</a>';
-            echo '<a class="navbar-brand" href="vision.php">Vision</a>';
-            echo '<a class="navbar-brand" href="finances.php">Finances</a>';
-            echo '<a class="navbar-brand" href="routine.php">Routine</a>';
-            echo '<a class="navbar-brand" href="health_fitness.php">Health & Fitness</a>';
-            echo '<a class="navbar-brand" href="style.php">Style</a>';
+            echo '<a class="navbar-brand" href="../pages/home.php">Home</a>';
+            echo '<a class="navbar-brand" href="../pages/vision.php">Vision</a>';
+            echo '<a class="navbar-brand" href="../pages/finances.php">Finances</a>';
+            echo '<a class="navbar-brand" href="../pages/routine.php">Routine</a>';
+            echo '<a class="navbar-brand" href="../pages/health_fitness.php">Health & Fitness</a>';
+            echo '<a class="navbar-brand" href="../pages/style.php">Style</a>';
 		  		echo '</div>';
 		  	echo '</div>';
 			echo '</nav>';

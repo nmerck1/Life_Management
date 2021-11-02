@@ -4,53 +4,19 @@ include '../includes/autoloader.inc.php';
 
 $show_error = false;
 
-$fi_id;
-if (isset($_POST['fi_id'])){
-	$fi_id = $_POST['fi_id'];
+$selected_id = NULL;
+if (isset($_GET['selected_id'])){
+	$selected_id = $_GET['selected_id'];
 }
 $form_type;// this is what type of form we need for this type of record
-if (isset($_POST['form_type'])){
-	$form_type = $_POST['form_type'];
+if (isset($_GET['form_type'])){
+	$form_type = $_GET['form_type'];
 } else {
 	$show_error = true;
 }
 
-if (!$show_error) {
-	// check form to set
-	if ($form_type == 'Expense') {
-		// echo out form
-		echo '<div class="container">';
-			echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="update_finances();" value="Save" class="btn btn-success btn-md">Save</button>';
-		echo '</div>';
-		// check if there is an id, then we are either editing or deleting an existing record
-		if ($fi_id != NULL) {
+$update_type;	// this is either Update or Insert
 
-		} else {
-
-		}
-	} elseif ($form_type == 'Income') {
-		// check if there is an id, then we are either editing or deleting an existing record
-		if ($fi_id != NULL) {
-
-		} else {
-
-		}
-	}	elseif ($form_type == 'Passive') {
-		// check if there is an id, then we are either editing or deleting an existing record
-		if ($fi_id != NULL) {
-
-		} else {
-
-		}
-	}	elseif ($form_type == 'Bill') {
-		// check if there is an id, then we are either editing or deleting an existing record
-		if ($fi_id != NULL) {
-
-		} else {
-
-		}
-	}
-}
 
 ?>
 <!DOCTYPE html>
@@ -75,17 +41,196 @@ if (!$show_error) {
 	$navbar->show_header_nav();
 ?>
 
-<div class="container-fluid text-center">
-  <div class="row content">
-    <div class="col-sm-8 text-left">
+<script type="text/javascript">
+	function send_to_ajax(){
+		// setup the ajax request
+			var xhttp = new XMLHttpRequest();
+
+
+			// get variables from inputs below:
+			//var update_table = document.getElementById('update_table');
+			var update_type = document.getElementById('update_type');
+			var selected_id = document.getElementById('selected_id');
+
+			var company = document.getElementById('company');
+			var fin_type = document.getElementById('fin_type');
+			var fin_type_value = fin_type.options[fin_type.selectedIndex].value;
+			var category = document.getElementById('category');
+			var category_value = category.options[category.selectedIndex].value;
+			var amount = document.getElementById("amount");
+			var fin_date = document.getElementById('fin_date');
+			var notes = document.getElementById('notes');
+			var is_active = document.getElementById("is_active");
+			var is_active_value = is_active.options[is_active.selectedIndex].value;
+
+
+			// create link to send GET variables through
+			var query_string = "../ajax/finances.ajax.php";
+			query_string += "?selected_id=" + selected_id.value;
+
+			query_string += "&company=" + company.value;
+			query_string += "&fin_type=" + fin_type_value;
+			query_string += "&category=" + category_value;
+			query_string += "&amount=" + amount.value;
+			query_string += "&fin_date=" + fin_date.value;
+			query_string += "&notes=" + notes.value;
+			query_string += "&is_active=" + is_active_value;
+			query_string += "&update_type=" + update_type.value;
+
+			//alert(query_string);
+
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+				 document.getElementById("test").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", query_string, true);
+			xhttp.send();
+
+			// when the datais returned after ajax, it redirects back to inventory
+			window.location = "../pages/finances.php";
+	}
+</script>
+
+<p id="test"></p>
+
+<div class="container text-center">
+    <div>
 				<?php
-					if ($show_error) {
+					if (!$show_error) {
+						// check form to set
+						if ($form_type == 'Expense') {
+							// check if there is an id, then we are either editing or deleting an existing record
+							if ($selected_id != NULL) {
+								// this is a currently existing record
+								echo '<h1>Edit Expense</h1>';
+								$update_type = 'Update';
+								// load variables from selected_id
+								// get values from selected id in table:
+									$sql = "SELECT * FROM finance_expenses WHERE fe_id = '".$selected_id."' ";
+									$dbh = new Dbh();
+			            $stmt = $dbh->connect()->query($sql);
+									//echo $sql;
+
+									// should only populate one row of data:
+									$company = mysqli_result($stmt, 0, 'fe_company');
+									$name = mysqli_result($stmt, 0, 'fe_name');
+									$category = mysqli_result($stmt, 0, 'fe_category');
+									$date = mysqli_result($stmt, 0, 'fe_date');
+									$amount = mysqli_result($stmt, 0, 'fe_amount');
+									$notes = mysqli_result($stmt, 0, 'fe_notes');
+							} else {
+								// this is a new record we are creating
+								echo '<h1>Add New Expense</h1>';
+								$update_type = 'Insert';
+								// variables
+								$company = "";
+								$name = "";
+								$category = "";
+								$amount = 0.00;
+								$date = date('m/d/Y');	// default to today
+								$notes = "";
+							}
+							// print the form type here
+							echo '<div class="container">';
+								echo '<p id="selected_id" value="'.$selected_id.'">selected_id: '.$selected_id.'</p>';
+								echo '<p id="update_type" value="'.$update_type.'">update_type: '.$update_type.'</p>';
+
+								echo '<label>Company: </label>';
+								echo '<input type="text" id="company" placeholder="Ingles, QT, Wal-Mart, etc.">'.$company.'</input>';
+								echo '<br>';
+								echo '<label>Name: </label>';
+								echo '<input type="text" id="name">'.$name.'</input>';
+								echo '<br>';
+								echo '<label>Category: </label>';
+								echo '<input type="text" id="category" placeholder="Food, Entertainment, Gas, etc.">'.$category.'</input>';
+								echo '<br>';
+								echo '<label>Amount: </label>';
+								echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx"></input>';
+								echo '<br>';
+								echo '<label>Date: </label>';
+								echo '<input type="date" id="date" value="'.$date.'"></input>';
+								echo '<br>';
+								echo '<label>Notes: </label>';
+								echo '<input type="text" id="notes">'.$notes.'</input>';
+								echo '<br>';
+
+								echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+							echo '</div>';
+						} elseif ($form_type == 'Income') {
+							// check if there is an id, then we are either editing or deleting an existing record
+							if ($selected_id != NULL) {
+								// this is a currently existing record
+								echo '<h1>Edit Income</h1>';
+								$update_type = 'Update';
+							} else {
+								// this is a new record we are creating
+								echo '<h1>Add New Income</h1>';
+								$update_type = 'Insert';
+							}
+							// print the form type here
+							echo '<div class="container">';
+							 	echo '<p id="selected_id" value="'.$selected_id.'">selected_id: '.$selected_id.'</p>';
+
+								echo '<label>Company: </label>';
+								echo '<input type="text" id="company" placeholder="Ingles, QT, Wal-Mart, etc."></input>';
+								echo '<br>';
+								echo '<label>Name: </label>';
+								echo '<input type="text" id="name"></input>';
+								echo '<br>';
+								echo '<label>Amount: </label>';
+								echo '<input type="number" id="amount" placeholder="x.xx"></input>';
+								echo '<br>';
+								echo '<label>Date: </label>';
+								echo '<input type="date" id="date"></input>';
+								echo '<br>';
+								echo '<label>Notes: </label>';
+								echo '<input type="text" id="notes"></input>';
+								echo '<br>';
+
+								echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+							echo '</div>';
+						}	elseif ($form_type == 'Passive') {
+							// check if there is an id, then we are either editing or deleting an existing record
+							if ($selected_id != NULL) {
+								// this is a currently existing record
+								echo '<h1>Edit Passive Income</h1>';
+								$update_type = 'Update';
+							} else {
+								// this is a new record we are creating
+								echo '<h1>Add New Passive Income</h1>';
+								$update_type = 'Insert';
+							}
+							// print the form type here
+							echo '<div class="container">';
+								echo '<p id="selected_id" value="'.$selected_id.'">selected_id: '.$selected_id.'</p>';
+
+								echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+							echo '</div>';
+						}	elseif ($form_type == 'Bill') {
+							// check if there is an id, then we are either editing or deleting an existing record
+							if ($selected_id != NULL) {
+								// this is a currently existing record
+								echo '<h1>Edit Bill</h1>';
+								$update_type = 'Update';
+							} else {
+								// this is a new record we are creating
+								echo '<h1>Add New Bill</h1>';
+								$update_type = 'Insert';
+							}
+							// print the form type here
+							echo '<div class="container">';
+								echo '<p id="selected_id" value="'.$selected_id.'">selected_id: '.$selected_id.'</p>';
+
+								echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+							echo '</div>';
+						}
+					} else {
 						$error_msg = new Library();
 						echo '<h2 style="color:red; text-align:center;">'. $error_msg->get_error_msg(). '</h2>';
 					}
 				?>
     </div>
-  </div>
 </div>
 
 <footer class="container-fluid text-center">

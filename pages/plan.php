@@ -19,14 +19,16 @@ include '../includes/autoloader.inc.php';
   $navbar->show_header_nav();
 ?>
 
-<div class="container-fluid text-center">
+<div class="container">
+  <!--
   <div class="row content">
     <div id="left_sidenav" class="col-sm-2 sidenav">
       <p class="bi-card-list" style="font-size: 1rem; color: white;"><a href="#"> Plans</a></p>
       <p class="bi-list-check" style="font-size: 1rem; color: white;"><a href="#"> Goals</a></p>
       <p class="bi-lightbulb" style="font-size: 1rem; color: white;"><a href="#"> Ideas</a></p>
     </div>
-    <div class="col-sm-8 text-left">
+  -->
+    <div>
       <?php
         $plan_id;
         if (isset($_GET['plan_id'])){
@@ -40,20 +42,6 @@ include '../includes/autoloader.inc.php';
         }
       ?>
     </div>
-    <div id="right_sidenav" class="col-sm-2 sidenav">
-      <div class="well">
-        <p>(Monthly Finances)</p>
-      </div>
-      <div class="well">
-        <p>Incomes: $1,500</p>
-        <p>Expenses: $500</p>
-      </div>
-      <div class="well">
-        <p>Savings: $1,000</p>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <footer class="container-fluid text-center">
