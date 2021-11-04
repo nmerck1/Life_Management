@@ -48,7 +48,7 @@ CREATE TABLE finance_incomes (
   is_active int(11) DEFAULT 1
 );
 INSERT INTO finance_incomes (fi_company, fi_name, fi_amount, fi_date, fi_notes)
-VALUES ('OnGen', 'Current Job', 1211.83, '2021-11-12', '');
+VALUES ('OnGen', 'Current Job', 1211.83, '2021-11-26', '');
 INSERT INTO finance_incomes (fi_company, fi_name, fi_amount, fi_date, fi_notes)
 VALUES ('eBay', 'Sold book', 1.23, '2021-10-30', '');
 
@@ -68,6 +68,8 @@ INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_da
 VALUES ('Publix', 'got four drinks for each day of weekday', 'Food', 6.59, '2021-11-02', 'Clemson, SC');
 INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
 VALUES ('Planet Fatness', 'membership', 'Gym', 23.04, '2021-11-02', 'Seneca, SC');
+INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
+VALUES ('Dollar General', 'Red Bull + spicy nuts + snickers ice cream bar', 'Food', 4.49, '2021-11-03', 'Six Mile, SC');
 /*
 CREATE TABLE finance_bills (
   finance_bill_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -147,12 +149,10 @@ CREATE TABLE current_bills (
   bill_created datetime,
   is_active int(11) DEFAULT 1
 );
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Gas', 100.00, 'M', '', '2021-10-28');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Vehicle Insurance', 90.00, 'M', '', '2021-10-28');
 INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Gym', 30.00, 'M', '', '2021-11-02');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Phone Bill', 22.97, 'M', '', '2021-10-28');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Microsoft OneDrive 1GB Storage', 1.99, 'M', '', '2021-10-28');
-INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Food', 100.00, 'M', '', '2021-10-28');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Insurance', 86.32, 'M', '', '2021-11-03');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Phone', 22.97, 'M', '', '2021-11-03');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Microsoft OneDrive 1GB Storage', 1.99, 'M', '', '2021-11-03');
 
 CREATE TABLE passive_incomes (
   pi_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -175,8 +175,39 @@ CREATE TABLE budgets (
   bud_created datetime,
   is_active int(11) DEFAULT 1
 );
-INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Food/Snacks', 250.00, 'M', '2021-10-27', '');
+INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Food', 250.00, 'M', '2021-10-27', '');
 INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Gym', 30.00, 'M', '2021-11-02', '');
+INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Donation', 50.00, 'M', '2021-11-03', '');
+INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Insurance', 100.00, 'M', '2021-11-03', '');
+INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Style', 50.00, 'M', '2021-11-03', '');
+
+
+CREATE TABLE diet_logs (
+  dl_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  dl_name varchar(255),           /* Steamed Broccoli, Roasted Peanuts, Baked Chicken, Builders Bar */
+  dl_category varchar(255),       /* Vegetable, Fruit, Nut, Dairy, Meat, Grain, etc. */
+  dl_amount decimal(18, 2),       /* 1.1, 1.5, 25.37 */
+  dl_measurement decimal(18, 2),  /* g (grams), mg (miligrams), l (liters), gal (gallons), oz (ounces)*/
+  dl_calories decimal(18, 2),
+  dl_protein decimal(18, 2),
+  dl_fat decimal(18, 2),
+  dl_carbs decimal(18, 2),
+  dl_created datetime,
+  is_active int(11) DEFAULT 1
+);
+
+CREATE TABLE exercise_logs (
+
+);
+
+
+
+
+
+
+
+
+
 /* selections */
 SELECT pa.plan_asset_id,
        a.asset_id,

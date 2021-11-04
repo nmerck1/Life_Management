@@ -118,6 +118,7 @@ include '../includes/autoloader.inc.php';
               echo '</th>';
             echo '</tr>';
             $total_expenses_amount = 0;
+            $total_not_shown_expenses = 0;
             $show_limit = 5;
             $counter = 1;
             $additional_rows = 0;
@@ -143,6 +144,8 @@ include '../includes/autoloader.inc.php';
               } else {
                   $additional_rows++;
               }
+              // always add to the total amount for all the rows
+              $total_not_shown_expenses += (float)$row['fe_amount'];
               $counter++;
             }
             echo '<tr>';
@@ -151,7 +154,8 @@ include '../includes/autoloader.inc.php';
               echo '<td style="background:rgb(33, 37, 46);"></td>';
             echo '</tr>';
             echo '<tr>';
-              echo '<td colspan=5><i>('.$additional_rows.' more rows...)</i></td>';
+              echo '<td colspan=4 style="text-align:left;"><i>('.$additional_rows.' more rows...)</i></td>';
+              echo '<td style="background:rgb(33, 37, 46);">($'.$total_not_shown_expenses.')</td>';
               echo '<td style="background:rgb(33, 37, 46);"></td>';
             echo '</tr>';
             echo '</table>';

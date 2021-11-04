@@ -14,8 +14,9 @@ class Navbar {
             echo '<a class="navbar-brand" href="../pages/vision.php">Vision</a>';
             echo '<a class="navbar-brand" href="../pages/finances.php">Finances</a>';
             echo '<a class="navbar-brand" href="../pages/routine.php">Routine</a>';
-            echo '<a class="navbar-brand" href="../pages/health_fitness.php">Health & Fitness</a>';
-            echo '<a class="navbar-brand" href="../pages/style.php">Style</a>';
+            echo '<a class="navbar-brand" href="../pages/diet.php">Diet</a>'; 
+            //echo '<a class="navbar-brand" href="../pages/health_fitness.php">Health & Fitness</a>';
+            //echo '<a class="navbar-brand" href="../pages/style.php">Style</a>';
 		  		echo '</div>';
 		  	echo '</div>';
 			echo '</nav>';
