@@ -65,11 +65,15 @@ CREATE TABLE finance_expenses (
 INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
 VALUES ('Ingles', 'Got drinks for weekend.', 'Food', 7.79, '2021-10-23', 'Central, SC');
 INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
-VALUES ('Publix', 'got four drinks for each day of weekday', 'Food', 6.59, '2021-11-02', 'Clemson, SC');
+VALUES ('Publix', 'got drinks', 'Food', 10.41, '2021-11-04', 'Greenville, SC');
 INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
 VALUES ('Planet Fatness', 'membership', 'Gym', 23.04, '2021-11-02', 'Seneca, SC');
 INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
 VALUES ('Dollar General', 'Red Bull + spicy nuts + snickers ice cream bar', 'Food', 4.49, '2021-11-03', 'Six Mile, SC');
+INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
+VALUES ('Murasaki', 'Chicken Hibachi', 'Food', 16.47, '2021-11-04', 'Greenville, SC');
+INSERT INTO finance_expenses (fe_company, fe_name, fe_category, fe_amount, fe_date, fe_notes)
+VALUES ('QT', 'Snacks', 'Food', 4.20, '2021-11-05', 'Piedmont, SC');
 /*
 CREATE TABLE finance_bills (
   finance_bill_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -153,6 +157,7 @@ INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_cr
 INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Insurance', 86.32, 'M', '', '2021-11-03');
 INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Phone', 22.97, 'M', '', '2021-11-03');
 INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Microsoft OneDrive 1GB Storage', 1.99, 'M', '', '2021-11-03');
+INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Oil & Filter Change', 10.00, 'M', 'Every three months or so it\'s around $30.00 or so', '2021-11-05');
 
 CREATE TABLE passive_incomes (
   pi_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -180,7 +185,8 @@ INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALU
 INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Donation', 50.00, 'M', '2021-11-03', '');
 INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Insurance', 100.00, 'M', '2021-11-03', '');
 INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Style', 50.00, 'M', '2021-11-03', '');
-
+INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Hygiene', 20.00, 'M', '2021-11-05', '');
+INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Gas', 100.00, 'M', '2021-11-05', '');
 
 CREATE TABLE diet_logs (
   dl_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -195,6 +201,19 @@ CREATE TABLE diet_logs (
   dl_created datetime,
   is_active int(11) DEFAULT 1
 );
+
+CREATE TABLE categories (
+  cat_id int(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  cat_name varchar(255),
+  is_active int(11) DEFAULT 1
+);
+INSERT INTO categories (cat_name) VALUES ('Donation');
+INSERT INTO categories (cat_name) VALUES ('Food');
+INSERT INTO categories (cat_name) VALUES ('Gym');
+INSERT INTO categories (cat_name) VALUES ('Insurance');
+INSERT INTO categories (cat_name) VALUES ('Style');
+INSERT INTO categories (cat_name) VALUES ('Hygiene');
+INSERT INTO categories (cat_name) VALUES ('Gas');
 
 CREATE TABLE exercise_logs (
 

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+//declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 
 ?>
@@ -67,10 +67,10 @@ include '../includes/autoloader.inc.php';
             $total_incomes_amount = 0;
             while ($row = $stmt->fetch()) {
               echo '<tr>';
-                echo '<td style="background:rgb(25, 29, 32);">' .$row['fi_company']. '</td>';
-                echo '<td style="background:rgb(25, 29, 32);">' .$row['fi_name']. '</td>';
+                echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['fi_company']. '</td>';
+                echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['fi_name']. '</td>';
                 $date_string = strtotime($row['fi_date']);
-                echo '<td style="background:rgb(25, 29, 32);">' .date('M, d', $date_string). '</td>';
+                echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M, d', $date_string). '</td>';
                 echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['fi_amount'], 2). '</td>';
                 echo '<td style="background:rgb(33, 37, 46);">';
                   echo '<span style="display:flex;">';
@@ -125,11 +125,11 @@ include '../includes/autoloader.inc.php';
             while ($row = $stmt->fetch()) {
               if ($counter <= $show_limit){
                 echo '<tr>';
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['fe_company']. '</td>';
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['fe_category']. '</td>';
+                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['fe_company']. '</td>';
+                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['fe_category']. '</td>';
                   echo '<td style="background:rgb(25, 29, 32);">' .$row['fe_name']. '</td>';
                   $date_string = strtotime($row['fe_date']);
-                  echo '<td style="background:rgb(25, 29, 32);">' .date('M, d', $date_string). '</td>';
+                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M, d', $date_string). '</td>';
                   echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['fe_amount'], 2). '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
                     echo '<span style="display:flex;">';
@@ -186,7 +186,7 @@ include '../includes/autoloader.inc.php';
                 echo '<tr>';
                   echo '<td style="background:rgb(25, 29, 32);">' .$row['pi_name']. '</td>';
                   echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['pi_amount'], 2). '</td>';
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['pi_freq']. '</td>';
+                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['pi_freq']. '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
                     echo '<span style="display:flex;">';
                       echo '<a href="../includes/finances.inc.php?selected_id='.$row['pi_id'].'&form_type=Passive"><p class="bi-pencil-fill" style="color:white;"></p></a>';
@@ -227,7 +227,7 @@ include '../includes/autoloader.inc.php';
                 echo '<tr>';
                   echo '<td style="background:rgb(25, 29, 32);">' .$row['bill_name']. '</td>';
                   echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['bill_amount'], 2). '</td>';
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['bill_freq']. '</td>';
+                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bill_freq']. '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
                     echo '<span style="display:flex;">';
                       echo '<a href="../includes/finances.inc.php?selected_id='.$row['bill_id'].'&form_type=Bill"><p class="bi-pencil-fill" style="color:white;"></p></a>';
@@ -277,11 +277,12 @@ include '../includes/autoloader.inc.php';
               $total_budgets_amount = 0;
               $cat_budgets = array();
               while ($row = $stmt->fetch()) {
-                array_push($cat_budgets, $row['bud_amount']);
+                //array_push($cat_budgets, $row['bud_amount']);
+                $cat_budgets[$row['bud_name']] = $row['bud_amount'];
                 echo '<tr>';
                   echo '<td style="background:rgb(25, 29, 32);">' .$row['bud_name']. '</td>';
                   echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['bud_amount'], 2). '</td>';
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['bud_freq']. '</td>';
+                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bud_freq']. '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
                     echo '<span style="display:flex;">';
                       echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&form_type=Budget"><p class="bi-pencil-fill" style="color:white;"></p></a>';
@@ -319,12 +320,23 @@ include '../includes/autoloader.inc.php';
               echo '<th>Category</th>';
               echo '<th>Amount</th>';
             echo '</tr>';
+
+            //var_dump($cat_budgets);
             $counter = 0;
             while ($row = $stmt->fetch()) {
+              // find the matching category with this name in category array
+              //$key = $row['fe_category'];
+              //$result = isset($array[$key]) ? $array[$key] : null;
+              //echo 'category: '. $row['fe_category'] .'<br>';
+              $find_budget = $cat_budgets[$row['fe_category']];
+              //echo 'find_budget: '.$find_budget.'<br>';
               $color = 'green';
-              if ($cat_budgets[$counter] <= $row['fe_amount']) {
-                $color = 'red';
+              if (array_key_exists($row['fe_category'], $cat_budgets)) {
+                if ($find_budget <= $row['fe_amount']) {
+                  $color = 'red';
+                }
               }
+
               echo '<tr>';
                 echo '<td style="background:rgb(25, 29, 32);">' .$row['fe_category']. '</td>';
                 echo '<td style="text-align:right; background:rgb(25, 29, 32); color:'.$color.';">' .number_format((float)$row['fe_amount'], 2). '</td>';
@@ -343,18 +355,18 @@ include '../includes/autoloader.inc.php';
           echo '<td colspan=2>';
             echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
               echo '<tr>';
-                echo '<th>Gross Monthly</th>';
-                echo '<th>Net Monthly</th>';
-                echo '<th>Gross Yearly</th>';
-                echo '<th>Net Yearly</th>';
+                echo '<th colspan=2>Gross Monthly</th>';
+                echo '<th colspan=2>Net Monthly</th>';
+                //echo '<th>Gross Yearly</th>';
+                //echo '<th>Net Yearly</th>';
               echo '</tr>';
               echo '<tr>';
                 // we need to get some variables
                 $net_savings = $total_incomes_amount - $total_expenses_amount - $total_bills_amount;
-                echo '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($total_incomes_amount, 2). '</td>';
-                echo '<td style="text-align:right; background:rgb(25, 29, 32); color:green;">$' .number_format($net_savings, 2). '</td>';
-                echo '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($total_incomes_amount*12, 2). '</td>';
-                echo '<td style="text-align:right; background:rgb(25, 29, 32); color:green;">$' .number_format($net_savings*12, 2). '</td>';
+                echo '<td colspan=2 style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($total_incomes_amount, 2). '</td>';
+                echo '<td colspan=2 style="text-align:right; background:rgb(25, 29, 32); color:green;">$' .number_format($net_savings, 2). '</td>';
+                //echo '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($total_incomes_amount*12, 2). '</td>';
+                //echo '<td style="text-align:right; background:rgb(25, 29, 32); color:green;">$' .number_format($net_savings*12, 2). '</td>';
               echo '</tr>';
             echo '</table>';
           echo '</td>';
