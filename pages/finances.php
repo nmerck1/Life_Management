@@ -32,6 +32,12 @@ include '../includes/autoloader.inc.php';
   -->
     <div>
       <?php
+      // this is for looking at previous finance dates in the system
+        //$date = 'now()';
+        //if (isset($_POST['date_range'])) {
+        //  $date = $_POST['date_range'];
+        //}
+
         echo '<h1 style="text-align:center;">Finances Overview</h1>';
         echo '<h2 style="text-align:center;">'.date('F, Y').'</h2>';
         echo '<table class="table table-dark" style="background-color:#3a5774;">';
@@ -61,7 +67,7 @@ include '../includes/autoloader.inc.php';
               echo '<th>Date</th>';
               echo '<th>Amount</th>';
               echo '<th style="background-color: rgb(33, 37, 46);">';
-                echo '<a href="../includes/finances.inc.php?action=New&form_type=Income"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                echo '<a href="../includes/finances.inc.php?form_type=Income"><p class="bi-plus-circle" style="color:white;"></p></a>';
               echo '</th>';
             echo '</tr>';
             $total_incomes_amount = 0;
@@ -74,8 +80,8 @@ include '../includes/autoloader.inc.php';
                 echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['fi_amount'], 2). '</td>';
                 echo '<td style="background:rgb(33, 37, 46);">';
                   echo '<span style="display:flex;">';
-                    echo '<a href="../includes/finances.inc.php?selected_id='.$row['fi_id'].'&form_type=Income"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                    echo '<a href="../includes/finances.ajax.php?selected_id='.$row['fi_id'].'&update_type=Delete"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                    echo '<a href="../includes/finances.inc.php?selected_id='.$row['fi_id'].'&update_type=Edit&form_type=Income"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                    echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fi_id'].'&update_type=Delete&form_type=Income"><p class="bi-trash-fill" style="color:white;"></p></a>';
                   echo '</span>';
                 echo '</td>';
               echo '</tr>';
@@ -92,14 +98,16 @@ include '../includes/autoloader.inc.php';
           echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
             $sql = "SELECT fe.fe_id,
                         fe.fe_company,
-                        fe.fe_category,
+                        fe.id_category,
+                        cat.cat_name,
                         fe.fe_name,
                         fe.fe_amount,
                         fe.fe_date
                     FROM finance_expenses fe
+                    LEFT JOIN categories cat ON fe.id_category = cat.cat_id
                     WHERE MONTH(fe.fe_date)=MONTH(now())
                     AND YEAR(fe.fe_date)=YEAR(now())
-                    AND is_active = 1
+                    AND fe.is_active = 1
 
                     ORDER BY fe.fe_date DESC;
                     #LIMIT 5;
@@ -114,7 +122,7 @@ include '../includes/autoloader.inc.php';
               echo '<th>Date</th>';
               echo '<th>Amount</th>';
               echo '<th style="background-color: rgb(33, 37, 46);">';
-                echo '<a href="../includes/finances.inc.php?action=New&form_type=Expense"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                echo '<a href="../includes/finances.inc.php?form_type=Expense"><p class="bi-plus-circle" style="color:white;"></p></a>';
               echo '</th>';
             echo '</tr>';
             $total_expenses_amount = 0;
@@ -126,15 +134,15 @@ include '../includes/autoloader.inc.php';
               if ($counter <= $show_limit){
                 echo '<tr>';
                   echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['fe_company']. '</td>';
-                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['fe_category']. '</td>';
+                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['cat_name']. '</td>';
                   echo '<td style="background:rgb(25, 29, 32);">' .$row['fe_name']. '</td>';
                   $date_string = strtotime($row['fe_date']);
                   echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M, d', $date_string). '</td>';
                   echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['fe_amount'], 2). '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
                     echo '<span style="display:flex;">';
-                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['fe_id'].'&form_type=Expense"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                      echo '<a href="../includes/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['fe_id'].'&update_type=Edit&form_type=Expense"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete&form_type=Expense"><p class="bi-trash-fill" style="color:white;"></p></a>';
                     echo '</span>';
                   echo '</td>';
                 echo '</tr>';
@@ -155,7 +163,7 @@ include '../includes/autoloader.inc.php';
             echo '</tr>';
             echo '<tr>';
               echo '<td colspan=4 style="text-align:left;"><i>('.$additional_rows.' more rows...)</i></td>';
-              echo '<td style="background:rgb(33, 37, 46);">($'.$total_not_shown_expenses.')</td>';
+              echo '<td style="background:rgb(33, 37, 46);">($'.number_format($total_not_shown_expenses, 2).')</td>';
               echo '<td style="background:rgb(33, 37, 46);"></td>';
             echo '</tr>';
             echo '</table>';
@@ -178,7 +186,7 @@ include '../includes/autoloader.inc.php';
                 echo '<th>Amount</th>';
                 echo '<th>Frequency</th>';
                 echo '<th style="background-color: rgb(33, 37, 46);">';
-                  echo '<a href="../includes/finances.inc.php?action=New&form_type=Passive"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                  echo '<a href="../includes/finances.inc.php?form_type=Passive"><p class="bi-plus-circle" style="color:white;"></p></a>';
                 echo '</th>';
               echo '</tr>';
               $total_passive_incomes = 0;
@@ -189,8 +197,8 @@ include '../includes/autoloader.inc.php';
                   echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['pi_freq']. '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
                     echo '<span style="display:flex;">';
-                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['pi_id'].'&form_type=Passive"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                      echo '<a href="../includes/finances.ajax.php?selected_id='.$row['pi_id'].'&update_type=Delete"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['pi_id'].'&update_type=Edit&form_type=Passive"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['pi_id'].'&update_type=Delete&form_type=Passive"><p class="bi-trash-fill" style="color:white;"></p></a>';
                     echo '</span>';
                   echo '</td>';
                 echo '</tr>';
@@ -219,7 +227,7 @@ include '../includes/autoloader.inc.php';
                 echo '<th>Amount</th>';
                 echo '<th>Frequency</th>';
                 echo '<th style="background-color: rgb(33, 37, 46);">';
-                  echo '<a href="../includes/finances.inc.php?action=New&form_type=Bill"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                  echo '<a href="../includes/finances.inc.php?form_type=Bill"><p class="bi-plus-circle" style="color:white;"></p></a>';
                 echo '</th>';
               echo '</tr>';
               $total_bills_amount = 0;
@@ -230,8 +238,8 @@ include '../includes/autoloader.inc.php';
                   echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bill_freq']. '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
                     echo '<span style="display:flex;">';
-                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['bill_id'].'&form_type=Bill"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                      echo '<a href="../includes/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['bill_id'].'&update_type=Edit&form_type=Bill"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete&form_type=Bill"><p class="bi-trash-fill" style="color:white;"></p></a>';
                     echo '</span>';
                   echo '</td>';
                 echo '</tr>';
@@ -271,7 +279,7 @@ include '../includes/autoloader.inc.php';
                 echo '<th>Amount</th>';
                 echo '<th>Frequency</th>';
                 echo '<th style="background-color: rgb(33, 37, 46);">';
-                  echo '<a href="../includes/finances.inc.php?action=New&form_type=Bill"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                  echo '<a href="../includes/finances.inc.php?form_type=Budget"><p class="bi-plus-circle" style="color:white;"></p></a>';
                 echo '</th>';
               echo '</tr>';
               $total_budgets_amount = 0;
@@ -285,8 +293,8 @@ include '../includes/autoloader.inc.php';
                   echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bud_freq']. '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
                     echo '<span style="display:flex;">';
-                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&form_type=Budget"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                      echo '<a href="../includes/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&update_type=Edit&form_type=Budget"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget"><p class="bi-trash-fill" style="color:white;"></p></a>';
                     echo '</span>';
                   echo '</td>';
                 echo '</tr>';
@@ -302,16 +310,18 @@ include '../includes/autoloader.inc.php';
           echo '</td>';
           echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
             $sql = "SELECT fe.fe_id,
-                        fe.fe_category,
+                        fe.id_category,
+                        cat.cat_name,
                         SUM(fe.fe_amount) AS 'fe_amount',
                         fe.fe_date
                     FROM finance_expenses fe
+                    LEFT JOIN categories cat ON fe.id_category = cat.cat_id
                     WHERE MONTH(fe.fe_date)=MONTH(now())
                     AND YEAR(fe.fe_date)=YEAR(now())
-                    AND is_active = 1
+                    AND fe.is_active = 1
 
-                    GROUP BY fe.fe_category
-                    ORDER BY fe.fe_category ASC;
+                    GROUP BY fe.id_category
+                    ORDER BY fe.id_category ASC;
             ";
             $dbh = new Dbh();
             $stmt = $dbh->connect()->query($sql);
@@ -328,17 +338,17 @@ include '../includes/autoloader.inc.php';
               //$key = $row['fe_category'];
               //$result = isset($array[$key]) ? $array[$key] : null;
               //echo 'category: '. $row['fe_category'] .'<br>';
-              $find_budget = $cat_budgets[$row['fe_category']];
+              $find_budget = $cat_budgets[$row['cat_name']];
               //echo 'find_budget: '.$find_budget.'<br>';
               $color = 'green';
-              if (array_key_exists($row['fe_category'], $cat_budgets)) {
+              if (array_key_exists($row['cat_name'], $cat_budgets)) {
                 if ($find_budget <= $row['fe_amount']) {
                   $color = 'red';
                 }
               }
 
               echo '<tr>';
-                echo '<td style="background:rgb(25, 29, 32);">' .$row['fe_category']. '</td>';
+                echo '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
                 echo '<td style="text-align:right; background:rgb(25, 29, 32); color:'.$color.';">' .number_format((float)$row['fe_amount'], 2). '</td>';
               echo '</tr>';
               $counter++;
@@ -363,8 +373,12 @@ include '../includes/autoloader.inc.php';
               echo '<tr>';
                 // we need to get some variables
                 $net_savings = $total_incomes_amount - $total_expenses_amount - $total_bills_amount;
+                $color = 'green';
+                if ($net_savings <= 0.00) {
+                  $color = 'red';
+                }
                 echo '<td colspan=2 style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($total_incomes_amount, 2). '</td>';
-                echo '<td colspan=2 style="text-align:right; background:rgb(25, 29, 32); color:green;">$' .number_format($net_savings, 2). '</td>';
+                echo '<td colspan=2 style="text-align:right; background:rgb(25, 29, 32); color:'.$color.';">$' .number_format($net_savings, 2). '</td>';
                 //echo '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($total_incomes_amount*12, 2). '</td>';
                 //echo '<td style="text-align:right; background:rgb(25, 29, 32); color:green;">$' .number_format($net_savings*12, 2). '</td>';
               echo '</tr>';
@@ -376,9 +390,10 @@ include '../includes/autoloader.inc.php';
   </div>
 </div>
 
-<footer class="container-fluid text-center">
-  <p class="bi-egg" style="color:white;"></p>
-</footer>
+<?php
+  $footer = new Footer();
+  $footer->show_footer();
+?>
 
 </body>
 </html>

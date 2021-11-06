@@ -23,6 +23,12 @@ h1 {
   border: none;
 }
 
+input, select, option {
+  background: rgb(33, 37, 46);
+  border: 1px solid grey;
+  color: white;
+}
+
 a:hover {
   color: rgb(47, 115, 152);
 }

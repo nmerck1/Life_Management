@@ -219,7 +219,19 @@ CREATE TABLE exercise_logs (
 
 );
 
-
+CREATE TABLE foods (
+  food_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  food_name varchar(255),           /* Steamed Broccoli, Roasted Peanuts, Baked Chicken, Builders Bar */
+  food_category varchar(255),       /* Vegetable, Fruit, Nut, Dairy, Meat, Grain, etc. */
+  food_amount decimal(18, 2),       /* 1.1, 1.5, 25.37 */
+  food_measurement decimal(18, 2),  /* g (grams), mg (miligrams), l (liters), gal (gallons), oz (ounces)*/
+  food_calories decimal(18, 2),
+  food_protein decimal(18, 2),
+  food_fat decimal(18, 2),
+  food_carbs decimal(18, 2),
+  food_created datetime,
+  is_active int(11) DEFAULT 1
+);
 
 
 

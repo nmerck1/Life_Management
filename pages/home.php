@@ -37,9 +37,10 @@ include '../includes/autoloader.inc.php';
   </div>
 </div>
 
-<footer class="container-fluid text-center">
-  <p class="bi-egg" style="color:white;"></p>
-</footer>
+<?php
+  $footer = new Footer();
+  $footer->show_footer();
+?>
 
 </body>
 </html>
