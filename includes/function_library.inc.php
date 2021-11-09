@@ -1,12 +1,13 @@
 <?php
 
+// "global variables"
 $g_servername = "localhost";
 $g_username = "root";
 $g_password = "";
 $g_database = "life_management";
-
 // Create connection
 $conn = new mysqli($g_servername, $g_username, $g_password, $g_database);
+
 
 // gets a dropdown based on the categories table (this will be used in multiple places )
 function library_get_categories_dropdown($cat_id){

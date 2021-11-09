@@ -260,3 +260,12 @@ SELECT bills.bill_name,
        SUM(bills.bill_amount) AS 'total_bills_amount'
 FROM current_bills bills
 WHERE is_active = 1;
+
+
+SELECT SUM(f.fe_amount),
+       f.fe_date,
+       f.is_active
+FROM finance_expenses f
+WHERE is_active = 1
+AND YEAR(f.fe_date)=YEAR(now())
+GROUP BY MONTH(f.fe_date);
