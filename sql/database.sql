@@ -269,3 +269,43 @@ FROM finance_expenses f
 WHERE is_active = 1
 AND YEAR(f.fe_date)=YEAR(now())
 GROUP BY MONTH(f.fe_date);
+
+
+/* query for selecting most recent bill logs for each category of bills (this can be changed to specific dates for bill history) */
+SELECT bl.*,
+       cb.bill_name,
+       cb.bill_freq
+FROM bill_logs bl
+INNER JOIN current_bills cb ON bl.bl_id_bill = cb.bill_id
+INNER JOIN
+    (SELECT bl_id,
+            bl_id_bill,
+            bl_amount,
+            MAX(bl_valid_date) AS MaxDateTime
+      FROM bill_logs
+      WHERE is_active = 1
+      GROUP BY bl_id_bill
+    ) bl2
+ON bl.bl_valid_date = bl2.MaxDateTime
+GROUP BY bl.bl_id_bill;
+
+
+
+
+SELECT bl.*,
+       cb.bill_name,
+       cb.bill_freq
+FROM bill_logs bl
+INNER JOIN current_bills cb ON bl.bl_id_bill = cb.bill_id
+INNER JOIN
+    (SELECT bl_id,
+            bl_id_bill,
+            bl_amount,
+            MAX(bl_valid_date) AS MaxDateTime
+      FROM bill_logs
+      WHERE DATE(bl_valid_date) <= DATE('2022-01-01')
+      AND is_active = 1
+      GROUP BY bl_id_bill
+    ) bl2
+ON bl.bl_valid_date = bl2.MaxDateTime
+GROUP BY bl.bl_id_bill;

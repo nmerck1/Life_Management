@@ -259,7 +259,7 @@ include '../includes/autoloader.inc.php';
 
                 echo '<tr>';
                   echo '<td style="background: rgb(33, 37, 46); border:2px solid rgb(33, 37, 46);">Passive Incomes</td>';
-                  echo '<td style="background: rgb(33, 37, 46); border:2px solid rgb(33, 37, 46);">Current Bills</td>';
+                  echo '<td style="background: rgb(33, 37, 46); border:2px solid rgb(33, 37, 46);">This Month\'s Bills</td>';
                 echo '</tr>';
 
                 echo '<tr>';
@@ -299,12 +299,36 @@ include '../includes/autoloader.inc.php';
                     echo '</table>';
                   echo '</td>';
                   echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
+                  /*
                     $sql = "SELECT bills.bill_id,
                                 bills.bill_name,
                                 bills.bill_amount,
                                 bills.bill_freq
                             FROM current_bills bills
-                            WHERE is_active = 1;
+                            WHERE is_active = 1
+                            AND bills.bill_freq = 'M';
+                    ";
+                    */
+                    $sql = "SELECT bl.*,
+                                   cb.bill_id,
+                                   cb.bill_name,
+                                   cb.bill_freq
+                            FROM bill_logs bl
+                            INNER JOIN current_bills cb ON bl.bl_id_bill = cb.bill_id
+                            INNER JOIN
+                                (SELECT bl_id,
+                                        bl_id_bill,
+                                        bl_amount,
+                                        MAX(bl_valid_date) AS MaxDateTime
+                                  FROM bill_logs
+                                  WHERE is_active = 1
+                                  GROUP BY bl_id_bill
+                                ) bl2
+                            ON bl.bl_valid_date = bl2.MaxDateTime
+                            WHERE cb.bill_freq = 'M'
+                            AND cb.is_active = 1
+
+                            GROUP BY bl.bl_id_bill;
                     ";
                     $dbh = new Dbh();
                     $stmt = $dbh->connect()->query($sql);
@@ -321,7 +345,7 @@ include '../includes/autoloader.inc.php';
                       while ($row = $stmt->fetch()) {
                         echo '<tr>';
                           echo '<td style="background:rgb(25, 29, 32);">' .$row['bill_name']. '</td>';
-                          echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['bill_amount'], 2). '</td>';
+                          echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['bl_amount'], 2). '</td>';
                           echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bill_freq']. '</td>';
                           echo '<td style="background:rgb(33, 37, 46);">';
                             echo '<span style="display:flex;">';
@@ -331,7 +355,7 @@ include '../includes/autoloader.inc.php';
                           echo '</td>';
                         echo '</tr>';
                         // get variables for savings:
-                        $total_bills_amount += (float)$row['bill_amount'];
+                        $total_bills_amount += (float)$row['bl_amount'];
                       }
                       echo '<tr>';
                         echo '<td colspan=2 style="text-align:left; background-color:rgb(33, 37, 46);">Total:</td>';
@@ -482,9 +506,35 @@ include '../includes/autoloader.inc.php';
               echo '<h2>Expenses</h2>';
               echo '<h2>'.$this_year.'</h2>';
               echo '<table>'; // mini table to display months
+              // sql for getting the bill logs for the correct times in history to show the correct expenses
+              $sql = "SELECT bl.*,
+                             cb.bill_name,
+                             cb.bill_freq
+                      FROM bill_logs bl
+                      INNER JOIN current_bills cb ON bl.bl_id_bill = cb.bill_id
+                      INNER JOIN
+                          (SELECT bl_id,
+                                  bl_id_bill,
+                                  bl_amount,
+                                  MAX(bl_valid_date) AS MaxDateTime
+                            FROM bill_logs
+                            WHERE DATE(bl_valid_date) <= DATE('2022-01-01')
+                            AND is_active = 1
+                            GROUP BY bl_id_bill
+                          ) bl2
+                      ON bl.bl_valid_date = bl2.MaxDateTime
+                      GROUP BY bl.bl_id_bill;
+              ";
+              $dbh = new Dbh();
+              $stmt = $dbh->connect()->query($sql);
+
+              $total_history_bills = 0;
+              while ($row = $stmt->fetch()) {
+                $total_history_bills += $row['bl_amount'];
+              }
+
 
               $monthly_totals = array();
-
               $sql = "SELECT SUM(f.fe_amount) AS 'fe_amount',
                              f.fe_date,
                              f.is_active
@@ -517,7 +567,8 @@ include '../includes/autoloader.inc.php';
                     //echo "each_month: ".$each_month."<br>";
                     if ($month == $each_month) {
                       //echo "picked! <br>";
-                      $this_total = '$'.$total;
+                      $add_bills_total = $total_history_bills + $total;
+                      $this_total = '$'.$add_bills_total;
                       $color = 'white';
                       break;
                     }
