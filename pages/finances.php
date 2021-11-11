@@ -412,6 +412,7 @@ include '../includes/autoloader.inc.php';
                         // get variables for savings:
                         $total_budgets_amount += (float)$row['bud_amount'];
                       }
+                      //var_dump($cat_budgets);
                       echo '<tr>';
                         echo '<td colspan=2 style="text-align:left; background-color:rgb(33, 37, 46);">Total:</td>';
                         echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_budgets_amount, 2).'</td>';
@@ -436,31 +437,58 @@ include '../includes/autoloader.inc.php';
                     ";
                     $dbh = new Dbh();
                     $stmt = $dbh->connect()->query($sql);
+                    //$count = $stmt->fetchColumn();
                     echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
                     echo '<tr>';
                       echo '<th>Category</th>';
                       echo '<th>Amount</th>';
+                    //  echo '<th>Over Scale</th>';
                     echo '</tr>';
 
                     //var_dump($cat_budgets);
                     $counter = 0;
+                    //$added = false;
                     while ($row = $stmt->fetch()) {
+                      //echo "counter: ".$counter++."<br>";
                       // find the matching category with this name in category array
                       //$key = $row['fe_category'];
                       //$result = isset($array[$key]) ? $array[$key] : null;
                       //echo 'category: '. $row['fe_category'] .'<br>';
                       $find_budget = $cat_budgets[$row['cat_name']];
                       //echo 'find_budget: '.$find_budget.'<br>';
+                      // default color
                       $color = 'green';
                       if (array_key_exists($row['cat_name'], $cat_budgets)) {
-                        if ($find_budget <= $row['fe_amount']) {
+                        // create more exact scale colors
+                        $get_amount = $row['fe_amount'];                            // 52.41
+
+                        $get_budget =        $find_budget;
+                        $get_double_budget = $find_budget * 2;                      // 104.82
+                        $get_half_budget =   $find_budget + ($find_budget / 2);   // 26.21
+
+                        //echo "get_budget: ".$get_budget.'<br>';
+                        //echo "get_half_budget: ".$get_half_budget.'<br>';
+                        //echo "get_double_budget: ".$get_double_budget.'<br><br>';
+
+                        if($get_amount >= $get_double_budget) {
                           $color = 'red';
+                        } elseif($get_amount >= $get_half_budget) {
+                          $color = 'orange';
+                        } elseif($get_amount > $get_budget) {
+                          $color = 'yellow';
+                        } else {
+                          $color = 'green';
                         }
                       }
 
                       echo '<tr>';
                         echo '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
                         echo '<td style="text-align:right; background:rgb(25, 29, 32); color:'.$color.';">' .number_format((float)$row['fe_amount'], 2). '</td>';
+                        //if ($added == false){
+                          //echo "count: ".$count++."<br>";
+                        //  $added = true;
+                          //  echo '<td rowspan='.$counter.' style="text-align:center; background:rgb(25, 29, 32); color:'.$color.';">hello</td>';
+                        //  }
                       echo '</tr>';
                       $counter++;
                     }
