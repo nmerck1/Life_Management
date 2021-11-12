@@ -21,38 +21,20 @@ include '../includes/autoloader.inc.php';
 ?>
 
 
-  <!--
-  <div class="row content">
-    <div id="left_sidenav">
-      <p class="bi-coin" style="font-size: 1rem; color: white;"><a href="#"> Overview</a></p>
-      <p class="bi-piggy-bank-fill" style="font-size: 1rem; color: white;"><a href="#"> Budgets</a></p>
-      <p class="bi-receipt" style="font-size: 1rem; color: white;"><a href="#"> Bills</a></p>
-    </div>
-  -->
-      <?php
-      // this is for looking at previous finance dates in the system
-        //$date = 'now()';
-        //if (isset($_POST['date_range'])) {
-        //  $date = $_POST['date_range'];
-        //}
 
-        // get all months of the year and store them into an array for using in two places
-        /*
-        $months = array();
-        for ($i = 0; $i < 12; $i++) {
-            $timestamp = mktime(0, 0, 0, date('n') - $i, 1);
-            $months[date('n', $timestamp)] = date('F', $timestamp);
+      <?php
+        // this is for looking at previous finance dates in the system
+        $date_search = date('Y-m-d');
+        if (isset($_POST['date_search'])) {
+          $date_search = $_POST['date_search'];
         }
-        foreach ($months as $num => $name) {
-            printf('<option value="%u">%s</option>', $num, $name);
-        }
-        */
-        $first_month = date('Y-m-d', strtotime('first day of january this year'));
-        $this_year = date('Y', strtotime($first_month));
+
+        $this_year = date('Y', strtotime($date_search));
+        $first_month = date('Y-m-d', strtotime('first day of January'.$this_year));
         //$next_year = date('Y-m-d', strtotime('+1 year'));
 
-        //echo "first_day_of_year: ".$first_day_of_year."<br><br>";
-      //  echo "next_year: ".$next_year."<br>";
+        //echo "first_month: ".$first_month."<br><br>";
+        //echo "next_year: ".$next_year."<br>";
         //echo "month: ".$month."<br>";
         $months_of_year = array();
         for ($i = 0; $i < 12; $i++) {
@@ -76,12 +58,13 @@ include '../includes/autoloader.inc.php';
 
               $monthly_totals = array();
 
-              $sql = "SELECT SUM(f.fi_amount) AS 'fi_amount',
+              $sql = "
+                      SELECT SUM(f.fi_amount) AS 'fi_amount',
                              f.fi_date,
                              f.is_active
                       FROM finance_incomes f
                       WHERE is_active = 1
-                      AND YEAR(f.fi_date)=YEAR(now())
+                      AND YEAR(f.fi_date)=YEAR('".$date_search."')
                       GROUP BY MONTH(f.fi_date)
                       ORDER BY f.fi_date ASC;
               ";
@@ -126,7 +109,22 @@ include '../includes/autoloader.inc.php';
               //echo '<div class="container">';
 
                 echo '<h1 style="text-align:center;">Finances Overview</h1>';
-                echo '<h2 style="text-align:center;">'.date('F, Y').'</h2>';
+                $show_month_year_title = date('F Y', strtotime($date_search));
+                echo '<h2 style="text-align:center;">'.$show_month_year_title.'</h2>';
+                // mini form for displaying different dates in history
+                echo '<form method="post" action="../pages/finances.php" style="text-align:center;">';
+                  //echo '<select>';
+                  //foreach ($months_of_year as $month) {
+                  //  echo '<option></option>';
+                  //}
+                  //echo '</select>';
+                  //echo $date_search;
+                  //$date = date('Y-m-d');	// default to today
+                  echo '<input type="date" name="date_search" value="'.$date_search.'"></input>';
+
+                  echo '<button type="submit" name="submit_search" class="btn btn-primary btn-sm" value="Display">Display Date</button>';
+                echo '</form>';
+
                 echo '<table class="table table-dark" style="background-color:#3a5774;">';
                 echo '<tr>';
                   echo '<td style="background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Incomes</td>';
@@ -135,16 +133,18 @@ include '../includes/autoloader.inc.php';
                 echo '<tr>';
                   echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
                     // check which table:
-                    $sql = "SELECT fi.fi_id,
-                                fi.fi_company,
-                                fi.fi_name,
-                                fi.fi_amount,
-                                fi.fi_date
-                            FROM finance_incomes fi
-                            WHERE MONTH(fi.fi_date)=MONTH(now())
-                            AND YEAR(fi.fi_date)=YEAR(now())
-                            AND is_active = 1;
+                    $sql = "
+                    SELECT fi.fi_id,
+                        fi.fi_company,
+                        fi.fi_name,
+                        fi.fi_amount,
+                        fi.fi_date
+                    FROM finance_incomes fi
+                    WHERE MONTH(fi.fi_date)=MONTH('".$date_search."')
+                    AND YEAR(fi.fi_date)=YEAR('".$date_search."')
+                    AND is_active = 1;
                     ";
+                    //echo $sql;
                     $dbh = new Dbh();
                     $stmt = $dbh->connect()->query($sql);
                     echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
@@ -183,7 +183,8 @@ include '../includes/autoloader.inc.php';
                     echo '</table>';
                   echo '</td>';
                   echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
-                    $sql = "SELECT fe.fe_id,
+                    $sql = "
+                            SELECT fe.fe_id,
                                 fe.fe_company,
                                 fe.id_category,
                                 cat.cat_name,
@@ -192,8 +193,8 @@ include '../includes/autoloader.inc.php';
                                 fe.fe_date
                             FROM finance_expenses fe
                             LEFT JOIN categories cat ON fe.id_category = cat.cat_id
-                            WHERE MONTH(fe.fe_date)=MONTH(now())
-                            AND YEAR(fe.fe_date)=YEAR(now())
+                            WHERE MONTH(fe.fe_date)=MONTH('".$date_search."')
+                            AND YEAR(fe.fe_date)=YEAR('".$date_search."')
                             AND fe.is_active = 1
 
                             ORDER BY fe.fe_date DESC;
@@ -421,15 +422,16 @@ include '../includes/autoloader.inc.php';
                     echo '</table>';
                   echo '</td>';
                   echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
-                    $sql = "SELECT fe.fe_id,
+                    $sql = "
+                            SELECT fe.fe_id,
                                 fe.id_category,
                                 cat.cat_name,
                                 SUM(fe.fe_amount) AS 'fe_amount',
                                 fe.fe_date
                             FROM finance_expenses fe
                             LEFT JOIN categories cat ON fe.id_category = cat.cat_id
-                            WHERE MONTH(fe.fe_date)=MONTH(now())
-                            AND YEAR(fe.fe_date)=YEAR(now())
+                            WHERE MONTH(fe.fe_date)=MONTH('".$date_search."')
+                            AND YEAR(fe.fe_date)=YEAR('".$date_search."')
                             AND fe.is_active = 1
 
                             GROUP BY fe.id_category
@@ -563,12 +565,13 @@ include '../includes/autoloader.inc.php';
 
 
               $monthly_totals = array();
-              $sql = "SELECT SUM(f.fe_amount) AS 'fe_amount',
+              $sql = "
+                      SELECT SUM(f.fe_amount) AS 'fe_amount',
                              f.fe_date,
                              f.is_active
                       FROM finance_expenses f
                       WHERE is_active = 1
-                      AND YEAR(f.fe_date)=YEAR(now())
+                      AND YEAR(f.fe_date)=YEAR('".$date_search."')
                       GROUP BY MONTH(f.fe_date)
                       ORDER BY f.fe_date ASC;
               ";
