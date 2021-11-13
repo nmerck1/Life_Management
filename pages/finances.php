@@ -435,7 +435,7 @@ include '../includes/autoloader.inc.php';
                             AND fe.is_active = 1
 
                             GROUP BY fe.id_category
-                            ORDER BY fe.id_category ASC;
+                            ORDER BY cat.cat_name ASC;
                     ";
                     $dbh = new Dbh();
                     $stmt = $dbh->connect()->query($sql);

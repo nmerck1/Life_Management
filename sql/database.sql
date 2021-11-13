@@ -103,6 +103,15 @@ CREATE TABLE users (
 INSERT INTO users (user_role, user_name, user_fname, user_lname, user_dob, user_notes)
 VALUES (1, 'nmerck', 'Nathaniel', 'Merck', '1997-11-19 04:00:00', '');
 
+CREATE TABLE user_roles (
+  role_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  role_name varchar(255),
+  role_notes varchar(255),
+  is_active bit(1) DEFAULT 1
+);
+INSERT INTO user_roles (role_name, role_notes)
+VALUES ('Admin', 'Has access and full control to everything in the system.');
+
 /* this table is for basic needs that need to be maintained in my life in order to survive and thrive */
 CREATE TABLE needs (
   need_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
