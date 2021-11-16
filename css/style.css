@@ -23,7 +23,7 @@ h1 {
   border: none;
 }
 
-input, select, option {
+input, select, option, textarea {
   background: rgb(33, 37, 46);
   border: 1px solid grey;
   color: white;

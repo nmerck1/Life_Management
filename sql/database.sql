@@ -98,7 +98,7 @@ CREATE TABLE users (
   user_lname varchar(255),
   user_dob datetime,
   user_notes varchar(255),
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 INSERT INTO users (user_role, user_name, user_fname, user_lname, user_dob, user_notes)
 VALUES (1, 'nmerck', 'Nathaniel', 'Merck', '1997-11-19 04:00:00', '');
@@ -111,12 +111,19 @@ CREATE TABLE user_roles (
 );
 INSERT INTO user_roles (role_name, role_notes)
 VALUES ('Admin', 'Has access and full control to everything in the system.');
+INSERT INTO user_roles (role_name, role_notes)
+VALUES ('Premium', 'A member with paid membership to the site.');
+INSERT INTO user_roles (role_name, role_notes)
+VALUES ('Member', 'A member with access to the site.');
+INSERT INTO user_roles (role_name, role_notes)
+VALUES ('Guest', 'Someone who can view the website but doesnt have access to anything');
+
 
 /* this table is for basic needs that need to be maintained in my life in order to survive and thrive */
 CREATE TABLE needs (
   need_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
   need_name varchar(255),
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 INSERT INTO needs(need_name) VALUES('Food');
 INSERT INTO needs(need_name) VALUES('Shower');
@@ -131,7 +138,7 @@ CREATE TABLE pros_cons (
   pc_name varchar(255), /* Examples: Cost Effective, Closer to Job, Closer to Family, More Money, Further from family, Further from friends, etc. */
   pc_type varchar(255), /* Either Pro or Con */
   pc_notes varchar(255),
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 INSERT INTO pros_cons(pc_name, pc_type, pc_notes) VALUES('Closer to Job', 'Pro', '-Distance, -Gas, -Vehicle Miles, +Free Time');
 INSERT INTO pros_cons(pc_name, pc_type, pc_notes) VALUES('Further from Job', 'Con', '+Distance, +Gas, +Vehicle Miles, -Free Time');
@@ -142,7 +149,7 @@ CREATE TABLE projects (
   proj_id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
   proj_name varchar(255),
   proj_notes varchar(255),
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 
 CREATE TABLE project_steps (
@@ -150,7 +157,7 @@ CREATE TABLE project_steps (
   ps_project_id int(11),
   ps_name varchar(255),
   ps_desc varchar(255),
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 
 CREATE TABLE current_bills (
@@ -160,7 +167,7 @@ CREATE TABLE current_bills (
   bill_freq char(1),  /* This will be either W=Weekly, M=Monthly, D=Daily, BW=Bi-Weekly, Y=Yearly, etc. */
   bill_desc varchar(255),
   bill_created datetime,
-  is_active int(11) DEFAULT 1
+  is_active bit(1)DEFAULT 1
 );
 INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Gym', 30.00, 'M', '', '2021-11-02');
 INSERT INTO current_bills (bill_name, bill_amount, bill_freq, bill_desc, bill_created) VALUES ('Insurance', 86.32, 'M', '', '2021-11-03');
@@ -175,7 +182,7 @@ CREATE TABLE passive_incomes (
   pi_freq char(1),  /* This will be either W=Weekly, M=Monthly, D=Daily, BW=Bi-Weekly, Y=Yearly, etc. */
   pi_desc varchar(255),
   pi_created datetime,
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 INSERT INTO passive_incomes (pi_name, pi_amount, pi_freq, pi_desc, pi_created) VALUES ('Roblox Game Development: Janitor Simulator', 0.01, 'M', '', '2021-10-28');
 
@@ -187,7 +194,7 @@ CREATE TABLE budgets (
   bud_freq char(1),  /* This will be either W=Weekly, M=Monthly, D=Daily, BW=Bi-Weekly, Y=Yearly, etc. */
   bud_desc varchar(255),
   bud_created datetime,
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Food', 250.00, 'M', '2021-10-27', '');
 INSERT INTO budgets (bud_name, bud_amount, bud_freq, bud_created, bud_desc) VALUES ('Gym', 30.00, 'M', '2021-11-02', '');
@@ -208,13 +215,13 @@ CREATE TABLE diet_logs (
   dl_fat decimal(18, 2),
   dl_carbs decimal(18, 2),
   dl_created datetime,
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 
 CREATE TABLE categories (
   cat_id int(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
   cat_name varchar(255),
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 INSERT INTO categories (cat_name) VALUES ('Donation');
 INSERT INTO categories (cat_name) VALUES ('Food');
@@ -223,6 +230,30 @@ INSERT INTO categories (cat_name) VALUES ('Insurance');
 INSERT INTO categories (cat_name) VALUES ('Style');
 INSERT INTO categories (cat_name) VALUES ('Hygiene');
 INSERT INTO categories (cat_name) VALUES ('Gas');
+
+CREATE TABLE companies (
+  comp_id int(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  comp_name varchar(255),
+  comp_desc varchar(255),
+  is_active bit(1) DEFAULT 1
+);
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Red Bowl', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Ingles', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('QT', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Wal-Mart', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Sushi Murasaki', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Tropical Grille', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Coffee Underground', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('ALDI', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Lidl', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Amazon', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Chick-fil-A', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Cantina 76', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Publix', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Starbucks', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Dollar General', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Moe Joe Coffee', '');
+INSERT INTO companies (comp_name, comp_desc) VALUES ('Swamp Rabbit Cafe', '');
 
 CREATE TABLE exercise_logs (
 
@@ -239,7 +270,7 @@ CREATE TABLE foods (
   food_fat decimal(18, 2),
   food_carbs decimal(18, 2),
   food_created datetime,
-  is_active int(11) DEFAULT 1
+  is_active bit(1) DEFAULT 1
 );
 
 

@@ -31,6 +31,26 @@ function library_get_categories_dropdown($cat_id){
 	echo '</select>';
 }
 
+function library_get_companies_dropdown($comp_id){
+	echo '<label>Company: </label>';
+	$sql = "SELECT *
+					FROM companies
+					WHERE is_active = 1
+					ORDER BY comp_name ASC;
+	";
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+	echo '<select id="company">';
+		while ($row = $stmt->fetch()) {
+			if ($comp_id == $row['cat_id']) {
+				echo '<option value="'.$row['comp_id'].'" selected="selected">'.$row['comp_name'].'</option>';
+			} else {
+				echo '<option value="'.$row['comp_id'].'">'.$row['comp_name'].'</option>';
+			}
+
+		}
+	echo '</select>';
+}
 
 
 ?>

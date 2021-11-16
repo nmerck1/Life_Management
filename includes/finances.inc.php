@@ -146,11 +146,9 @@ if (isset($_GET['update_type'])){
 								echo '<h1>Add New Expense</h1>';
 								$update_type = 'Insert';
 							}
-							echo '<p id="update_type" value="'.$update_type.'">'.$update_type.'</p>';
+							echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
 							// print the form type here
 							echo '<div class="container">';
-								//echo '<p id="selected_id" value="'.$selected_id.'">selected_id: '.$selected_id.'</p>';
-								//echo '<p id="update_type" value="'.$update_type.'">update_type: '.$update_type.'</p>';
 
 								echo '<label>Company: </label>';
 								echo '<input type="text" id="company" value="'.$company.'" placeholder="Ingles, QT, Wal-Mart, etc."></input>';
@@ -170,7 +168,7 @@ if (isset($_GET['update_type'])){
 								echo '<input type="date" id="date" value="'.$date.'"></input>';
 								echo '<br>';
 								echo '<label>Notes: </label>';
-								echo '<input type="text" id="notes" value="'.$notes.'"></input>';
+								echo '<textarea id="notes" style="height:100px; width:300px;">'.$notes.'</textarea>';
 								echo '<br>';
 
 								echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
@@ -212,11 +210,9 @@ if (isset($_GET['update_type'])){
 									echo '<h1>Add New Income</h1>';
 									$update_type = 'Insert';
 								}
-								echo '<p id="update_type" value="'.$update_type.'">'.$update_type.'</p>';
+								echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
 								// print the form type here
 								echo '<div class="container">';
-									//echo '<p id="selected_id" value="'.$selected_id.'">selected_id: '.$selected_id.'</p>';
-									//echo '<p id="update_type" value="'.$update_type.'">update_type: '.$update_type.'</p>';
 
 									echo '<label>Company: </label>';
 									echo '<input type="text" id="company" value="'.$company.'" placeholder="Ingles, QT, Wal-Mart, etc."></input>';
@@ -231,7 +227,7 @@ if (isset($_GET['update_type'])){
 									echo '<input type="date" id="date" value="'.$date.'"></input>';
 									echo '<br>';
 									echo '<label>Notes: </label>';
-									echo '<input type="text" id="notes" value="'.$notes.'"></input>';
+									echo '<textarea id="notes" style="height:100px; width:300px;">'.$notes.'</textarea>';
 									echo '<br>';
 
 									echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
