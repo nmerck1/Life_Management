@@ -449,6 +449,7 @@ include '../includes/autoloader.inc.php';
 
                     //var_dump($cat_budgets);
                     $counter = 0;
+                    $total_budget_over = 0;
                     //$added = false;
                     while ($row = $stmt->fetch()) {
                       //echo "counter: ".$counter++."<br>";
@@ -481,6 +482,12 @@ include '../includes/autoloader.inc.php';
                         } else {
                           $color = 'green';
                         }
+
+                        $bud_diff = ($get_budget - $get_amount);
+                        if ($bud_diff < 0) {
+                          $bud_diff = 0;
+                        }
+                        $total_budget_over += $bud_diff;
                       }
 
                       echo '<tr>';
@@ -494,6 +501,16 @@ include '../includes/autoloader.inc.php';
                       echo '</tr>';
                       $counter++;
                     }
+                    // check if budget is over at all:
+                    $color = 'green';
+                    if ($total_budget_over > 0){
+                      $color = 'red';
+                    }
+                    echo '<tr>';
+                      echo '<td style="text-align:left; background-color:rgb(33, 37, 46);">Total Amount Over:</td>';
+                      echo '<td style="text-align:right; background-color:rgb(33, 37, 46); color:'.$color.';">$'.number_format($total_budget_over, 2).'</td>';
+                    echo '</tr>';
+
                     echo '</table>';
                   echo '</td>';
                 echo '</tr>';
