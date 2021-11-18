@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('America/New_York');
+
 // "global variables"
 $g_servername = "localhost";
 $g_username = "root";

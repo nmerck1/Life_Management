@@ -116,7 +116,12 @@ if ($update_type == 'Delete') {
       //$sql = "INSERT INTO budgets SET is_active = 0;";
     }
 
-  }
+} elseif ($update_type == 'Next') {
+
+} elseif ($update_type == 'Previous') {
+
+}
+
 
 
 header("Location: ../pages/finances.php");

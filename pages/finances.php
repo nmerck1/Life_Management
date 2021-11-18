@@ -483,7 +483,7 @@ include '../includes/autoloader.inc.php';
                           $color = 'green';
                         }
 
-                        $bud_diff = ($get_budget - $get_amount);
+                        $bud_diff = ($get_amount - $get_budget);
                         if ($bud_diff < 0) {
                           $bud_diff = 0;
                         }
