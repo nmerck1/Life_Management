@@ -2,6 +2,40 @@
 //declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 
+// Initialize the session
+session_start();
+
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: ../pages/login.php");
+    exit;
+}
+
+$loggedin = $_SESSION['loggedin'];
+$username = $_SESSION['username'];
+$user_id = $_SESSION['user_id'];
+$id_role = $_SESSION['id_role'];
+// Prepare a select statement
+echo "user_id: ". $user_id."<br>";
+//echo "id_role: ". $id_role."<br>";
+$sql = "
+    SELECT *
+    FROM users
+    WHERE user_id = '".$user_id."'
+    AND is_active = 1
+";
+//echo $sql;
+$dbh = new Dbh();
+$stmt = $dbh->connect()->query($sql);
+//echo $sql;
+// should only populate one row of data
+while ($row = $stmt->fetch()) {
+  $user_name = $row['user_name'];
+  $user_fname = $row['user_fname'];
+  $user_lname = $row['user_lname'];
+  $pass_word = $row['pass_word'];
+  //echo "user_fname: ".$user_fname."<br>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +51,7 @@ include '../includes/autoloader.inc.php';
 <?php
   //use Style\Navbar;
   $navbar = new Navbar();
-  $navbar->show_header_nav();
+  $navbar->show_header_nav($loggedin, $user_fname, $id_role);
 ?>
 
 
@@ -63,11 +97,15 @@ include '../includes/autoloader.inc.php';
                              f.fi_date,
                              f.is_active
                       FROM finance_incomes f
-                      WHERE is_active = 1
+                      LEFT JOIN users u ON f.id_user = u.user_id
+                      WHERE f.is_active = 1
+                      AND u.user_id = ".$user_id."
                       AND YEAR(f.fi_date)=YEAR('".$date_search."')
+
                       GROUP BY MONTH(f.fi_date)
                       ORDER BY f.fi_date ASC;
               ";
+              //echo $sql;
               $dbh = new Dbh();
               $stmt = $dbh->connect()->query($sql);
 
@@ -140,9 +178,11 @@ include '../includes/autoloader.inc.php';
                         fi.fi_amount,
                         fi.fi_date
                     FROM finance_incomes fi
-                    WHERE MONTH(fi.fi_date)=MONTH('".$date_search."')
+                    LEFT JOIN users u ON fi.id_user = u.user_id
+                    WHERE fi.is_active = 1
+                    AND u.user_id = ".$user_id."
+                    AND MONTH(fi.fi_date)=MONTH('".$date_search."')
                     AND YEAR(fi.fi_date)=YEAR('".$date_search."')
-                    AND is_active = 1;
                     ";
                     //echo $sql;
                     $dbh = new Dbh();
@@ -193,9 +233,11 @@ include '../includes/autoloader.inc.php';
                                 fe.fe_date
                             FROM finance_expenses fe
                             LEFT JOIN categories cat ON fe.id_category = cat.cat_id
-                            WHERE MONTH(fe.fe_date)=MONTH('".$date_search."')
+                            LEFT JOIN users u ON fe.id_user = u.user_id
+                            WHERE fe.is_active = 1
+                            AND u.user_id = ".$user_id."
+                            AND MONTH(fe.fe_date)=MONTH('".$date_search."')
                             AND YEAR(fe.fe_date)=YEAR('".$date_search."')
-                            AND fe.is_active = 1
 
                             ORDER BY fe.fe_date DESC;
                             #LIMIT 5;
@@ -265,7 +307,13 @@ include '../includes/autoloader.inc.php';
 
                 echo '<tr>';
                   echo '<td style="border-right:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
-                    $sql = "SELECT * FROM passive_incomes WHERE is_active = 1;";
+                    $sql = "
+                      SELECT *
+                      FROM passive_incomes pi
+                      LEFT JOIN users u ON pi.id_user = u.user_id
+                      WHERE pi.is_active = 1
+                      AND u.user_id = ".$user_id.";
+                    ";
                     $dbh = new Dbh();
                     $stmt = $dbh->connect()->query($sql);
                     echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
@@ -315,7 +363,9 @@ include '../includes/autoloader.inc.php';
                                    cb.bill_name,
                                    cb.bill_freq
                             FROM bill_logs bl
+
                             INNER JOIN current_bills cb ON bl.bl_id_bill = cb.bill_id
+
                             INNER JOIN
                                 (SELECT bl_id,
                                         bl_id_bill,
@@ -326,8 +376,12 @@ include '../includes/autoloader.inc.php';
                                   GROUP BY bl_id_bill
                                 ) bl2
                             ON bl.bl_valid_date = bl2.MaxDateTime
+
+                            LEFT JOIN users u ON bl.id_user = u.user_id
+
                             WHERE cb.bill_freq = 'M'
                             AND cb.is_active = 1
+                            AND u.user_id = '.$user_id.'
 
                             GROUP BY bl.bl_id_bill;
                     ";
@@ -374,12 +428,15 @@ include '../includes/autoloader.inc.php';
                 echo '<tr>';
                   echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
                   // budgets names need to match the categories of expenses so that we can sum each expense category into a table //
-                    $sql = "SELECT b.bud_id,
+                    $sql = "
+                          SELECT b.bud_id,
                                 b.bud_name,
                                 b.bud_amount,
                                 b.bud_freq
                             FROM budgets b
-                            WHERE is_active = 1
+                            LEFT JOIN users u ON b.id_user = u.user_id
+                            WHERE b.is_active = 1
+                            AND u.user_id = ".$user_id."
 
                             ORDER BY b.bud_name ASC;
                     ";
@@ -430,9 +487,11 @@ include '../includes/autoloader.inc.php';
                                 fe.fe_date
                             FROM finance_expenses fe
                             LEFT JOIN categories cat ON fe.id_category = cat.cat_id
-                            WHERE MONTH(fe.fe_date)=MONTH('".$date_search."')
+                            LEFT JOIN users u ON fe.id_user = u.user_id
+                            WHERE fe.is_active = 1
+                            AND u.user_id = ".$user_id."
+                            AND MONTH(fe.fe_date)=MONTH('".$date_search."')
                             AND YEAR(fe.fe_date)=YEAR('".$date_search."')
-                            AND fe.is_active = 1
 
                             GROUP BY fe.id_category
                             ORDER BY cat.cat_name ASC;
@@ -532,7 +591,7 @@ include '../includes/autoloader.inc.php';
                         // we need to get some variables
                         $net_savings = $total_incomes_amount - $total_not_shown_expenses - $total_bills_amount;
                         $color = 'green';
-                        if ($net_savings <= 0.00) {
+                        if ($net_savings < 0.00) {
                           $color = 'red';
                         }
                         echo '<td colspan=2 style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($total_incomes_amount, 2). '</td>';
@@ -570,6 +629,10 @@ include '../includes/autoloader.inc.php';
                             GROUP BY bl_id_bill
                           ) bl2
                       ON bl.bl_valid_date = bl2.MaxDateTime
+                      LEFT JOIN users u ON bl.id_user = u.user_id
+                      WHERE bl.is_active = 1
+                      AND u.user_id = '.$user_id.'
+
                       GROUP BY bl.bl_id_bill;
               ";
               $dbh = new Dbh();
@@ -583,14 +646,17 @@ include '../includes/autoloader.inc.php';
 
               $monthly_totals = array();
               $sql = "
-                      SELECT SUM(f.fe_amount) AS 'fe_amount',
-                             f.fe_date,
-                             f.is_active
-                      FROM finance_expenses f
-                      WHERE is_active = 1
-                      AND YEAR(f.fe_date)=YEAR('".$date_search."')
-                      GROUP BY MONTH(f.fe_date)
-                      ORDER BY f.fe_date ASC;
+                      SELECT SUM(fe.fe_amount) AS 'fe_amount',
+                             fe.fe_date,
+                             fe.is_active
+                      FROM finance_expenses fe
+                      LEFT JOIN users u ON fe.id_user = u.user_id
+                      WHERE fe.is_active = 1
+                      AND u.user_id = ".$user_id."
+                      AND YEAR(fe.fe_date)=YEAR('".$date_search."')
+
+                      GROUP BY MONTH(fe.fe_date)
+                      ORDER BY fe.fe_date ASC;
               ";
               $dbh = new Dbh();
               $stmt = $dbh->connect()->query($sql);

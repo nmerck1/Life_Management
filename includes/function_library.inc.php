@@ -33,6 +33,7 @@ function library_get_categories_dropdown($cat_id){
 	echo '</select>';
 }
 
+/*
 function library_get_companies_dropdown($comp_id){
 	echo '<label>Company: </label>';
 	$sql = "SELECT *
@@ -53,6 +54,6 @@ function library_get_companies_dropdown($comp_id){
 		}
 	echo '</select>';
 }
-
+*/
 
 ?>
