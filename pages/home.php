@@ -1,6 +1,7 @@
 <?php
 declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
+include '../includes/function_library.inc.php';
 
 // Initialize the session
 session_start();
@@ -11,10 +12,16 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
+
+
 $loggedin = $_SESSION['loggedin'];
 $username = $_SESSION['username'];
 $user_id = $_SESSION['user_id'];
 $id_role = $_SESSION['id_role'];
+
+// check messages on every page
+$messages = library_get_num_messages($user_id);
+
 // Prepare a select statement
 //echo "user_id: ". $user_id."<br>";
 //echo "id_role: ". $id_role."<br>";
@@ -50,7 +57,7 @@ while ($row = $stmt->fetch()) {
 <?php
   //use Style\Navbar;
   $navbar = new Navbar();
-  $navbar->show_header_nav($loggedin, $user_fname, $id_role);
+  $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
   echo '<h1>Welcome!</h1>';
 

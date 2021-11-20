@@ -33,6 +33,37 @@ function library_get_categories_dropdown($cat_id){
 	echo '</select>';
 }
 
+function library_get_num_messages($user_id){
+	$sql = "
+					SELECT
+						m.msg_subject,
+						m.msg_send_date,
+						m.msg_read_date,
+						m.is_active,
+
+						fu.user_fname AS 'from_fname',
+						fu.user_lname AS 'from_lname'
+					FROM messages m
+					LEFT JOIN users fu ON m.from_user = fu.user_id
+					WHERE m.is_active = 1
+					AND m.to_user = ".$user_id."
+					AND m.msg_read_date < DATE('2020-01-01')
+
+					ORDER BY m.msg_send_date DESC;
+	";
+	//echo $sql;
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+
+	$messages = 0;
+	while ($row = $stmt->fetch()) {
+		$messages++;
+	}
+	return $messages;
+}
+
+
+
 /*
 function library_get_companies_dropdown($comp_id){
 	echo '<label>Company: </label>';

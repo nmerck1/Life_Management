@@ -112,7 +112,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <?php
   //use Style\Navbar;
   $navbar = new Navbar();
-  $navbar->show_header_nav('', '', '');
+  $navbar->show_header_nav('', '', '', 0);
 
   if(!empty($login_err)){
       echo '<div class="alert alert-danger">' . $login_err . '</div>';

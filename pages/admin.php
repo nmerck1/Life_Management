@@ -72,47 +72,6 @@ while ($row = $stmt->fetch()) {
     <div class="container" style="height:600px;">
       <?php
 
-      echo '<p> (This page is currently being developed) </p>';
-
-
-      /*
-      echo '<h1>Daily Checklist</h2>';
-      echo '<ul>';
-      $sql = "
-            SELECT *
-            FROM daily_checklists dc
-            LEFT JOIN users u ON dc.id_user = u.user_id
-            LEFT JOIN daily_tasks dt ON dc.id_task = dt.task_id
-            WHERE dc.is_active = 1
-            AND u.user_id = ".$user_id."
-
-            #ORDER BY dt.task_name ASC;
-      ";
-      $dbh = new Dbh();
-      $stmt = $dbh->connect()->query($sql);
-
-      $color = 'white';
-      $line_through = 'none';
-      while ($row = $stmt->fetch()) {
-        echo "task_value: ".$row["task_value"]."<br>";
-        echo "min_task_completed: ".$row["min_task_completed"]."<br>";
-
-        if ($row["task_value"] >= $row["min_task_completed"]) {
-          $color = 'grey';
-          $line_through = 'line-through';
-        }
-
-        echo '<li style="color:'.$color.'; text-decoration:'.$line_through.';">'.$row["task_name"].'</li>';
-
-      }
-
-
-      echo '</ul>';
-
-      echo '<br>';
-        $show_plans = new Plan();
-        $show_plans->show_plans_table(true, true);  // editable, show title
-        */
       ?>
     </div>
 </div>

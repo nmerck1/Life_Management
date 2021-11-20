@@ -9,6 +9,7 @@ if (isset($_GET['selected_id'])) {
 }
 $update_type = $_GET['update_type'];
 $form_type = $_GET['form_type'];
+$user_id = $_GET['user_id'];
 
 $table = '';
 $table_id = '';
@@ -33,7 +34,11 @@ if ($form_type == 'Expense'){
 if ($update_type == 'Delete') {
   // get form type so we know the table:
   // find selected id in table, then make is_active equal zero
-  $sql = "UPDATE $table SET is_active = 0 WHERE $table_id = $selected_id;";
+  $sql = "UPDATE $table
+          SET is_active = 0
+          WHERE $table_id = $selected_id
+          AND id_user = $user_id;
+  ";
   $dbh = new Dbh();
   $stmt = $dbh->connect()->query($sql);
 
@@ -50,7 +55,8 @@ if ($update_type == 'Delete') {
     $sql = "UPDATE $table
             SET fe_company='$company', fe_name='$name', id_category='$category', fe_amount=$amount,
             fe_date='$date', fe_notes='$notes'
-            WHERE $table_id = $selected_id;
+            WHERE $table_id = $selected_id
+            AND id_user = $user_id;
     ";
     //echo $sql;
     if ($conn->query($sql) === TRUE) {
@@ -68,9 +74,10 @@ if ($update_type == 'Delete') {
     $notes = $_GET['notes'];
 
     $sql = "UPDATE $table
-    SET fi_company='$company', fi_name='$name', fi_amount=$amount,
-    fi_date='$date', fi_notes='$notes'
-            WHERE $table_id = $selected_id;
+            SET fi_company='$company', fi_name='$name', fi_amount=$amount,
+            fi_date='$date', fi_notes='$notes'
+            WHERE $table_id = $selected_id
+            AND id_user = $user_id;
     ";
     if ($conn->query($sql) === TRUE) {
       //echo "New record created successfully";
@@ -89,8 +96,8 @@ if ($update_type == 'Delete') {
 } elseif ($update_type == 'Insert') {
   // $sql = "INSERT INTO finance_expenses $column_names_string";\
     if ($form_type == 'Expense'){
-      $sql = "INSERT INTO $table (fe_company, fe_name, id_category, fe_amount, fe_date, fe_notes)
-              VALUES ('".$_GET["company"]."', '".$_GET["name"]."', '".$_GET["category"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."');
+      $sql = "INSERT INTO $table (fe_company, fe_name, id_category, fe_amount, fe_date, fe_notes, id_user)
+              VALUES ('".$_GET["company"]."', '".$_GET["name"]."', '".$_GET["category"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."', '".$_GET["user_id"]."');
       ";
       if ($conn->query($sql) === TRUE) {
         //echo "New record created successfully";
@@ -99,8 +106,8 @@ if ($update_type == 'Delete') {
       }
 
     } elseif ($form_type == 'Income') {
-      $sql = "INSERT INTO $table (fi_company, fi_name, fi_amount, fi_date, fi_notes)
-              VALUES ('".$_GET["company"]."', '".$_GET["name"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."');
+      $sql = "INSERT INTO $table (fi_company, fi_name, fi_amount, fi_date, fi_notes, id_user)
+              VALUES ('".$_GET["company"]."', '".$_GET["name"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."', '".$_GET["user_id"]."');
       ";
       if ($conn->query($sql) === TRUE) {
         //echo "New record created successfully";
