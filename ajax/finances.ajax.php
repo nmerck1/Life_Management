@@ -88,7 +88,20 @@ if ($update_type == 'Delete') {
   } elseif ($form_type == 'Passive') {
 
   } elseif ($form_type == 'Bill') {
+    $name = $_GET['name'];
+    $amount = $_GET['amount'];
+    $freq = $_GET['freq'];
 
+    $sql = "UPDATE $table
+            SET bill_name='$name', bill_amount=$amount, bill_freq='$nofreqtes'
+            WHERE $table_id = $selected_id
+            AND id_user = $user_id;
+    ";
+    if ($conn->query($sql) === TRUE) {
+      //echo "New record created successfully";
+    } else {
+    //  echo "Error: " . $sql . "<br>" . $conn->error;
+    }
   } elseif ($form_type == 'Budget') {
 
   }
@@ -118,7 +131,14 @@ if ($update_type == 'Delete') {
     } elseif ($form_type == 'Passive') {
       //$sql = "INSERT INTO passive_incomes SET is_active = 0;";
     } elseif ($form_type == 'Bill') {
-      //$sql = "INSERT INTO current_bills SET is_active = 0;";
+      $sql = "INSERT INTO $table (bill_name, bill_amount, bill_freq id_user)
+              VALUES ('".$_GET["name"]."', ".$_GET['amount'].", '".$_GET["freq"]."', '".$_GET["user_id"]."');
+      ";
+      if ($conn->query($sql) === TRUE) {
+        //echo "New record created successfully";
+      } else {
+      //  echo "Error: " . $sql . "<br>" . $conn->error;
+      }
     } elseif ($form_type == 'Budget') {
       //$sql = "INSERT INTO budgets SET is_active = 0;";
     }

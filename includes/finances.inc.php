@@ -98,15 +98,23 @@ while ($row = $stmt->fetch()) {
 		var form_type = document.getElementById('form_type');
 		var user_id = document.getElementById('user_id');
 
-		var company = document.getElementById('company');
+    if (form_type.innerHTML != "Bill") {
+      var company = document.getElementById('company');
+    }
 		var name = document.getElementById('name');
 		if (form_type.innerHTML == "Expense"){
 			var category = document.getElementById('category');
 			var category_value = category.options[category.selectedIndex].value;
 		}
 		var amount = document.getElementById("amount");
-		var date = document.getElementById('date');
-		var notes = document.getElementById('notes');
+    if (form_type.innerHTML != "Bill") {
+      var date = document.getElementById('date');
+      var notes = document.getElementById('notes');
+    }
+		if (form_type.innerHTML == "Bill") {
+      var freq = document.getElementById('freq');
+			var freq_value = freq.options[freq.selectedIndex].value;
+    }
 
 		// create link to send GET variables through
 		var query_string = "../ajax/finances.ajax.php";
@@ -115,15 +123,21 @@ while ($row = $stmt->fetch()) {
 		query_string += "&form_type=" + form_type.innerHTML;
 		query_string += "&user_id=" + user_id.innerHTML;
 
-		query_string += "&company=" + company.value;
+    if (form_type.innerHTML != "Bill") {
+      query_string += "&company=" + company.value;
+    }
 		query_string += "&name=" + name.value;
 		if (form_type.innerHTML == "Expense"){
 			query_string += "&category=" + category_value;
 		}
 		query_string += "&amount=" + amount.value;
-		query_string += "&date=" + date.value;
-		query_string += "&notes=" + notes.value;
-
+    if (form_type.innerHTML != "Bill") {
+  		query_string += "&date=" + date.value;
+  		query_string += "&notes=" + notes.value;
+    }
+    if (form_type.innerHTML == "Bill") {
+      query_string += "&freq=" + freq_value;
+    }
 		//alert(query_string);
 
 		xhttp.onreadystatechange = function() {
@@ -297,22 +311,54 @@ while ($row = $stmt->fetch()) {
 								echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
 							echo '</div>';
 						}	elseif ($form_type == 'Bill') {
-							// check if there is an id, then we are either editing or deleting an existing record
-							if ($selected_id != NULL) {
-								// this is a currently existing record
-								echo '<h1>Edit Bill</h1>';
-								$update_type = 'Update';
-							} else {
-								// this is a new record we are creating
-								echo '<h1>Add New Bill</h1>';
-								$update_type = 'Insert';
-							}
-							// print the form type here
-							echo '<div class="container">';
-								echo '<p id="selected_id" value="'.$selected_id.'">selected_id: '.$selected_id.'</p>';
+              // default variables
+              $update_type = "";
+              $name = "";
+              $amount = 0.00;
+              $freq = "";
+              // check if there is an id, then we are either editing or deleting an existing record
+              if ($selected_id != NULL) {// this is a currently existing record
+                echo '<h1>Edit Bill</h1>';
+                $update_type = 'Update';
+                // load variables from selected_id
+                // get values from selected id in table:
+                  $sql = "SELECT * FROM current_bills WHERE bill_id = '".$selected_id."' ";
+                  $dbh = new Dbh();
+                  $stmt = $dbh->connect()->query($sql);
+                  //echo $sql;
+                  // should only populate one row of data
+                  while ($row = $stmt->fetch()) {
+                    $name = $row['bill_name'];
+                    // format date
+                    //echo $row['fe_date'];
+                    $get_date = date_create($row['bill_created']);
+                    $formatted_date = date_format($get_date, 'Y-m-d');
+                    //echo $formatted_date;
+                    $date = $formatted_date;
+                    $amount = $row['bill_amount'];
+                    $freq = $row['bill_freq'];
+                  }
+              } else {
+                // this is a new record we are creating
+                echo '<h1>Add New Bill</h1>';
+                $update_type = 'Insert';
+              }
+              echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
+              // print the form type here
+              echo '<div class="container">';
 
-								echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
-							echo '</div>';
+                echo '<label>Name: </label>';
+                echo '<input type="text" id="name" value="'.$name.'"></input>';
+                echo '<br>';
+                echo '<label>Amount: </label>';
+                echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;"></input>';
+                echo '<br>';
+
+                library_get_freq_dropdown($freq);
+
+                echo '<br>';
+                echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+              echo '</div>';
 						}
 					} else {
 						$error_msg = new Library();

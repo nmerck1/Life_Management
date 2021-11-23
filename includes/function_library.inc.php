@@ -63,6 +63,25 @@ function library_get_num_messages($user_id){
 }
 
 
+function library_get_freq_dropdown($freq_value){
+	// default to monthly
+	if ($freq_value == '') { $freq_value = 'M'; }
+	
+	echo '<label>Frequency: </label>';
+	$all_freqs = array('D', 'W', 'M', 'Y');
+	$freq_names = array('Daily', 'Weekly', 'Monthly', 'Yearly');
+	echo '<select id="freq">';
+		for ($i=0; $i<count($all_freqs); $i++) {
+			if ($all_freqs[$i] == $freq_value) {
+				echo '<option value="'.$freq_value.'" selected="selected">'.$freq_names[$i].'</option>';
+			} else {
+				echo '<option value="'.$freq_value.'">'.$freq_names[$i].'</option>';
+			}
+
+		}
+	echo '</select>';
+}
+
 
 /*
 function library_get_companies_dropdown($comp_id){
