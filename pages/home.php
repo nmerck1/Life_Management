@@ -20,7 +20,7 @@ $user_id = $_SESSION['user_id'];
 $id_role = $_SESSION['id_role'];
 
 // check messages on every page
-$messages = library_get_num_messages($user_id);
+$messages = library_get_num_notifications($user_id);
 
 // Prepare a select statement
 //echo "user_id: ". $user_id."<br>";

@@ -62,7 +62,7 @@ class Navbar {
            echo '</div>';
          echo '</li>';
 
-        echo '<li style="float:right; font-size:17px;"><a class="bi-envelope-fill" href="../pages/messages.php"> '.$messages.'</a></li>';
+        echo '<li style="float:right; font-size:17px;"><a class="bi-envelope-fill" href="../pages/notifications.php"> '.$messages.'</a></li>';
       }
       //echo '<a class="navbar-brand" href="../pages/vision.php">Vision</a>';
       //echo '<a class="navbar-brand" href="../pages/routine.php">Routine</a>';

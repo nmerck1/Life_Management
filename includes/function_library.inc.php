@@ -33,23 +33,23 @@ function library_get_categories_dropdown($cat_id){
 	echo '</select>';
 }
 
-function library_get_num_messages($user_id){
+function library_get_num_notifications($user_id){
 	$sql = "
 					SELECT
-						m.msg_subject,
-						m.msg_send_date,
-						m.msg_read_date,
-						m.is_active,
+						n.n_subject,
+						n.n_send_date,
+						n.n_read_date,
+						n.is_active,
 
 						fu.user_fname AS 'from_fname',
 						fu.user_lname AS 'from_lname'
-					FROM messages m
-					LEFT JOIN users fu ON m.from_user = fu.user_id
-					WHERE m.is_active = 1
-					AND m.to_user = ".$user_id."
-					AND m.msg_read_date < DATE('2020-01-01')
+					FROM notifications n
+					LEFT JOIN users fu ON n.n_from_user = fu.user_id
+					WHERE n.is_active = 1
+					AND n.n_to_user = ".$user_id."
+					AND n.n_read_date < DATE('2020-01-01')
 
-					ORDER BY m.msg_send_date DESC;
+					ORDER BY n.n_send_date DESC;
 	";
 	//echo $sql;
 	$dbh = new Dbh();
@@ -66,11 +66,11 @@ function library_get_num_messages($user_id){
 function library_get_freq_dropdown($freq_value){
 	// default to monthly
 	if ($freq_value == '') { $freq_value = 'M'; }
-	
+
 	echo '<label>Frequency: </label>';
-	$all_freqs = array('D', 'W', 'M', 'Y');
-	$freq_names = array('Daily', 'Weekly', 'Monthly', 'Yearly');
-	echo '<select id="freq">';
+	$all_freqs = array('M', 'Y'); // 'D', 'W',
+	$freq_names = array('Monthly', 'Yearly'); //'Daily', 'Weekly',
+	echo '<select id="freq" name="freq">';
 		for ($i=0; $i<count($all_freqs); $i++) {
 			if ($all_freqs[$i] == $freq_value) {
 				echo '<option value="'.$freq_value.'" selected="selected">'.$freq_names[$i].'</option>';
@@ -82,9 +82,11 @@ function library_get_freq_dropdown($freq_value){
 	echo '</select>';
 }
 
-
-/*
-function library_get_companies_dropdown($comp_id){
+// this was changed to the company name as a filter instead of id since I already have a bunch of records and dont want
+// to update the column as a id_company int type foreign key... so it will be the name right now,
+// I have full control of what companies get added so just make sure they are distinct names, otherwise
+// it will get duplicate records. Use SELECT DISTINCT comp_name in query for searching...
+function library_get_companies_dropdown($comp_name){
 	echo '<label>Company: </label>';
 	$sql = "SELECT *
 					FROM companies
@@ -93,17 +95,21 @@ function library_get_companies_dropdown($comp_id){
 	";
 	$dbh = new Dbh();
 	$stmt = $dbh->connect()->query($sql);
-	echo '<select id="company">';
+	echo '<select id="company" name="company">';
 		while ($row = $stmt->fetch()) {
-			if ($comp_id == $row['cat_id']) {
-				echo '<option value="'.$row['comp_id'].'" selected="selected">'.$row['comp_name'].'</option>';
+			$color = 'white';
+			if ($comp_name == $row['comp_name']) {
+				if ($row['comp_name'] == 'Other') {
+					$color = 'red';
+				}
+				echo '<option value="'.$row['comp_name'].'" selected="selected" style="color:'.$color.';">'.$row['comp_name'].'</option>';
 			} else {
-				echo '<option value="'.$row['comp_id'].'">'.$row['comp_name'].'</option>';
+				echo '<option value="'.$row['comp_name'].'" style="color:'.$color.';">'.$row['comp_name'].'</option>';
 			}
 
 		}
 	echo '</select>';
 }
-*/
+
 
 ?>

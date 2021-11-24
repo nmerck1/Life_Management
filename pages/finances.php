@@ -18,7 +18,7 @@ $user_id = $_SESSION['user_id'];
 $id_role = $_SESSION['id_role'];
 
 // check messages on every page
-$messages = library_get_num_messages($user_id);
+$messages = library_get_num_notifications($user_id);
 
 // Prepare a select statement
 //echo "user_id: ". $user_id."<br>";
@@ -373,161 +373,174 @@ while ($row = $stmt->fetch()) {
                   echo '</td>';
                 echo '</tr>';
 
-                echo '<tr>';
-                  echo '<td style="background: rgb(33, 37, 46); border:2px solid rgb(33, 37, 46);">Budget Categories</td>';
-                  echo '<td style="background: rgb(33, 37, 46); border:2px solid rgb(33, 37, 46);">Category Spending</td>';
-                echo '</tr>';
-                echo '<tr>';
-                  echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
-                  // budgets names need to match the categories of expenses so that we can sum each expense category into a table //
+                if ($id_role == 1) {
                     $sql = "
-                          SELECT b.bud_id,
-                                b.bud_name,
-                                b.bud_amount,
-                                b.bud_freq
-                            FROM budgets b
-                            LEFT JOIN users u ON b.id_user = u.user_id
-                            WHERE b.is_active = 1
-                            AND u.user_id = ".$user_id."
-
-                            ORDER BY b.bud_name ASC;
+                        SELECT * FROM user_roles WHERE role_id = ".$id_role.";
                     ";
                     $dbh = new Dbh();
                     $stmt = $dbh->connect()->query($sql);
-                    echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
-                      echo '<tr>';
-                        echo '<th>Name</th>';
-                        echo '<th>Amount</th>';
-                        echo '<th>Frequency</th>';
-                        echo '<th style="background-color: rgb(33, 37, 46);">';
-                          echo '<a href="../includes/finances.inc.php?form_type=Budget&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
-                        echo '</th>';
-                      echo '</tr>';
-                      $total_budgets_amount = 0;
-                      $cat_budgets = array();
-                      while ($row = $stmt->fetch()) {
-                        //array_push($cat_budgets, $row['bud_amount']);
-                        $cat_budgets[$row['bud_name']] = $row['bud_amount'];
-                        echo '<tr>';
-                          echo '<td style="background:rgb(25, 29, 32);">' .$row['bud_name']. '</td>';
-                          echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['bud_amount'], 2). '</td>';
-                          echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bud_freq']. '</td>';
-                          echo '<td style="background:rgb(33, 37, 46);">';
-                            echo '<span style="display:flex;">';
-                              echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&update_type=Edit&form_type=Budget&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                              echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
-                            echo '</span>';
-                          echo '</td>';
-                        echo '</tr>';
-                        // get variables for savings:
-                        $total_budgets_amount += (float)$row['bud_amount'];
-                      }
-                      //var_dump($cat_budgets);
-                      echo '<tr>';
-                        echo '<td colspan=2 style="text-align:left; background-color:rgb(33, 37, 46);">Total:</td>';
-                        echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_budgets_amount, 2).'</td>';
-                        echo '<td style="background:rgb(33, 37, 46);"></td>';
-                      echo '</tr>';
-                    echo '</table>';
-                  echo '</td>';
-                  echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
-                    $sql = "
-                            SELECT fe.fe_id,
-                                fe.id_category,
-                                cat.cat_name,
-                                SUM(fe.fe_amount) AS 'fe_amount',
-                                fe.fe_date
-                            FROM finance_expenses fe
-                            LEFT JOIN categories cat ON fe.id_category = cat.cat_id
-                            LEFT JOIN users u ON fe.id_user = u.user_id
-                            WHERE fe.is_active = 1
-                            AND u.user_id = ".$user_id."
-                            AND MONTH(fe.fe_date)=MONTH('".$date_search."')
-                            AND YEAR(fe.fe_date)=YEAR('".$date_search."')
 
-                            GROUP BY fe.id_category
-                            ORDER BY cat.cat_name ASC;
-                    ";
-                    $dbh = new Dbh();
-                    $stmt = $dbh->connect()->query($sql);
-                    //$count = $stmt->fetchColumn();
-                    echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
-                    echo '<tr>';
-                      echo '<th>Category</th>';
-                      echo '<th>Amount</th>';
-                    //  echo '<th>Over Scale</th>';
-                    echo '</tr>';
-
-                    //var_dump($cat_budgets);
-                    $counter = 0;
-                    $total_budget_over = 0;
-                    //$added = false;
+                    $role_color = '2px solid rgb(33, 37, 46)';  // default color for border
                     while ($row = $stmt->fetch()) {
-                      //echo "counter: ".$counter++."<br>";
-                      // find the matching category with this name in category array
-                      //$key = $row['fe_category'];
-                      //$result = isset($array[$key]) ? $array[$key] : null;
-                      //echo 'category: '. $row['fe_category'] .'<br>';
-                      if (count($cat_budgets) > 0) {
-                        $find_budget = $cat_budgets[$row['cat_name']];
-                        //echo 'find_budget: '.$find_budget.'<br>';
-                        // default color
-                        $color = 'green';
-                        if (array_key_exists($row['cat_name'], $cat_budgets)) {
-                          // create more exact scale colors
-                          $get_amount = $row['fe_amount'];                            // 52.41
+                      $role_color = '2px solid '.$row['role_color'];
+                    }
+                  echo '<tr>';
+                    echo '<td style="border:2px solid rgb(33, 37, 46); border:2px solid rgb(33, 37, 46);">Budget Categories</td>';
+                    echo '<td style="border:2px solid rgb(33, 37, 46); border:2px solid rgb(33, 37, 46);">Category Spending</td>';
+                  echo '</tr>';
+                  echo '<tr>';
+                    echo '<td style="border:'.$role_color.'; padding:0px; margin:0px;">';
+                    // budgets names need to match the categories of expenses so that we can sum each expense category into a table //
+                      $sql = "
+                            SELECT b.bud_id,
+                                  b.bud_name,
+                                  b.bud_amount,
+                                  b.bud_freq
+                              FROM budgets b
+                              LEFT JOIN users u ON b.id_user = u.user_id
+                              WHERE b.is_active = 1
+                              AND u.user_id = ".$user_id."
 
-                          $get_budget =        $find_budget;
-                          $get_double_budget = $find_budget * 2;                      // 104.82
-                          $get_half_budget =   $find_budget + ($find_budget / 2);   // 26.21
+                              ORDER BY b.bud_name ASC;
+                      ";
+                      $dbh = new Dbh();
+                      $stmt = $dbh->connect()->query($sql);
+                      echo '<table class="table table-dark" style="background-color:#3a5774; border:'.$role_color.'; text-align:center;">';
+                        echo '<tr>';
+                          echo '<th>Name</th>';
+                          echo '<th>Amount</th>';
+                          echo '<th>Frequency</th>';
+                          echo '<th style="background-color: rgb(33, 37, 46);">';
+                            echo '<a href="../includes/finances.inc.php?form_type=Budget&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                          echo '</th>';
+                        echo '</tr>';
+                        $total_budgets_amount = 0;
+                        $cat_budgets = array();
+                        while ($row = $stmt->fetch()) {
+                          //array_push($cat_budgets, $row['bud_amount']);
+                          $cat_budgets[$row['bud_name']] = $row['bud_amount'];
+                          echo '<tr>';
+                            echo '<td style="background:rgb(25, 29, 32);">' .$row['bud_name']. '</td>';
+                            echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['bud_amount'], 2). '</td>';
+                            echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bud_freq']. '</td>';
+                            echo '<td style="background:rgb(33, 37, 46);">';
+                              echo '<span style="display:flex;">';
+                                echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&update_type=Edit&form_type=Budget&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                                echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                              echo '</span>';
+                            echo '</td>';
+                          echo '</tr>';
+                          // get variables for savings:
+                          $total_budgets_amount += (float)$row['bud_amount'];
+                        }
+                        //var_dump($cat_budgets);
+                        echo '<tr>';
+                          echo '<td colspan=2 style="text-align:left; background-color:rgb(33, 37, 46);">Total:</td>';
+                          echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_budgets_amount, 2).'</td>';
+                          echo '<td style="background:rgb(33, 37, 46);"></td>';
+                        echo '</tr>';
+                      echo '</table>';
+                    echo '</td>';
+                    echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
+                      $sql = "
+                              SELECT fe.fe_id,
+                                  fe.id_category,
+                                  cat.cat_name,
+                                  SUM(fe.fe_amount) AS 'fe_amount',
+                                  fe.fe_date
+                              FROM finance_expenses fe
+                              LEFT JOIN categories cat ON fe.id_category = cat.cat_id
+                              LEFT JOIN users u ON fe.id_user = u.user_id
+                              WHERE fe.is_active = 1
+                              AND u.user_id = ".$user_id."
+                              AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+                              AND YEAR(fe.fe_date)=YEAR('".$date_search."')
 
-                          //echo "get_budget: ".$get_budget.'<br>';
-                          //echo "get_half_budget: ".$get_half_budget.'<br>';
-                          //echo "get_double_budget: ".$get_double_budget.'<br><br>';
+                              GROUP BY fe.id_category
+                              ORDER BY cat.cat_name ASC;
+                      ";
+                      $dbh = new Dbh();
+                      $stmt = $dbh->connect()->query($sql);
+                      //$count = $stmt->fetchColumn();
+                      echo '<table class="table table-dark" style="background-color:#3a5774; border:'.$role_color.'; text-align:center;">';
+                      echo '<tr>';
+                        echo '<th>Category</th>';
+                        echo '<th>Amount</th>';
+                      //  echo '<th>Over Scale</th>';
+                      echo '</tr>';
 
-                          if($get_amount >= $get_double_budget) {
-                            $color = 'red';
-                          } elseif($get_amount >= $get_half_budget) {
-                            $color = 'orange';
-                          } elseif($get_amount > $get_budget) {
-                            $color = 'yellow';
-                          } else {
-                            $color = 'green';
+                      //var_dump($cat_budgets);
+                      $counter = 0;
+                      $total_budget_over = 0;
+                      //$added = false;
+                      while ($row = $stmt->fetch()) {
+                        //echo "counter: ".$counter++."<br>";
+                        // find the matching category with this name in category array
+                        //$key = $row['fe_category'];
+                        //$result = isset($array[$key]) ? $array[$key] : null;
+                        //echo 'category: '. $row['fe_category'] .'<br>';
+                        if (count($cat_budgets) > 0) {
+                          $find_budget = $cat_budgets[$row['cat_name']];
+                          //echo 'find_budget: '.$find_budget.'<br>';
+                          // default color
+                          $color = 'green';
+                          if (array_key_exists($row['cat_name'], $cat_budgets)) {
+                            // create more exact scale colors
+                            $get_amount = $row['fe_amount'];                            // 52.41
+
+                            $get_budget =        $find_budget;
+                            $get_double_budget = $find_budget * 2;                      // 104.82
+                            $get_half_budget =   $find_budget + ($find_budget / 2);   // 26.21
+
+                            //echo "get_budget: ".$get_budget.'<br>';
+                            //echo "get_half_budget: ".$get_half_budget.'<br>';
+                            //echo "get_double_budget: ".$get_double_budget.'<br><br>';
+
+                            if($get_amount >= $get_double_budget) {
+                              $color = 'red';
+                            } elseif($get_amount >= $get_half_budget) {
+                              $color = 'orange';
+                            } elseif($get_amount > $get_budget) {
+                              $color = 'yellow';
+                            } else {
+                              $color = 'green';
+                            }
+
+                            $bud_diff = ($get_amount - $get_budget);
+                            if ($bud_diff < 0) {
+                              $bud_diff = 0;
+                            }
+                            $total_budget_over += $bud_diff;
                           }
 
-                          $bud_diff = ($get_amount - $get_budget);
-                          if ($bud_diff < 0) {
-                            $bud_diff = 0;
-                          }
-                          $total_budget_over += $bud_diff;
+                          echo '<tr>';
+                            echo '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
+                            echo '<td style="text-align:right; background:rgb(25, 29, 32); color:'.$color.';">' .number_format((float)$row['fe_amount'], 2). '</td>';
+                            //if ($added == false){
+                              //echo "count: ".$count++."<br>";
+                            //  $added = true;
+                              //  echo '<td rowspan='.$counter.' style="text-align:center; background:rgb(25, 29, 32); color:'.$color.';">hello</td>';
+                            //  }
+                          echo '</tr>';
+                          $counter++;
                         }
 
-                        echo '<tr>';
-                          echo '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
-                          echo '<td style="text-align:right; background:rgb(25, 29, 32); color:'.$color.';">' .number_format((float)$row['fe_amount'], 2). '</td>';
-                          //if ($added == false){
-                            //echo "count: ".$count++."<br>";
-                          //  $added = true;
-                            //  echo '<td rowspan='.$counter.' style="text-align:center; background:rgb(25, 29, 32); color:'.$color.';">hello</td>';
-                          //  }
-                        echo '</tr>';
-                        $counter++;
                       }
+                      // check if budget is over at all:
+                      $color = 'green';
+                      if ($total_budget_over > 0){
+                        $color = 'red';
+                      }
+                      echo '<tr>';
+                        echo '<td style="text-align:left; background-color:rgb(33, 37, 46);">Total Amount Over:</td>';
+                        echo '<td style="text-align:right; background-color:rgb(33, 37, 46); color:'.$color.';">$'.number_format($total_budget_over, 2).'</td>';
+                      echo '</tr>';
 
-                    }
-                    // check if budget is over at all:
-                    $color = 'green';
-                    if ($total_budget_over > 0){
-                      $color = 'red';
-                    }
-                    echo '<tr>';
-                      echo '<td style="text-align:left; background-color:rgb(33, 37, 46);">Total Amount Over:</td>';
-                      echo '<td style="text-align:right; background-color:rgb(33, 37, 46); color:'.$color.';">$'.number_format($total_budget_over, 2).'</td>';
-                    echo '</tr>';
+                      echo '</table>';
+                    echo '</td>';
+                  echo '</tr>';
+                }
 
-                    echo '</table>';
-                  echo '</td>';
-                echo '</tr>';
 
                 echo '<tr colspan=2 style="padding-top:20px;">';
                   echo '<td colspan=2 style="text-align:center; border-top:2px solid rgb(33, 37, 46);">Savings</td>';
@@ -645,6 +658,7 @@ while ($row = $stmt->fetch()) {
 
                                     GROUP BY bl.bl_id_bill;
                             ";
+                            //echo $sql;
                             $dbh = new Dbh();
                             $stmt = $dbh->connect()->query($sql);
 
@@ -688,18 +702,25 @@ while ($row = $stmt->fetch()) {
                                     $add_bills_total = $total_history_bills + $total;
                                     $this_total = '$'.$add_bills_total;
                                     $color = 'white';
-
                                     // calculate savings for savings row in this table
                                     //echo '$income_monthly_totals[$each_month]: '.$income_monthly_totals[$each_month]."<br>";
-                                    if ($income_monthly_totals[$each_month] != null && $income_monthly_totals[$each_month] != '') {
-                                      $month_savings = ($income_monthly_totals[$each_month] - $add_bills_total);
-                                      // check if positive
-                                      $save_color = 'red';
-                                      if ($month_savings >= 0) {
-                                        $save_color = 'green';
+                                  //  var_dump($income_monthly_totals);
+                                    //var_dump($expense_monthly_totals);
+                                    if (count($expense_monthly_totals) != 0 && count($income_monthly_totals) != 0){
+                                      if ($income_monthly_totals[$each_month] != null && $income_monthly_totals[$each_month] != '') {
+                                        $month_savings = ($income_monthly_totals[$each_month] - $add_bills_total);
+                                        // check if positive
+                                        $save_color = 'red';
+                                        if ($month_savings >= 0) {
+                                          $save_color = 'green';
+                                        }
+                                        $savings_total_string .= '<td style="color:'.$save_color.';">$'.number_format($month_savings, 2).'</td>';
                                       }
-                                      $savings_total_string .= '<td style="color:'.$save_color.';">$'.$month_savings.'</td>';
+                                    } else {
+                                      $save_color = 'green';
+                                      $savings_total_string .= '<td style="color:'.$save_color.';">$0.00</td>';
                                     }
+
                                     //break;
                                   } else {
                                     $savings_total_string .= '<td style="color:grey;">~</td>';

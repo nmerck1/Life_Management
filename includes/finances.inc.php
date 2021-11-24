@@ -42,7 +42,7 @@ $user_id = $_SESSION['user_id'];
 $id_role = $_SESSION['id_role'];
 
 // check messages on every page
-$messages = library_get_num_messages($user_id);
+$messages = library_get_num_notifications($user_id);
 
 // Prepare a select statement
 //echo "user_id: ". $user_id."<br>";
@@ -112,8 +112,8 @@ while ($row = $stmt->fetch()) {
       var notes = document.getElementById('notes');
     }
 		if (form_type.innerHTML == "Bill") {
-      var freq = document.getElementById('freq');
-			var freq_value = freq.options[freq.selectedIndex].value;
+      //var freq = document.getElementById('freq');
+			//var freq_value = freq.options[freq.selectedIndex].value;
     }
 
 		// create link to send GET variables through
@@ -136,7 +136,7 @@ while ($row = $stmt->fetch()) {
   		query_string += "&notes=" + notes.value;
     }
     if (form_type.innerHTML == "Bill") {
-      query_string += "&freq=" + freq_value;
+      //query_string += "&freq=" + freq_value;
     }
 		//alert(query_string);
 
@@ -170,7 +170,7 @@ while ($row = $stmt->fetch()) {
 						if ($form_type == 'Expense') {
 							// default variables
 							$update_type = "";
-							$company = "";
+							$company = "Other";  // default for now
 							$name = "";
 							$cat_id = "";
 							$amount = 0.00;
@@ -208,11 +208,17 @@ while ($row = $stmt->fetch()) {
 								$update_type = 'Insert';
 							}
 							echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
+              echo '<i style="color:grey;">
+              (If the company you are looking for doesn\'t show up in the company dropdown list, then set the Company to \'Other\' and leave the company name in the notes section so I can add it later.)
+              </i>';
+
 							// print the form type here
 							echo '<div class="container">';
+                echo '<br>';
+								//echo '<label>Company: </label>';
+								//echo '<input type="text" id="company" value="'.$company.'" placeholder="Ingles, QT, Wal-Mart, etc."></input>';
+                library_get_companies_dropdown($company);
 
-								echo '<label>Company: </label>';
-								echo '<input type="text" id="company" value="'.$company.'" placeholder="Ingles, QT, Wal-Mart, etc."></input>';
 								echo '<br>';
 								echo '<label>Name: </label>';
 								echo '<input type="text" id="name" value="'.$name.'"></input>';
@@ -348,13 +354,14 @@ while ($row = $stmt->fetch()) {
               echo '<div class="container">';
 
                 echo '<label>Name: </label>';
-                echo '<input type="text" id="name" value="'.$name.'"></input>';
+                echo '<input type="text" id="name" value="'.$name.'" readonly></input>';
                 echo '<br>';
                 echo '<label>Amount: </label>';
                 echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;"></input>';
                 echo '<br>';
 
-                library_get_freq_dropdown($freq);
+                //library_get_freq_dropdown($freq);
+                echo '<p>(Per month)</p>';
 
                 echo '<br>';
                 echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
