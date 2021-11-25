@@ -111,7 +111,7 @@ function library_get_companies_dropdown($comp_name){
 	echo '</select>';
 }
 
-function library_get_food_categories_dropdown($fc_name) {
+function library_get_food_categories_dropdown($fc_id) {
 	echo '<label>Food Category: </label>';
 	$sql = "SELECT *
 					FROM food_categories
@@ -120,15 +120,53 @@ function library_get_food_categories_dropdown($fc_name) {
 	";
 	$dbh = new Dbh();
 	$stmt = $dbh->connect()->query($sql);
-	echo '<select id="food_category" name="food_category">';
+	echo '<select id="food_category" name="food_category" style="width:200px;">';
 		while ($row = $stmt->fetch()) {
-			if ($fc_name == $row['fc_name']) {
-				echo '<option value="'.$row['fc_id'].'" selected="selected">'.$row['fc_name'].' <p style="color:grey;">('.$row['fc_desc'].')</p></option>';
+			if ($fc_id == $row['fc_id']) {
+				echo '<option value="'.$row['fc_id'].'" selected="selected">'.$row['fc_name'].' <span style="color:grey;">('.$row['fc_desc'].')</span></option>';
 			} else {
-				echo '<option value="'.$row['fc_id'].'">'.$row['fc_name'].' <p style="color:grey;">('.$row['fc_desc'].')</p></option>';
+				echo '<option value="'.$row['fc_id'].'">'.$row['fc_name'].' <span style="color:grey;">('.$row['fc_desc'].')</span></option>';
 			}
 		}
 	echo '</select>';
 }
+
+function library_get_measurements_dropdown($mea_id) {
+	//echo '<label>Food Category: </label>';
+	$sql = "SELECT *
+					FROM measurements
+					WHERE is_active = 1;
+	";
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+	echo '<select id="measurement" name="measurement">';
+		while ($row = $stmt->fetch()) {
+			if ($mea_id == $row['mea_id']) {
+				echo '<option value="'.$row['mea_id'].'" selected="selected">'.$row['mea_abbr'].'</option>';
+			} else {
+				echo '<option value="'.$row['mea_id'].'">'.$row['mea_abbr'].'</option>';
+			}
+		}
+	echo '</select>';
+}
+
+function library_get_meal_time_dropdown($meal_time){
+	// default to monthly
+	if ($meal_time == '') { $meal_time = 'Breakfast'; }
+	echo '<label>Meal Time: </label>';
+	$meal_names = array('Breakfast', 'Lunch', 'Dinner', 'Snacks'); //'Daily', 'Weekly',
+	echo '<select id="meal_time" name="meal_time">';
+		for ($i=0; $i<count($meal_names); $i++) {
+			if ($meal_names[$i] == $meal_time) {
+				echo '<option value="'.$meal_names[$i].'" selected="selected">'.$meal_names[$i].'</option>';
+			} else {
+				echo '<option value="'.$meal_names[$i].'">'.$meal_names[$i].'</option>';
+			}
+
+		}
+	echo '</select>';
+}
+
+
 
 ?>

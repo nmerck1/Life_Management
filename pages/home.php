@@ -66,9 +66,27 @@ while ($row = $stmt->fetch()) {
 
         echo '<td>';
           echo '<p style="text-align:center;">Finances</p>';
+          echo '<p style="text-align:center;">This weeks savings</p>';
+
+          echo '<p style="text-align:center;">This years savings</p>';
+
+          echo '<p style="text-align:center;">Actions</p>';
+            echo '<p style="text-align:center;">Add New Income</p>';
+            echo '<p style="text-align:center;">Add New Expense</p>';
         echo '</td>';
+
         echo '<td>';
           echo '<p style="text-align:center;">Diet</p>';
+          echo '<p style="text-align:center;">Macro Progress to Goal this week</p>';
+
+          echo '<p style="text-align:center;">This year percentage of macro goals met</p>';
+          echo '<p style="text-align:center;">Pounds need to be gained/lost to meet weight goal</p>';
+
+          echo '<p style="text-align:center;">Average macros per day</p>';
+          echo '<p style="text-align:center;">Average macros per week</p>';
+
+          echo '<p style="text-align:center;">Actions</p>';
+            echo '<p style="text-align:center;">Add New Food Log</p>';
         echo '</td>';
 
       echo '</tr>';

@@ -90,67 +90,87 @@ while ($row = $stmt->fetch()) {
 
 <script type="text/javascript">
 	function send_to_ajax(){
-		// setup the ajax request
-		var xhttp = new XMLHttpRequest();
-		// get variables from inputs below:
-		var selected_id = document.getElementById('selected_id');
-		var update_type = document.getElementById('update_type');
-		var form_type = document.getElementById('form_type');
-		var user_id = document.getElementById('user_id');
+    // first check form is good
+    if (check_form()) {
+      // setup the ajax request
+  		var xhttp = new XMLHttpRequest();
+  		// get variables from inputs below:
+  		var selected_id = document.getElementById('selected_id');
+  		var update_type = document.getElementById('update_type');
+  		var form_type = document.getElementById('form_type');
+  		var user_id = document.getElementById('user_id');
 
-    if (form_type.innerHTML != "Bill") {
-      var company = document.getElementById('company');
-    }
-		var name = document.getElementById('name');
-		if (form_type.innerHTML == "Expense"){
-			var category = document.getElementById('category');
-			var category_value = category.options[category.selectedIndex].value;
-		}
-		var amount = document.getElementById("amount");
-    if (form_type.innerHTML != "Bill") {
-      var date = document.getElementById('date');
-      var notes = document.getElementById('notes');
-    }
-		if (form_type.innerHTML == "Bill") {
-      //var freq = document.getElementById('freq');
-			//var freq_value = freq.options[freq.selectedIndex].value;
+      if (form_type.innerHTML != "Bill") {
+        var company = document.getElementById('company');
+      }
+  		var name = document.getElementById('name');
+  		if (form_type.innerHTML == "Expense"){
+  			var category = document.getElementById('category');
+  			var category_value = category.options[category.selectedIndex].value;
+  		}
+  		var amount = document.getElementById("amount");
+      if (form_type.innerHTML != "Bill") {
+        var date = document.getElementById('date');
+        var notes = document.getElementById('notes');
+      }
+  		if (form_type.innerHTML == "Bill") {
+        //var freq = document.getElementById('freq');
+  			//var freq_value = freq.options[freq.selectedIndex].value;
+      }
+
+  		// create link to send GET variables through
+  		var query_string = "../ajax/finances.ajax.php";
+  		query_string += "?selected_id=" + selected_id.innerHTML;
+  		query_string += "&update_type=" + update_type.innerHTML;
+  		query_string += "&form_type=" + form_type.innerHTML;
+  		query_string += "&user_id=" + user_id.innerHTML;
+
+      if (form_type.innerHTML != "Bill") {
+        query_string += "&company=" + company.value;
+      }
+  		query_string += "&name=" + name.value;
+  		if (form_type.innerHTML == "Expense"){
+  			query_string += "&category=" + category_value;
+  		}
+  		query_string += "&amount=" + amount.value;
+      if (form_type.innerHTML != "Bill") {
+    		query_string += "&date=" + date.value;
+    		query_string += "&notes=" + notes.value;
+      }
+      if (form_type.innerHTML == "Bill") {
+        //query_string += "&freq=" + freq_value;
+      }
+  		//alert(query_string);
+
+  		xhttp.onreadystatechange = function() {
+  			if (this.readyState == 4 && this.status == 200) {
+  			 document.getElementById("test").innerHTML = this.responseText;
+  			}
+  		};
+  		xhttp.open("GET", query_string, true);
+  		xhttp.send();
+
+  		// when the data is returned after ajax, it redirects back to inventory
+  		window.location = "../pages/finances.php";
+    } else {
+      alert('Form needs to be filled out');
     }
 
-		// create link to send GET variables through
-		var query_string = "../ajax/finances.ajax.php";
-		query_string += "?selected_id=" + selected_id.innerHTML;
-		query_string += "&update_type=" + update_type.innerHTML;
-		query_string += "&form_type=" + form_type.innerHTML;
-		query_string += "&user_id=" + user_id.innerHTML;
-
-    if (form_type.innerHTML != "Bill") {
-      query_string += "&company=" + company.value;
-    }
-		query_string += "&name=" + name.value;
-		if (form_type.innerHTML == "Expense"){
-			query_string += "&category=" + category_value;
-		}
-		query_string += "&amount=" + amount.value;
-    if (form_type.innerHTML != "Bill") {
-  		query_string += "&date=" + date.value;
-  		query_string += "&notes=" + notes.value;
-    }
-    if (form_type.innerHTML == "Bill") {
-      //query_string += "&freq=" + freq_value;
-    }
-		//alert(query_string);
-
-		xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-			 document.getElementById("test").innerHTML = this.responseText;
-			}
-		};
-		xhttp.open("GET", query_string, true);
-		xhttp.send();
-
-		// when the data is returned after ajax, it redirects back to inventory
-		window.location = "../pages/finances.php";
 	}
+
+  function check_form(){
+    var name = document.getElementById('name');
+		var amount = document.getElementById("amount");
+
+    if (name.value == '' || amount.value == 0) {
+      return false;
+    }
+    return true;
+  }
+
+  function update_element_value(element, value){
+    element.value = value;
+  }
 </script>
 
 <?php
@@ -221,7 +241,7 @@ while ($row = $stmt->fetch()) {
 
 								echo '<br>';
 								echo '<label>Name: </label>';
-								echo '<input type="text" id="name" value="'.$name.'"></input>';
+								echo '<input type="text" id="name" value="'.$name.'" onchange="update_element_value(this, this.value)"></input>';
 								echo '<br>';
 
 								library_get_categories_dropdown($cat_id);
@@ -229,7 +249,7 @@ while ($row = $stmt->fetch()) {
 								//echo '<input type="text" id="category" value="'.$category.'" placeholder="Food, Entertainment, Gas, etc."></input>';
 								echo '<br>';
 								echo '<label>Amount: </label>';
-								echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;"></input>';
+								echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;" onchange="update_element_value(this, this.value)"></input>';
 								echo '<br>';
 								echo '<label>Date: </label>';
 								echo '<input type="date" id="date" value="'.$date.'"></input>';
@@ -243,7 +263,7 @@ while ($row = $stmt->fetch()) {
 						} elseif ($form_type == 'Income') {
 								// default variables
 								$update_type = "";
-								$company = "";
+								$company = "Other";
 								$name = "";
 								$amount = 0.00;
 								$date = date('Y-m-d');	// default to today
@@ -278,17 +298,20 @@ while ($row = $stmt->fetch()) {
 									$update_type = 'Insert';
 								}
 								echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
+                echo '<i style="color:grey;">
+                (If the company you are looking for doesn\'t show up in the company dropdown list, then set the Company to \'Other\' and leave the company name in the notes section so I can add it later.)
+                </i>';
 								// print the form type here
 								echo '<div class="container">';
 
-									echo '<label>Company: </label>';
-									echo '<input type="text" id="company" value="'.$company.'" placeholder="Ingles, QT, Wal-Mart, etc."></input>';
+									library_get_companies_dropdown($company);
+
 									echo '<br>';
 									echo '<label>Name: </label>';
-									echo '<input type="text" id="name" value="'.$name.'"></input>';
+									echo '<input type="text" id="name" value="'.$name.'" onchange="update_element_value(this, this.value)"></input>';
 									echo '<br>';
 									echo '<label>Amount: </label>';
-									echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;"></input>';
+									echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;" onchange="update_element_value(this, this.value)"></input>';
 									echo '<br>';
 									echo '<label>Date: </label>';
 									echo '<input type="date" id="date" value="'.$date.'"></input>';
@@ -357,7 +380,7 @@ while ($row = $stmt->fetch()) {
                 echo '<input type="text" id="name" value="'.$name.'" readonly></input>';
                 echo '<br>';
                 echo '<label>Amount: </label>';
-                echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;"></input>';
+                echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;" onchange="update_element_value(this, this.value)"></input>';
                 echo '<br>';
 
                 //library_get_freq_dropdown($freq);

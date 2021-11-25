@@ -118,6 +118,11 @@ while ($row = $stmt->fetch()) {
           echo '<tr>';
 
               for ($i=-1; $i<6; $i++){
+                //echo '<td style="background-color: rgb(25, 29, 32);">';
+                  // actions
+                  //echo '<a href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Edit&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                  //echo '<a href="../ajax/diet.ajax.php?selected_id='.$row['fl_id'].'&update_type=Delete&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                //echo '</td>';
                 echo '<td style="background-color: rgb(25, 29, 32);">';
                   $time = date('Y-m-d', strtotime($week_start.'+'.$i.' days'));
                   $time_check = date('Y-m-d', strtotime($week_start.'+'.($i+1).' days'));
@@ -158,7 +163,15 @@ while ($row = $stmt->fetch()) {
                     while ($row = $stmt->fetch()) {
                       $mea_abbr = $row['mea_abbr'];
                       if ($mea_abbr == 'Other') { $mea_abbr = ''; }
-                      $build_string .= '<li class="my_li">x'.$row['fl_quantity'].' '.$row['fl_name'].' ('.$row['fl_amount'].$mea_abbr.')</li><br>';
+
+                      $build_string .= '<li class="my_li">';
+
+                      $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Edit&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                      $build_string .= '<a id="diet_li_a" href="../ajax/diet.ajax.php?selected_id='.$row['fl_id'].'&update_type=Delete&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+
+                      $build_string .= ' x'.$row['fl_quantity'].' '.$row['fl_name'];//.' ('.$row['fl_amount'].$mea_abbr.')';
+
+                      $build_string .= '</li><br><br>';
 
                       $total_calories += ($row['fl_calories'] * $row['fl_quantity']);
                       $total_carbs += ($row['fl_carbs'] * $row['fl_quantity']);

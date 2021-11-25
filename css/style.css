@@ -153,6 +153,11 @@ li a, .dropbtn {
   text-decoration: none;
 }
 
+#diet_li_a {
+  padding: 0;
+}
+
+
 li.dropdown {
   display: inline-block;
 }
