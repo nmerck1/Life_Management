@@ -70,7 +70,7 @@ while ($row = $stmt->fetch()) {
   //echo "date_search: ".$date_search."<br>";
 
   // start the outer table
-  echo '<div class="container">';
+  echo '<div class="container" style="max-width:100%;">';
     echo '<table class="table table-dark" style="background-color:#3a5774;">';    // main table
       echo '<tr>';
 

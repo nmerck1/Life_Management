@@ -86,6 +86,23 @@ if ($update_type == 'Delete') {
       echo $sql. "<br>";
       if ($conn->query($sql)) {
         echo 'SUCCESS: INSERTED NEW RECORD';
+        // we want to check the user id and then give a notification to an admin for a specific case of Other company selection
+        if ($user_id != 1 && ($food_category == 14 || $measurement == 22) ) {
+          // set notification for admins
+          $subject = 'New Food Category or Measurement';
+          $message = 'User ID: '.$user_id.' is requesting a new food_category and/or measurement record be added. Check notes for new name.';
+
+          $sql = "
+                  INSERT INTO notifications (n_subject, n_message, n_type, n_from_user, n_to_user)
+                  VALUES ('".$subject."', '".$message."', 'Request', '".$user_id."', '1');
+          ";
+          //echo $sql. "<br>";
+          if ($conn->query($sql) === TRUE) {
+            echo 'SUCCESS: INSERTED NEW Notification';
+          } else {
+            echo 'ERROR: DID NOT INSERT Notification';
+          }
+        }
       } else {
         echo 'ERROR: DID NOT INSERT';
       }
