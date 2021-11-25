@@ -275,6 +275,49 @@ CREATE TABLE foods (
 
 
 
+INSERT INTO food_categories (fc_name, fc_desc)
+VALUES ('Vegetable', 'Leafy Green(Kale, Spinach), Fungus (Mushrooms) Root (Carrots, Potatoes, Radishes, Onions) etc.'),
+        ('Fruit', 'Apple, Orange, Strawberry, Blueberry, Pineapple, Kiwi, Banana, Raspberry, Coconut?'),
+        ('Meat', 'Chicken, Cow, Fish, Lamb, Deer, Elk, Bison, Egg?'),
+        ('Nut', 'Peanut, Almond, Brazilian, Cashew'),
+        ('Legume', 'Bean, Pea'),
+        ('Dairy', 'Milk, Cheese, Yogurt, Cream, Butter'),
+        ('Seed', 'Sunflower, Pumpkin'),
+        ('Oil', 'Sunflower, Safflower, Coconut, Olive, Avocado, Canola, Vegetable, Peanut'),
+        ('Grain', 'Rice, Pasta, Bread, Bagels, Barley, Rye'),
+        ('Sweetener', 'Honey, Stevia, Cane Sugar, White Sugar, Erythritol, Sucralose, Xylitol'),
+        ('Mineral', 'Salt, etc.'),
+        ('Vitamin', 'Vitamin C Powder, Vitamin D Supplement, etc.'),
+        ('Herb', 'Turmeric, Basil, Oregano, Rosemary, Pepper, Bay Leaves, Cayenne Pepper, Garlic Powder, etc.'),
+        ('Other', 'Undefined...'),
+        ('Powder', 'Protein powder, Cocoa powder, etc. ');
+
+
+INSERT INTO measurements (mea_abbr, mea_name)
+VALUES ('lb', 'pound'),
+      ('g', 'gram'),
+      ('mg', 'miligram'),
+      ('mcg', 'microgram'),
+      ('oz', 'ounce'),
+      ('fl oz', 'fluid ounce'),
+      ('cup', 'cup'),
+      ('kg', 'kilogram'),
+      ('l', 'liter'),
+      ('ml', 'mililiter'),
+      ('pt', 'pint'),
+      ('gal', 'gallon'),
+      ('tsp', 'teaspoon'),
+      ('tbsp', 'tablespoon'),
+      ('qt', 'quart'),
+      ('bar', 'bar'),
+      ('bt', 'bottle'),
+      ('scoop', 'scoop'),
+      ('sm', 'small'),
+      ('med', 'medium'),
+      ('lg', 'large'),
+      ('Other', 'Other');
+
+
 
 
 

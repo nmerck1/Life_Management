@@ -111,5 +111,24 @@ function library_get_companies_dropdown($comp_name){
 	echo '</select>';
 }
 
+function library_get_food_categories_dropdown($fc_name) {
+	echo '<label>Food Category: </label>';
+	$sql = "SELECT *
+					FROM food_categories
+					WHERE is_active = 1
+					ORDER BY fc_name ASC;
+	";
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+	echo '<select id="food_category" name="food_category">';
+		while ($row = $stmt->fetch()) {
+			if ($fc_name == $row['fc_name']) {
+				echo '<option value="'.$row['fc_id'].'" selected="selected">'.$row['fc_name'].' <p style="color:grey;">('.$row['fc_desc'].')</p></option>';
+			} else {
+				echo '<option value="'.$row['fc_id'].'">'.$row['fc_name'].' <p style="color:grey;">('.$row['fc_desc'].')</p></option>';
+			}
+		}
+	echo '</select>';
+}
 
 ?>

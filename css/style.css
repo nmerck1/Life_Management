@@ -5,6 +5,24 @@
   background-color: rgb(25, 29, 32);
 }
 
+.my_list {
+  list-style-type: square;
+  padding: 1px;
+  /* overflow: hidden; */
+  background: rgb(33, 37, 46);
+  position: relative;
+  top: 0;
+}
+
+.my_li {
+  border-right:1px solid rgb(33, 37, 46);
+}
+
+.my_paragraph {
+  padding: 0;
+  margin:0;
+}
+
 a {
   color: white;
 }
