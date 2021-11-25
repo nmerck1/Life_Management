@@ -108,7 +108,7 @@ while ($row = $stmt->fetch()) {
             $time = strtotime($week_start.'+'.$i.' days');
             $next_date = date('D', $time);
             $format_num = date('m-d', $time);
-            echo '<th>' .$next_date. ' <span style="color:black;">('.$format_num.')</span></th>';
+            echo '<th style="text-align:center;">' .$next_date. ' <span style="color:black;">('.$format_num.')</span></th>';// style="width:225px;"
           }
           echo '<th style="background-color: rgb(33, 37, 46);">';
             echo '<a href="../includes/diet.inc.php?user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
@@ -118,7 +118,7 @@ while ($row = $stmt->fetch()) {
           echo '<tr>';
 
               for ($i=-1; $i<6; $i++){
-                echo '<td>';
+                echo '<td style="background-color: rgb(25, 29, 32);">';
                   $time = date('Y-m-d', strtotime($week_start.'+'.$i.' days'));
                   $time_check = date('Y-m-d', strtotime($week_start.'+'.($i+1).' days'));
                   //echo "time: ".$time."<br>";
@@ -127,6 +127,7 @@ while ($row = $stmt->fetch()) {
                   $sql = "
                     SELECT *
                     FROM food_logs fl
+                    LEFT JOIN measurements m ON fl.id_mea = m.mea_id
                     WHERE fl.is_active = 1
                     AND fl.fl_log_date >= TIMESTAMP('".$time_check." 00:00:00')
                     AND fl.fl_log_date <= TIMESTAMP('".$time_check." 23:59:59')
@@ -141,39 +142,75 @@ while ($row = $stmt->fetch()) {
                   $total_protein = 0;
                   $total_fat = 0;
 
+                  $build_string = '';
+                  $breakfast_items_string = '';
+                  $lunch_items_string = '';
+                  $dinner_items_string = '';
+                  $snacks_items_string = '';
+
                   $stmt_get_rows = $conn->prepare($sql);
                   $stmt_get_rows->execute();
                   $stmt_get_rows->store_result();
                   $num_rows = mysqli_stmt_num_rows($stmt_get_rows);
                   if ($num_rows > 0) {
-                    echo '<p class="my_paragraph" style="color:grey;">Foods: </p>';
+                    echo '<p class="my_paragraph" style="color:grey; text-align:center;"> [Foods] </p>';
                     echo '<ul class="my_list">';
                     while ($row = $stmt->fetch()) {
-                      echo '<li class="my_li">'.$row['fl_name'].'</li>';
-                      echo '<br>';
-                      $total_calories += $row['fl_calories'];
-                      $total_carbs += $row['fl_carbs'];
-                      $total_protein += $row['fl_protein'];
-                      $total_fat += $row['fl_fat'];
+                      $mea_abbr = $row['mea_abbr'];
+                      if ($mea_abbr == 'Other') { $mea_abbr = ''; }
+                      $build_string .= '<li class="my_li">x'.$row['fl_quantity'].' '.$row['fl_name'].' ('.$row['fl_amount'].$mea_abbr.')</li><br>';
+
+                      $total_calories += ($row['fl_calories'] * $row['fl_quantity']);
+                      $total_carbs += ($row['fl_carbs'] * $row['fl_quantity']);
+                      $total_protein += ($row['fl_protein'] * $row['fl_quantity']);
+                      $total_fat += ($row['fl_fat'] * $row['fl_quantity']);
+                      // check what meal time this is
+
+                      if ($row['fl_meal_time'] == 'Breakfast'){ $breakfast_items_string .= $build_string; }
+                      elseif ($row['fl_meal_time'] == 'Lunch'){ $lunch_items_string .= $build_string; }
+                      elseif ($row['fl_meal_time'] == 'Dinner'){ $dinner_items_string .= $build_string; }
+                      elseif ($row['fl_meal_time'] == 'Snacks'){ $snacks_items_string .= $build_string; }
+                      $build_string = '';
                     }
+                    // now echo out each meal time in order:
+                      echo '<ul class="my_list">';
+                      if ($breakfast_items_string != '') {
+                        echo '<li class="my_li" style="list-style-type:none; color:grey; width:100%;">(Breakfast)</li><br>';
+                        echo $breakfast_items_string;
+                      }
+                      if ($lunch_items_string != '') {
+                        echo '<li class="my_li" style="list-style-type:none; color:grey; width:100%;">(Lunch)</li><br>';
+                        echo $lunch_items_string;
+                      }
+                      if ($dinner_items_string != '') {
+                        echo '<li class="my_li" style="list-style-type:none; color:grey; width:100%;">(Dinner)</li><br>';
+                        echo $dinner_items_string;
+                      }
+                      if ($snacks_items_string != '') {
+                        echo '<li class="my_li" style="list-style-type:none; color:grey; width:100%;">(Snacks)</li><br>';
+                        echo $snacks_items_string;
+                      }
+                      echo '</ul>';
+
+
                     echo '</ul>';
                   } else {
                     echo '<p style="color:grey;">(No foods logged)</p>';
                   }
 
-
+                  echo '<br>';
                   echo '<br>';
 
                   if ($total_calories != 0 && $total_carbs != 0 && $total_protein != 0 && $total_fat != 0) {
-                    echo '<p class="my_paragraph" style="color:grey;">Totals: </p>';
+                    echo '<p class="my_paragraph" style="color:grey; text-align:center;"> [Totals] </p>';
                       echo '<ul class="my_list">';
-                        echo '<li class="my_li">Calories: '.$total_calories.'</li>';
+                        echo '<li class="my_li">Calories: '.number_format($total_calories, 1).'</li>';
                         echo '<br>';
-                        echo '<li class="my_li">Carbs: '.$total_carbs.'</li>';
+                        echo '<li class="my_li">Carbs: '.number_format($total_carbs, 1).'g</li>';
                         echo '<br>';
-                        echo '<li class="my_li">Protein: '.$total_protein.'</li>';
+                        echo '<li class="my_li">Protein: '.number_format($total_protein, 1).'g</li>';
                         echo '<br>';
-                        echo '<li class="my_li">Fat: '.$total_fat.'</li>';
+                        echo '<li class="my_li">Fat: '.number_format($total_fat, 1).'g</li>';
                         echo '<br>';
                       echo '</ul>';
                   }

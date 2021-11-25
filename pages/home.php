@@ -59,12 +59,21 @@ while ($row = $stmt->fetch()) {
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
-  echo '<h1>Welcome!</h1>';
+  echo '<h1 style="text-align:center;">Life Overview</h1>';
+  echo '<div class="container">';
+    echo '<table class="table table-dark" style="background-color:#3a5774;">';    // main table
+      echo '<tr>';
 
+        echo '<td>';
+          echo '<p style="text-align:center;">Finances</p>';
+        echo '</td>';
+        echo '<td>';
+          echo '<p style="text-align:center;">Diet</p>';
+        echo '</td>';
 
-
-
-
+      echo '</tr>';
+    echo '</table>';
+  echo '</div>';
 
   $footer = new Footer();
   $footer->show_footer();

@@ -9,13 +9,14 @@
   list-style-type: square;
   padding: 1px;
   /* overflow: hidden; */
-  background: rgb(33, 37, 46);
+  background-color: rgb(25, 29, 32);
   position: relative;
   top: 0;
 }
 
 .my_li {
-  border-right:1px solid rgb(33, 37, 46);
+  border-right:1px solid rgb(25, 29, 32);
+  background-color: rgb(25, 29, 32);
 }
 
 .my_paragraph {
