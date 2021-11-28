@@ -51,32 +51,48 @@ while ($row = $stmt->fetch()) {
   ?>
 </head>
 <body>
-
-
 <?php
   //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
-?>
 
 
-<div class="container text-center">
-  <!--
-  <div class="row content">
-    <div id="left_sidenav" class="col-sm-2 sidenav">
-      <p class="bi-card-list" style="font-size: 1rem; color: white;"><a href="#"> Plans</a></p>
-      <p class="bi-list-check" style="font-size: 1rem; color: white;"><a href="#"> Goals</a></p>
-      <p class="bi-lightbulb" style="font-size: 1rem; color: white;"><a href="#"> Ideas</a></p>
-    </div>
-  -->
-    <div class="container" style="height:600px;">
-      <?php
 
-      ?>
-    </div>
-</div>
 
-<?php
+  echo '<div class="container" style="height:600px; text-align:center;">';
+    echo '<br>';
+    $sql = "
+            SELECT *
+            FROM users u
+            LEFT JOIN user_roles ur ON u.id_role = ur.role_id
+            WHERE u.user_id = '".$user_id."'
+            AND u.is_active = 1;
+    ";
+    //echo $sql;
+    $dbh = new Dbh();
+    $stmt = $dbh->connect()->query($sql);
+
+    while ($row = $stmt->fetch()) {
+      $user_name = $row['user_name'];
+      $user_fname = $row['user_fname'];
+      $user_lname = $row['user_lname'];
+      $user_dob = $row['user_dob'];
+      $role_name = $row['role_name'];
+    }
+
+    $today = date("Y-m-d");
+    $diff = date_diff(date_create($user_dob), date_create($today));
+
+    echo '<p>'.$user_fname.' '.$user_lname.'</p>';
+    echo '<p><span style="color:grey;">Username: </span>'.$user_name.'</p>';
+    echo '<p><span style="color:grey;">Role: </span>'.$role_name.'</p>';
+    echo '<p><span style="color:grey;">Age: </span>'.$diff->format('%y').'</p>';
+
+  echo '</div>';
+
+
+
+
   $footer = new Footer();
   $footer->show_footer();
 ?>

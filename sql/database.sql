@@ -392,3 +392,62 @@ INNER JOIN
     ) bl2
 ON bl.bl_valid_date = bl2.MaxDateTime
 GROUP BY bl.bl_id_bill;
+
+
+
+
+
+
+
+SELECT u.user_name,
+      u.user_fname,
+      u.user_lname,
+      u.user_last_logged,
+
+      ur.role_name,
+
+      COUNT(fi.fi_name) AS 'num_incomes',
+      COUNT(fe.fe_name) AS 'num_expenses',
+      COUNT(fl.fl_name) AS 'num_food_logs'
+FROM users u
+LEFT JOIN user_roles ur ON u.id_role = ur.role_id
+INNER JOIN finance_incomes fi ON u.user_id = fi.id_user
+INNER JOIN finance_expenses fe ON u.user_id = fe.id_user
+INNER JOIN food_logs fl ON u.user_id = fl.id_user
+
+WHERE u.is_active = 1
+AND fi.is_active = 1
+AND fe.is_active = 1
+AND fl.is_active = 1
+
+GROUP BY u.user_name;
+
+
+
+
+
+
+
+
+
+
+SELECT u.user_name,
+      u.user_fname,
+      u.user_lname,
+      u.user_last_logged,
+
+      COUNT(DISTINCT fi.fi_id) AS 'num_incomes',
+      COUNT(DISTINCT fe.fe_id) AS 'num_expenses',
+      COUNT(DISTINCT fl.fl_id) AS 'num_food_logs'
+
+FROM users u
+LEFT JOIN finance_incomes fi ON u.user_id = fi.id_user AND fi.fi_id <> ''
+LEFT JOIN finance_expenses fe ON u.user_id = fe.id_user AND fe.fe_id <> ''
+LEFT JOIN food_logs fl ON u.user_id = fl.id_user AND fl.fl_id <> ''
+
+WHERE u.is_active = 1
+AND fi.is_active = 1
+AND fe.is_active = 1
+AND fl.is_active = 1
+
+GROUP BY u.user_id;

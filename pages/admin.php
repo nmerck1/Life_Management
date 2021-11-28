@@ -17,6 +17,12 @@ $username = $_SESSION['username'];
 $user_id = $_SESSION['user_id'];
 $id_role = $_SESSION['id_role'];
 
+// check if user is not an admin
+if ($id_role != 1){
+  header("location: ../pages/home.php");
+  exit;
+}
+
 // check messages on every page
 $messages = library_get_num_notifications($user_id);
 
@@ -57,26 +63,91 @@ while ($row = $stmt->fetch()) {
   //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
-?>
 
 
-<div class="container text-center">
-  <!--
-  <div class="row content">
-    <div id="left_sidenav" class="col-sm-2 sidenav">
-      <p class="bi-card-list" style="font-size: 1rem; color: white;"><a href="#"> Plans</a></p>
-      <p class="bi-list-check" style="font-size: 1rem; color: white;"><a href="#"> Goals</a></p>
-      <p class="bi-lightbulb" style="font-size: 1rem; color: white;"><a href="#"> Ideas</a></p>
-    </div>
-  -->
-    <div class="container" style="height:600px;">
-      <?php
 
-      ?>
-    </div>
-</div>
+  echo '<div class="container" style="height:600px; text-align:center;">';
+    echo '<h1>User Activity & Overview</h1>';
+    echo '<br>';
+    echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+    echo '<tr>';
+      echo '<th>Username</th>';
+      echo '<th>Role</th>';
+      echo '<th>First & Last</th>';
+      echo '<th>Last Logged In</th>';
+      echo '<th>Number Finance Income Records</th>';
+      echo '<th>Number Finance Expense Records</th>';
+      echo '<th>Number Diet Food Log Records</th>';
+    echo '</tr>';
 
-<?php
+    // first select each user that is active and then loop through each one
+    $sql = "
+            SELECT u.user_id,
+                  u.user_name,
+                  u.user_fname,
+                  u.user_lname,
+                  u.user_last_logged,
+
+                  ur.role_name,
+                  ur.role_color
+
+            FROM users u
+            LEFT JOIN user_roles ur ON u.id_role = ur.role_id
+            WHERE u.is_active = 1;
+    ";
+    //echo $sql;
+    $dbh = new Dbh();
+    $stmt = $dbh->connect()->query($sql);
+
+    while ($row = $stmt->fetch()) {
+      echo '<tr>';
+        $this_user_id = $row['user_id'];
+        $role_color = $row['role_color'];
+        //echo 'this_user_id: '.$this_user_id.'<br>';
+        echo '<td style="background:rgb(25, 29, 32);">'.$row['user_name'].'</td>';
+        echo '<td style="background:rgb(25, 29, 32); color:'.$role_color.';">'.$row['role_name'].'</td>';
+        echo '<td style="background:rgb(25, 29, 32);">'.$row['user_fname'].' '.$row['user_lname'].'</td>';
+
+        $date_string = strtotime($row['user_last_logged']);
+        echo '<td style="background:rgb(25, 29, 32);">'.date('M, d', $date_string).'</td>';
+
+        // now for each row and each user, let's print out their stats
+        $sql_stats = "
+              SELECT u.user_id,
+
+                    COUNT(DISTINCT fi.fi_id) AS 'num_incomes',
+                    COUNT(DISTINCT fe.fe_id) AS 'num_expenses',
+                    COUNT(DISTINCT fl.fl_id) AS 'num_food_logs'
+
+              FROM users u
+              LEFT JOIN finance_incomes fi ON u.user_id = fi.id_user AND fi.fi_id <> ''
+              LEFT JOIN finance_expenses fe ON u.user_id = fe.id_user AND fe.fe_id <> ''
+              LEFT JOIN food_logs fl ON u.user_id = fl.id_user AND fl.fl_id <> ''
+
+              WHERE u.user_id = '".$this_user_id."'
+              AND fi.is_active = 1
+              AND fe.is_active = 1
+              AND fl.is_active = 1;
+        ";
+        //echo $sql_stats;
+        $dbh = new Dbh();
+        $stmt_stats = $dbh->connect()->query($sql_stats);
+
+        while ($row = $stmt_stats->fetch()) {
+          echo '<td style="background:rgb(25, 29, 32);">'.$row['num_incomes'].'</td>';
+          echo '<td style="background:rgb(25, 29, 32);">'.$row['num_expenses'].'</td>';
+          echo '<td style="background:rgb(25, 29, 32);">'.$row['num_food_logs'].'</td>';
+        }
+
+      echo '</tr>';
+    }
+
+    echo '</table>';
+  echo '</div>';
+
+
+
+
   $footer = new Footer();
   $footer->show_footer();
 ?>

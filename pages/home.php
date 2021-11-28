@@ -51,46 +51,59 @@ while ($row = $stmt->fetch()) {
     $header = new Header();
     $header->show_header();
   ?>
+
 </head>
 <body>
-
 <?php
   //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
-  echo '<h1 style="text-align:center;">Life Overview</h1>';
-  echo '<div class="container">';
+  //echo '<h1 style="text-align:center;">Life Overview</h1>';
+  echo '<div class="container" style="height:600px;">';
+    echo '<p style="text-align:center;">(Page is still in development)</p>';
+  /*
     echo '<table class="table table-dark" style="background-color:#3a5774;">';    // main table
       echo '<tr>';
 
         echo '<td>';
           echo '<p style="text-align:center;">Finances</p>';
-          echo '<p style="text-align:center;">This weeks savings</p>';
+        //  echo '<p style="text-align:center;">This weeks savings</p>';
 
           echo '<p style="text-align:center;">This years savings</p>';
 
           echo '<p style="text-align:center;">Actions</p>';
-            echo '<p style="text-align:center;">Add New Income</p>';
-            echo '<p style="text-align:center;">Add New Expense</p>';
+
+          echo '<form method="get" action="../includes/finances.inc.php?user_id='.$user_id.'&form_type=Income" style="text-align:center;">';
+            echo '<button type="submit" name="submit" class="btn btn-primary btn-sm">Add New Income</button>';
+          echo '</form>';
+
+          echo '<br>';
+
+          echo '<form method="get" action="../includes/finances.inc.php?user_id='.$user_id.'&form_type=Expense" style="text-align:center;">';
+            echo '<button type="button" name="submit" class="btn btn-primary btn-sm">Add New Expense</button>';
+          echo '</form>';
+
         echo '</td>';
 
         echo '<td>';
           echo '<p style="text-align:center;">Diet</p>';
           echo '<p style="text-align:center;">Macro Progress to Goal this week</p>';
 
-          echo '<p style="text-align:center;">This year percentage of macro goals met</p>';
-          echo '<p style="text-align:center;">Pounds need to be gained/lost to meet weight goal</p>';
+        //  echo '<p style="text-align:center;">This year percentage of macro goals met</p>';
+          //echo '<p style="text-align:center;">Pounds need to be gained/lost to meet weight goal</p>';
 
           echo '<p style="text-align:center;">Average macros per day</p>';
           echo '<p style="text-align:center;">Average macros per week</p>';
 
           echo '<p style="text-align:center;">Actions</p>';
-            echo '<p style="text-align:center;">Add New Food Log</p>';
+            echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_food();" value="Save" class="btn btn-primary btn-md">Add New Food Log</button>';
+
         echo '</td>';
 
       echo '</tr>';
     echo '</table>';
+    */
   echo '</div>';
 
   $footer = new Footer();

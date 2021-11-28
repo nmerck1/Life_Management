@@ -117,6 +117,7 @@ while ($row = $stmt->fetch()) {
                 echo '</tr>';
                 echo '<tr>';
                   echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
+                    //echo '<div class="well">';
                     // check which table:
                     $sql = "
                     SELECT fi.fi_id,
@@ -168,7 +169,9 @@ while ($row = $stmt->fetch()) {
                       echo '<td style="background:rgb(33, 37, 46);"></td>';
                     echo '</tr>';
                     echo '</table>';
+                    //echo '</div>';
                   echo '</td>';
+
                   echo '<td style="border:2px solid rgb(33, 37, 46); padding:0px; margin:0px;">';
                     $sql = "
                             SELECT fe.fe_id,

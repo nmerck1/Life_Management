@@ -69,8 +69,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           $_SESSION['id_role'] = $id_role;
           $_SESSION["username"] = $username;
 
-          echo "user_id: ".$user_id."<br>";
-          echo "username: ".$username."<br>";
+          //echo "user_id: ".$user_id."<br>";
+          //echo "username: ".$username."<br>";
+
+          // update last logged in to current timestamp
+          $sql = "UPDATE users
+                  SET user_last_logged = TIMESTAMP(CURRENT_TIMESTAMP)
+                  WHERE user_id = $user_id;
+          ";
+          //echo $sql;
+          if ($conn->query($sql) === TRUE) {
+            echo 'SUCCESS: UPDATED RECORD';
+          } else {
+            echo 'ERROR: DID NOT UPDATE';
+          }
 
           // Redirect user to welcome page
           header("location: ../pages/home.php");
