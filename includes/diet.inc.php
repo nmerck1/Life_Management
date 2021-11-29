@@ -17,11 +17,13 @@ $show_error = false;
 $selected_id = '';
 if (isset($_GET['selected_id'])){
 	$selected_id = $_GET['selected_id'];
+  //echo "selected_id: ".$selected_id."<br>";
 }
 
 $update_type = '';	// this is either Update or Insert
 if (isset($_GET['update_type'])){
 	$update_type = $_GET['update_type'];
+  //echo "update_type: ".$update_type."<br>";
 }
 
 $user_id = '';	// this is either Update or Insert
@@ -165,9 +167,7 @@ while ($row = $stmt->fetch()) {
 
 
   echo '<div class="container text-center"  style="height:600px;">';
-		// default variables
-		$update_type = "";
-    $fc_id = 14;  // this is defaulted to other 
+    $fc_id = 14;  // this is defaulted to other
 		$name = "";
     $amount = 0.00;
     $mea_id = '';
@@ -180,8 +180,40 @@ while ($row = $stmt->fetch()) {
 		$log_date = date('Y-m-d');	// default to today
 		$notes = "";
 		// check if there is an id, then we are either editing or deleting an existing record
-		if ($selected_id != NULL) {
-			// this is a currently existing record
+		if ($selected_id != NULL && $update_type == 'Copy') {
+      // this is a currently existing record
+      echo '<h1>New Food Log (Copy)</h1>';
+      $update_type = 'Copy';
+      // load variables from selected_id
+      // get values from selected id in table:
+      $sql = "SELECT * FROM food_logs WHERE fl_id = '".$selected_id."' ";
+      $dbh = new Dbh();
+      $stmt = $dbh->connect()->query($sql);
+      //echo $sql;
+      // should only populate one row of data
+      while ($row = $stmt->fetch()) {
+        $fc_id = $row['id_food_category'];
+        $name = $row['fl_name'];
+        $amount = $row['fl_amount'];
+        $mea_id = $row['id_mea'];
+        $quantity = $row['fl_quantity'];
+        $calories = $row['fl_calories'];
+        $carbs = $row['fl_carbs'];
+        $protein = $row['fl_protein'];
+        $fat = $row['fl_fat'];
+        $meal_time = $row['fl_meal_time'];
+
+        // we aren't using this copied date because this is a new entry for today
+        //$get_date = date_create($row['fl_log_date']);
+        //$formatted_date = date_format($get_date, 'Y-m-d');
+        //$log_date = $formatted_date;
+
+        $notes = $row['fl_notes'];
+      }
+		} elseif ($selected_id != NULL && $update_type != 'Copy') {
+      echo "selected_id: ".$selected_id."<br>";
+      echo "update_type: ".$update_type."<br>";
+      // this is a currently existing record
 			echo '<h1>Edit Food Log</h1>';
 			$update_type = 'Update';
 			// load variables from selected_id
@@ -210,10 +242,10 @@ while ($row = $stmt->fetch()) {
       		$notes = $row['fl_notes'];
 				}
 		} else {
-			// this is a new record we are creating
+      // this is a new record we are creating
 			echo '<h1>Add New Food Log</h1>';
 			$update_type = 'Insert';
-		}
+    }
 		echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
     echo '<i style="color:grey;">
     (If you don\'t know the macros of a food and you can\'t find the food in dropdown, then estimate as best as you can.)

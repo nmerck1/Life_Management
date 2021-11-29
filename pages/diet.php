@@ -154,10 +154,12 @@ while ($row = $stmt->fetch()) {
 
                   $build_string .= '<li class="my_li">';
 
-                  $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Edit&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                  $build_string .= '<a id="diet_li_a" href="../ajax/diet.ajax.php?selected_id='.$row['fl_id'].'&update_type=Delete&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                  $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Edit&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"> </p> </a>';
+                  $build_string .= '<a id="diet_li_a" href="../ajax/diet.ajax.php?selected_id='.$row['fl_id'].'&update_type=Delete&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"> </p> </a>';
 
                   $build_string .= ' x'.$row['fl_quantity'].' '.$row['fl_name'];//.' ('.$row['fl_amount'].$mea_abbr.')';
+
+                  $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Copy&user_id='.$user_id.'"><p class="bi-clipboard-plus" style="color:white;"> </p> </a>';
 
                   $build_string .= '</li><br><br>';
 
