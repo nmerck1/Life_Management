@@ -605,7 +605,7 @@ while ($row = $stmt->fetch()) {
                                     GROUP BY MONTH(f.fi_date)
                                     ORDER BY f.fi_date ASC;
                             ";
-                            //echo $sql;
+                            //echo $sql .'<br>';
                             $dbh = new Dbh();
                             $stmt = $dbh->connect()->query($sql);
 
@@ -613,25 +613,27 @@ while ($row = $stmt->fetch()) {
                               $fi_date = strtotime($row['fi_date']);
                               $get_formatted_date = date('M', $fi_date);
 
-                              $income_monthly_totals[$get_formatted_date] = $row['fi_amount'];
+                              // check if fi_amount is zero or null
+                              if ($row['fi_amount'] == 0 || $row['fi_amount'] == null) {
+                                $income_monthly_totals[$get_formatted_date] = 0;
+                              } else {
+                                $income_monthly_totals[$get_formatted_date] = $row['fi_amount'];
+                              }
+
+
                             }
 
                             foreach ($months_of_year as $month) {
                                 $this_total = '~';
                                 $color = 'grey';
-                                //echo "month: ".$month."<br>";
-                                //echo "get_dates: ".$get_dates[$counter]."<br>";
-                                foreach($income_monthly_totals as $each_month => $total) {
-                                  //echo "each_month: ".$each_month."<br>";
-                                  if ($month == $each_month) {
-                                    //echo "picked! <br>";
-                                    $this_total = '$'.$total;
-                                    $color = 'white';
-                                    break;
-                                  }
-                                }
-                                echo '<td style="color:'.$color.';">'.$this_total.'</td>';
 
+                                if (array_key_exists($month, $income_monthly_totals)) {
+                                  $this_total = '$'.$income_monthly_totals[$month];
+                                  $color = 'white';
+                                  echo '<td style="color:'.$color.';">'.$this_total.'</td>';
+                                } else {
+                                  echo '<td style="color:grey;">~</td>';
+                                }
                             }
                           echo '</tr>';
 
@@ -661,7 +663,6 @@ while ($row = $stmt->fetch()) {
 
                                     GROUP BY bl.bl_id_bill;
                             ";
-                            //echo $sql;
                             $dbh = new Dbh();
                             $stmt = $dbh->connect()->query($sql);
 
@@ -683,6 +684,7 @@ while ($row = $stmt->fetch()) {
                                     GROUP BY MONTH(fe.fe_date)
                                     ORDER BY fe.fe_date ASC;
                             ";
+                            //echo $sql.'<br>';
                             $dbh = new Dbh();
                             $stmt = $dbh->connect()->query($sql);
 
@@ -693,46 +695,34 @@ while ($row = $stmt->fetch()) {
                               $expense_monthly_totals[$get_formatted_date] = $row['fe_amount'];
                             }
 
+                            // incomes
                             foreach ($months_of_year as $month) {
-                                $this_total = '~';
-                                $color = 'grey';
+                              $this_total = '~';
+                              $color = 'grey';
 
-                                //$income_counter = 0;
-                                foreach($expense_monthly_totals as $each_month => $total) {
-                                  //echo "each_month: ".$each_month."<br>";
-                                  if ($month == $each_month) {
-                                    //echo "picked! <br>";
-                                    $add_bills_total = $total_history_bills + $total;
-                                    $this_total = '$'.$add_bills_total;
-                                    $color = 'white';
-                                    // calculate savings for savings row in this table
-                                    //echo '$income_monthly_totals[$each_month]: '.$income_monthly_totals[$each_month]."<br>";
-                                  //  var_dump($income_monthly_totals);
-                                    //var_dump($expense_monthly_totals);
-                                    if (count($expense_monthly_totals) != 0 && count($income_monthly_totals) != 0){
-                                      if ($income_monthly_totals[$each_month] != null && $income_monthly_totals[$each_month] != '') {
-                                        $month_savings = ($income_monthly_totals[$each_month] - $add_bills_total);
-                                        // check if positive
-                                        $save_color = 'red';
-                                        if ($month_savings >= 0) {
-                                          $save_color = 'green';
-                                        }
-                                        $savings_total_string .= '<td style="color:'.$save_color.';">$'.number_format($month_savings, 2).'</td>';
-                                      }
-                                    } else {
-                                      $save_color = 'green';
-                                      $savings_total_string .= '<td style="color:'.$save_color.';">$0.00</td>';
-                                    }
-
-                                    //break;
-                                  } else {
-                                    $savings_total_string .= '<td style="color:grey;">~</td>';
-                                  }
-                                  //$income_counter++;
+                              if (array_key_exists($month, $expense_monthly_totals)) {
+                                $add_bills_total = $total_history_bills + $expense_monthly_totals[$month];
+                                $color = 'white';
+                                if (array_key_exists($month, $income_monthly_totals)) {
+                                  $month_savings = ($income_monthly_totals[$month] - $add_bills_total);
+                                } else {
+                                  $month_savings = 0 - $add_bills_total;
                                 }
-                                echo '<td style="color:'.$color.';">'.$this_total.'</td>';
 
+                                // check if positive
+                                $save_color = 'red';
+                                if ($month_savings >= 0) {
+                                  $save_color = 'green';
+                                }
+                                $savings_total_string .= '<td style="color:'.$save_color.';">$'.number_format($month_savings, 2).'</td>';
+                                echo '<td style="color:'.$color.';">'.$add_bills_total.'</td>';
+                              } else {
+                                $savings_total_string .= '<td style="color:grey;">~</td>';
+                                echo '<td style="color:grey;">~</td>';
+                              }
                             }
+
+
                           echo '</tr>';
 
                           echo '<tr>';
@@ -744,175 +734,12 @@ while ($row = $stmt->fetch()) {
                         echo '</table>';
                       echo '</td>';
 
-
-
-
-
-                      /*
-                      echo '<td style="background:rgb(25, 29, 32); text-align:center;">';
-                        // loop through each month of the year for this year and display the amount for each month
-
-                        echo '<h2>Incomes</h2>';
-                        echo '<h2>'.$this_year.'</h2>';
-                        echo '<table class="table table-dark">'; // mini table to display months
-
-                        $monthly_totals = array();
-
-                        $sql = "
-                                SELECT SUM(f.fi_amount) AS 'fi_amount',
-                                       f.fi_date,
-                                       f.is_active
-                                FROM finance_incomes f
-                                LEFT JOIN users u ON f.id_user = u.user_id
-                                WHERE f.is_active = 1
-                                AND u.user_id = ".$user_id."
-                                AND YEAR(f.fi_date)=YEAR('".$date_search."')
-
-                                GROUP BY MONTH(f.fi_date)
-                                ORDER BY f.fi_date ASC;
-                        ";
-                        //echo $sql;
-                        $dbh = new Dbh();
-                        $stmt = $dbh->connect()->query($sql);
-
-                        while ($row = $stmt->fetch()) {
-                          $fi_date = strtotime($row['fi_date']);
-                          $get_formatted_date = date('M', $fi_date);
-
-                          $monthly_totals[$get_formatted_date] = $row['fi_amount'];
-
-                          //echo "get_formatted_date: ".$get_formatted_date."<br>";
-                          //echo "this month: ".$months_of_year[$counter]."<br>";
-
-                        }
-
-                        foreach ($months_of_year as $month) {
-                            $this_total = '(No data)';
-                            $color = 'grey';
-                            //echo "month: ".$month."<br>";
-                            //echo "get_dates: ".$get_dates[$counter]."<br>";
-                            foreach($monthly_totals as $each_month => $total) {
-                              //echo "each_month: ".$each_month."<br>";
-                              if ($month == $each_month) {
-                                //echo "picked! <br>";
-                                $this_total = '$'.$total;
-                                $color = 'white';
-                                break;
-                              }
-                            }
-                            echo '<tr>';
-                              echo '<td style="color:grey;">'.$month.'</td>';
-                              echo '<td style="color:'.$color.';">'.$this_total.'</td>';
-                            echo '</tr>';
-
-                        }
-                        echo '</table>'; // mini table to display months
-                      echo '</td>';
-
-                      echo '<td style="background:rgb(25, 29, 32); text-align:center;">';
-
-                        echo '<h2>Expenses</h2>';
-                        echo '<h2>'.$this_year.'</h2>';
-                        echo '<table class="table table-dark">'; // mini table to display months
-                        // sql for getting the bill logs for the correct times in history to show the correct expenses
-                        $sql = "
-                              SELECT bl.*,
-                                       cb.bill_name,
-                                       cb.bill_freq
-                                FROM bill_logs bl
-                                INNER JOIN current_bills cb ON bl.bl_id_bill = cb.bill_id
-                                INNER JOIN
-                                    (SELECT bl_id,
-                                            bl_id_bill,
-                                            bl_amount,
-                                            MAX(bl_valid_date) AS MaxDateTime
-                                      FROM bill_logs
-                                      WHERE DATE(bl_valid_date) <= DATE('2022-01-01')
-                                      AND is_active = 1
-                                      GROUP BY bl_id_bill
-                                    ) bl2
-                                ON bl.bl_valid_date = bl2.MaxDateTime
-                                LEFT JOIN users u ON bl.id_user = u.user_id
-                                WHERE bl.is_active = 1
-                                AND u.user_id = ".$user_id."
-
-                                GROUP BY bl.bl_id_bill;
-                        ";
-                        $dbh = new Dbh();
-                        $stmt = $dbh->connect()->query($sql);
-
-                        $total_history_bills = 0;
-                        while ($row = $stmt->fetch()) {
-                          $total_history_bills += $row['bl_amount'];
-                        }
-
-
-                        $monthly_totals = array();
-                        $sql = "
-                                SELECT SUM(fe.fe_amount) AS 'fe_amount',
-                                       fe.fe_date,
-                                       fe.is_active
-                                FROM finance_expenses fe
-                                LEFT JOIN users u ON fe.id_user = u.user_id
-                                WHERE fe.is_active = 1
-                                AND u.user_id = ".$user_id."
-                                AND YEAR(fe.fe_date)=YEAR('".$date_search."')
-
-                                GROUP BY MONTH(fe.fe_date)
-                                ORDER BY fe.fe_date ASC;
-                        ";
-                        $dbh = new Dbh();
-                        $stmt = $dbh->connect()->query($sql);
-
-                        while ($row = $stmt->fetch()) {
-                          $fe_date = strtotime($row['fe_date']);
-                          $get_formatted_date = date('M', $fe_date);
-
-                          $monthly_totals[$get_formatted_date] = $row['fe_amount'];
-
-                          //echo "get_formatted_date: ".$get_formatted_date."<br>";
-                          //echo "this month: ".$months_of_year[$counter]."<br>";
-
-                        }
-
-                        foreach ($months_of_year as $month) {
-                            $this_total = '(No data)';
-                            $color = 'grey';
-                            //echo "month: ".$month."<br>";
-                            //echo "get_dates: ".$get_dates[$counter]."<br>";
-                            foreach($monthly_totals as $each_month => $total) {
-                              //echo "each_month: ".$each_month."<br>";
-                              if ($month == $each_month) {
-                                //echo "picked! <br>";
-                                $add_bills_total = $total_history_bills + $total;
-                                $this_total = '$'.$add_bills_total;
-                                $color = 'white';
-                                break;
-                              }
-                            }
-                            echo '<tr>';
-                              echo '<td style="color:grey;">'.$month.'</td>';
-                              echo '<td style="color:'.$color.';">'.$this_total.'</td>';
-                            echo '</tr>';
-
-                        }
-                        echo '</table>'; // mini table to display months
-                      echo '</td>';
-                      */
                     echo '</tr>';
 
 
                   echo '</td>';
                 echo '</tr>';
                 echo '</table>';  // the table for the two main rows for incomes & expenses
-
-            //  echo '</div>';  // the div ending for the main section for displaying overview
-
-            //echo '</td>';
-          //echo '</tr>';
-
-          //echo '<tr>';
-
 
           echo '</tr>';
 

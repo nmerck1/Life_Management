@@ -103,18 +103,6 @@ while ($row = $stmt->fetch()) {
       echo '<p style="display:none;" id="user_id" name="user_id" value="'.$user_id.'">'.$user_id.'</p>';
 
       echo '<h1>Notifications</h1>';
-      echo '<table class="table table-dark" style="background-color:#3a5774; width:100%;">'; // mini table to display months
-        echo '<tr>';
-          echo '<th>Type</th>';
-          echo '<th>From</th>';
-          echo '<th>Subject</th>';
-          echo '<th>Sent</th>';
-          echo '<th style="background-color: rgb(33, 37, 46);">';
-            //echo '<a href="../ajax/messages.ajax.php?form_type=Income&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
-          echo '</th>';
-        echo '</tr>';
-
-
           $sql = "
                   SELECT
                     n.n_id,
@@ -144,6 +132,27 @@ while ($row = $stmt->fetch()) {
           //echo $sql;
           $dbh = new Dbh();
           $stmt = $dbh->connect()->query($sql);
+          // get num rows to check
+          $num_stmt = $conn->prepare($sql);
+          $num_stmt->execute();
+          /* store the result in an internal buffer */
+          $num_stmt->store_result();
+          if ($num_stmt->num_rows > 0) {
+            echo '<table class="table table-dark" style="background-color:#3a5774; width:100%;">'; // mini table to display months
+              echo '<tr>';
+                echo '<th>Type</th>';
+                echo '<th>From</th>';
+                echo '<th>Subject</th>';
+                echo '<th>Sent</th>';
+                echo '<th style="background-color: rgb(33, 37, 46);">';
+                  //echo '<a href="../ajax/messages.ajax.php?form_type=Income&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                echo '</th>';
+              echo '</tr>';
+          } else {
+            echo '<p style="text-align:center;">(There are no notifications)</p>';
+          }
+
+
 
           while ($row = $stmt->fetch()) {
             echo '<tr>';
