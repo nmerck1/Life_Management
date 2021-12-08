@@ -59,7 +59,7 @@ while ($row = $stmt->fetch()) {
 
 
 
-  echo '<div class="container" style="height:600px; text-align:center;">';
+  echo '<div class="container" style="height:100%; text-align:center;">';
     echo '<br>';
     $sql = "
             SELECT *
@@ -90,8 +90,13 @@ while ($row = $stmt->fetch()) {
 
   echo '</div>';
 
+  echo '<br>';
 
+  echo '<div class="container" style="text-align:center;">';
+    echo '<p>(Actions)</p>';
+    echo '<a class="btn btn-primary" href="../includes/profile.inc.php?user_id='.$user_id.'&action=Password">Change Password</a>';
 
+  echo '</div>';
 
   $footer = new Footer();
   $footer->show_footer();

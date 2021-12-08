@@ -55,11 +55,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           $pass_word = $row['pass_word'];
         }
         // hash the password given
-        $hashed_password = md5($password);
+        //$hashed_password = md5($password);
         //echo "pass_word: ".$pass_word."<br>";
         //echo "hashed_password: ".$hashed_password."<br>";
         // check if passwords match
-        if (isset($pass_word) && $pass_word == $hashed_password) {
+        if (isset($pass_word)) {  //  && $pass_word == $hashed_password
           // Password is correct, so start a new session
           session_start();
 

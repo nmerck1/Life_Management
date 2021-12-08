@@ -134,6 +134,11 @@ ul {
   position: -webkit-sticky; /* Safari */
   position: sticky;
   top: 0;
+
+}
+
+.navbar-brand {
+  margin-right: 0;
 }
 
 li {

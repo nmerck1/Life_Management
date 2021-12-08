@@ -211,8 +211,8 @@ while ($row = $stmt->fetch()) {
         $notes = $row['fl_notes'];
       }
 		} elseif ($selected_id != NULL && $update_type != 'Copy') {
-      echo "selected_id: ".$selected_id."<br>";
-      echo "update_type: ".$update_type."<br>";
+      //echo "selected_id: ".$selected_id."<br>";
+      //echo "update_type: ".$update_type."<br>";
       // this is a currently existing record
 			echo '<h1>Edit Food Log</h1>';
 			$update_type = 'Update';
