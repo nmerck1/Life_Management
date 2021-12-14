@@ -335,7 +335,6 @@ while ($row = $stmt->fetch()) {
             echo '<h1 style="text-align:center;">Yearly Overview</h1>';
             echo '<h2 style="text-align:center;">'.$this_year.'</h2>';
 
-            $savings_total_string = '';
             echo '<table class="table table-dark" style="text-align:center;">'; // table where rows are incomes, expenses and savings, and columns are months
               echo '<tr>';
                 echo '<th></th>';
@@ -344,6 +343,7 @@ while ($row = $stmt->fetch()) {
                 //}
                 echo '<th>Incomes</th>';
                 echo '<th>Expenses</th>';
+                echo '<th>Savings</th>';
               echo '</tr>';
               //echo '<tr>';
                 //echo '<td style="background:rgb(25, 29, 32);">Incomes</td>';
@@ -483,15 +483,22 @@ while ($row = $stmt->fetch()) {
 
               //echo '</tr>';
 
+              //$savings_total_string = '';
+              $total_yearly_expenses = 0;
+              $total_yearly_incomes = 0;
+              $total_yearly_savings = 0;
+
               foreach ($months_of_year as $month) {
                 $this_total = '~';
                 $color = 'grey';
 
                 echo '<tr>';
                   // month name
-                  echo '<td style="background:rgb(25, 29, 32);">'.$month.'</td>';
+                  echo '<td style="color:grey; background:rgb(25, 29, 32);">'.$month.'</td>';
                   // incomes
                   if (array_key_exists($month, $income_monthly_totals)) {
+                    $total_yearly_incomes += $income_monthly_totals[$month];
+
                     $this_total = '$'.$income_monthly_totals[$month];
                     $color = 'white';
                     echo '<td style="color:'.$color.'; background:rgb(25, 29, 32);">'.$this_total.'</td>';
@@ -501,21 +508,26 @@ while ($row = $stmt->fetch()) {
                   // expenses
                   if (array_key_exists($month, $expense_monthly_totals)) {
                     $add_bills_total = $total_history_bills + $expense_monthly_totals[$month];
+                    $total_yearly_expenses += $add_bills_total;
+
                     $color = 'white';
                     if (array_key_exists($month, $income_monthly_totals)) {
                       $month_savings = ($income_monthly_totals[$month] - $add_bills_total);
                     } else {
                       $month_savings = 0 - $add_bills_total;
                     }
+                    $total_yearly_savings += $month_savings;
                     // check if positive
                     $save_color = 'red';
                     if ($month_savings >= 0) {
                       $save_color = 'green';
                     }
-                    $savings_total_string .= '<td style="color:'.$save_color.';">$'.number_format($month_savings, 2).'</td>';
-                    echo '<td style="color:'.$color.'; background:rgb(25, 29, 32);">'.$add_bills_total.'</td>';
+                    //$savings_total_string .= '<td style="color:'.$save_color.';">$'.number_format($month_savings, 2).'</td>';
+                    echo '<td style="color:white; background:rgb(25, 29, 32);">$'.number_format($add_bills_total, 2).'</td>';
+                    echo '<td style="color:'.$save_color.'; background:rgb(25, 29, 32);">$'.number_format($month_savings, 2).'</td>';
                   } else {
                     //$savings_total_string .= '<td style="color:grey;">~</td>';
+                    echo '<td style="color:grey; background:rgb(25, 29, 32);">~</td>';
                     echo '<td style="color:grey; background:rgb(25, 29, 32);">~</td>';
                   }
                 echo '</tr>';
@@ -523,8 +535,10 @@ while ($row = $stmt->fetch()) {
 
 
               echo '<tr>';
-                echo '<td>Savings</td>';
-                echo $savings_total_string;
+                echo '<td style="color:grey;">(Yearly Totals)</td>';
+                echo '<td>$'.number_format($total_yearly_incomes, 2).'</td>';
+                echo '<td>$'.number_format($total_yearly_expenses, 2).'</td>';
+                echo '<td>$'.number_format($total_yearly_savings, 2).'</td>';
               echo '</tr>';
 
 
