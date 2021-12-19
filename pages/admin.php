@@ -66,7 +66,7 @@ while ($row = $stmt->fetch()) {
 
 
 
-  echo '<div class="container" style="height:600px; text-align:center;">';
+  echo '<div class="container" style="height:100%; text-align:center;">';
     echo '<h1>User Activity & Overview</h1>';
     echo '<br>';
     echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
@@ -109,7 +109,7 @@ while ($row = $stmt->fetch()) {
         echo '<td style="background:rgb(25, 29, 32);">'.$row['user_fname'].' '.$row['user_lname'].'</td>';
 
         $date_string = strtotime($row['user_last_logged']);
-        echo '<td style="background:rgb(25, 29, 32);">'.date('M, d', $date_string).'</td>';
+        echo '<td style="background:rgb(25, 29, 32); color:grey;">'.date('m-d-Y h:iA', $date_string).'</td>';
 
         // now for each row and each user, let's print out their stats
         $sql_stats = "

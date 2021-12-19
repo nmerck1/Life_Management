@@ -1,16 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <?php
 //declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
+//include '/home3/lifement/public_html/classes/header.class.php';
 include '../includes/function_library.inc.php';
 // Initialize the session
 session_start();
+// TEST FOR SERVER ////////////////////////////////////////////////////////////
+/*
+$_SESSION['loggedin'] = true;
+$_SESSION['username'] = "redfox";
+$_SESSION['user_id'] = 1;
+$_SESSION['id_role'] = 1;
+
+echo "SESSION loggedin = ".$_SESSION['loggedin']."<br>";
+echo "SESSION username = ".$_SESSION['username']."<br>";
+echo "SESSION user_id = ".$_SESSION['user_id']."<br>";
+echo "SESSION id_role = ".$_SESSION['id_role']."<br>";
+*/
+//////////////////////////////////////////////////////////////////////////////
 $_SESSION['loggedin'] = false;
 
+//echo 'Session: '.$_SESSION['loggedin'].'<br>';
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
     header("location: ../pages/home.php");
     exit;
+} else {
+  //echo "<h1>Hello Friends. Website is still currently being worked on. Patience is a virtue! ~N</h2>";
 }
+//error_reporting(E_ALL);
 
 // Define variables and initialize with empty values
 $username = $password = "";
@@ -59,7 +80,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         //echo "pass_word: ".$pass_word."<br>";
         //echo "hashed_password: ".$hashed_password."<br>";
         // check if passwords match
-        if (isset($pass_word)) {  //  && $pass_word == $hashed_password
+        if (isset($pass_word) && $password == $pass_word) {  //  && $pass_word == $hashed_password
           // Password is correct, so start a new session
           session_start();
 
@@ -95,14 +116,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
 
-
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <?php
     $header = new Header();
     $header->show_header();
+
   ?>
 
 

@@ -4,11 +4,29 @@ date_default_timezone_set('America/New_York');
 
 // "global variables"
 $g_servername = "localhost";
+//$g_servername = "lifemanagement.me";
 $g_username = "root";
 $g_password = "";
 $g_database = "life_management";
+$g_port = 3306;
+
+$is_server = false;
+
+if ($is_server == true) {
+	$g_username = "lifement_test";
+	$g_password = "poopy";
+	$g_database = "lifement_life_management";
+	$g_port = 3306;
+}
 // Create connection
-$conn = new mysqli($g_servername, $g_username, $g_password, $g_database);
+$conn = mysqli_connect(
+	$g_servername,
+	$g_username,
+	$g_password,
+	$g_database,
+	$g_port
+);
+
 
 
 // gets a dropdown based on the categories table (this will be used in multiple places )

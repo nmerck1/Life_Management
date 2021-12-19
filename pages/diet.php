@@ -70,7 +70,7 @@ while ($row = $stmt->fetch()) {
   //echo "date_search: ".$date_search."<br>";
 
   // start the outer table
-  echo '<div class="container" style="max-width:100%;">';
+  echo '<div class="container" style="max-width:100%; display:contents;">';
 
     //echo '<div class="container">';
       echo '<h1 style="text-align:center;">Diet Overview</h1>';
@@ -89,7 +89,7 @@ while ($row = $stmt->fetch()) {
 
     echo '<br>';
 
-    echo '<div class="container">';
+    echo '<div class="container" style="display:contents;">';
       echo '<p style="text-align:center;">Food Log</p>';
       echo '<table class="table table-dark" style="background-color:#3a5774; width:400px; margin:auto;">';
         echo '<tr>';
