@@ -141,7 +141,7 @@ while ($row = $stmt->fetch()) {
                   echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M, d', $date_string). '</td>';
                   echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['fi_amount'], 2). '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
-                    echo '<span style="display:flex;">';
+                    echo '<span>'; //style="display:flex;"
                       echo '<a href="../includes/finances.inc.php?selected_id='.$row['fi_id'].'&update_type=Edit&form_type=Income&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
                       echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fi_id'].'&update_type=Delete&form_type=Income&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
                     echo '</span>';
@@ -207,7 +207,7 @@ while ($row = $stmt->fetch()) {
                     echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M, d', $date_string). '</td>';
                     echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['fe_amount'], 2). '</td>';
                     echo '<td style="background:rgb(33, 37, 46);">';
-                      echo '<span style="display:flex;">';
+                      echo '<span>'; //style="display:flex;"
                         echo '<a href="../includes/finances.inc.php?selected_id='.$row['fe_id'].'&update_type=Edit&form_type=Expense&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
                         echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete&form_type=Expense&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
                       echo '</span>';
@@ -286,7 +286,7 @@ while ($row = $stmt->fetch()) {
                   echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['bl_amount'], 2). '</td>';
                   echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bill_freq']. '</td>';
                   echo '<td style="background:rgb(33, 37, 46);">';
-                    echo '<span style="display:flex;">';
+                    echo '<span>'; //style="display:flex;"
                       echo '<a href="../includes/finances.inc.php?selected_id='.$row['bill_id'].'&update_type=Edit&form_type=Bill&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
                       echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete&form_type=Bill&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
                     echo '</span>';
@@ -538,7 +538,11 @@ while ($row = $stmt->fetch()) {
                 echo '<td style="color:grey;">(Yearly Totals)</td>';
                 echo '<td>$'.number_format($total_yearly_incomes, 2).'</td>';
                 echo '<td>$'.number_format($total_yearly_expenses, 2).'</td>';
-                echo '<td>$'.number_format($total_yearly_savings, 2).'</td>';
+                $save_color = 'red';
+                if ($total_yearly_savings >= 0) {
+                  $save_color = 'green';
+                }
+                echo '<td style="color:'.$save_color.';">$'.number_format($total_yearly_savings, 2).'</td>';
               echo '</tr>';
 
 

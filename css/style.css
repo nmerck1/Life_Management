@@ -28,6 +28,10 @@ a {
   color: white;
 }
 
+label {
+  color: grey;
+}
+
 h1 {
   color: rgb(47, 115, 152);
 }
@@ -110,20 +114,6 @@ body {
   height: 100%;
 }
 
-/* On small screens, set height to 'auto' for sidenav and grid */
-@media screen and (max-width: 767px) {
-  .sidenav {
-    height: auto;
-    padding: 15px;
-  }
-  .row.content {height:auto;}
-}
-
-
-
-
-
-
 /* for my custom navbar */
 ul {
   list-style-type: none;
@@ -150,7 +140,7 @@ li:last-child {
   border-right: none;
 }
 
-li a, .dropbtn {
+li a, .dropbtn, .dropnavbtn {
   display: inline-block;
   color: white;
   text-align: center;
@@ -162,8 +152,8 @@ li a, .dropbtn {
   padding: 0;
 }
 
-
-li.dropdown {
+/*       dropdowns          */
+li.dropdown, li.navdropdown {
   display: inline-block;
 }
 
@@ -177,7 +167,17 @@ li.dropdown {
   z-index: 2;
 }
 
-.dropdown-content a {
+ .navbar-content {
+   left: 0px;
+   display: none;
+   position: absolute;
+   background-color: #f9f9f9;
+   min-width: 160px;
+   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+   z-index: 2;
+ }
+
+.dropdown-content a, .navbar-content a {
   color: black;
   padding: 9px 10px;
   text-decoration: none;
@@ -185,8 +185,8 @@ li.dropdown {
   text-align: left;
 }
 
-.dropdown-content a:hover {background-color: #f1f1f1;}
+.dropdown-content a:hover, .navbar-content a:hover {background-color: #f1f1f1;}
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content, .navdropdown:hover .navbar-content {
   display: block;
 }

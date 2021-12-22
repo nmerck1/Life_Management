@@ -12,7 +12,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
-$show_error = false;
+$show_error = true;
 
 $selected_id = '';
 if (isset($_GET['selected_id'])){
@@ -182,7 +182,7 @@ while ($row = $stmt->fetch()) {
 
 
 ?>
-<div class="container text-center"  style="height:600px;">
+<div class="container" style="height:600px; text-align:right; width:390px;">
     <div>
 				<?php
 					if (!$show_error) {
@@ -231,6 +231,7 @@ while ($row = $stmt->fetch()) {
               echo '<i style="color:grey;">
               (If the company you are looking for doesn\'t show up in the company dropdown list, then set the Company to \'Other\' and leave the company name in the notes section so I can add it later.)
               </i>';
+              echo '<br><br>';
 
 							// print the form type here
 							echo '<div class="container">';
@@ -254,8 +255,7 @@ while ($row = $stmt->fetch()) {
 								echo '<label>Date: </label>';
 								echo '<input type="date" id="date" value="'.$date.'"></input>';
 								echo '<br>';
-								echo '<label>Notes: </label>';
-								echo '<textarea id="notes" style="height:100px; width:300px;">'.$notes.'</textarea>';
+	              echo '<textarea id="notes" style="height:100px; width:300px;" placeholder="(Notes)">'.$notes.'</textarea>';
 								echo '<br>';
 
 								echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
@@ -301,6 +301,8 @@ while ($row = $stmt->fetch()) {
                 echo '<i style="color:grey;">
                 (If the company you are looking for doesn\'t show up in the company dropdown list, then set the Company to \'Other\' and leave the company name in the notes section so I can add it later.)
                 </i>';
+                echo '<br><br>';
+
 								// print the form type here
 								echo '<div class="container">';
 
@@ -384,7 +386,7 @@ while ($row = $stmt->fetch()) {
                 echo '<br>';
 
                 //library_get_freq_dropdown($freq);
-                echo '<p>(Per month)</p>';
+                echo '<p style="color:grey;">(Per month)</p>';
 
                 echo '<br>';
                 echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';

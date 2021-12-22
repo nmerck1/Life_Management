@@ -19,7 +19,4 @@ class Header {
       echo '<link rel="stylesheet" href="../css/style.css">';
     }
   }
-
-
-
 }

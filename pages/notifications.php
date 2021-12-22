@@ -97,7 +97,7 @@ while ($row = $stmt->fetch()) {
       <p class="bi-lightbulb" style="font-size: 1rem; color: white;"><a href="#"> Ideas</a></p>
     </div>
   -->
-    <div class="container" style="height:600px;">
+    <div class="container" style="height:600px; display:contents;">
       <?php
 
       echo '<p style="display:none;" id="user_id" name="user_id" value="'.$user_id.'">'.$user_id.'</p>';

@@ -166,7 +166,7 @@ while ($row = $stmt->fetch()) {
 	echo '<p id="test"></p>';
 
 
-  echo '<div class="container text-center"  style="height:600px;">';
+  echo '<div class="container" style="width:390px; text-align:right;">';
     $fc_id = 14;  // this is defaulted to other
 		$name = "";
     $amount = 0.00;
@@ -250,12 +250,12 @@ while ($row = $stmt->fetch()) {
     echo '<i style="color:grey;">
     (If you don\'t know the macros of a food and you can\'t find the food in dropdown, then estimate as best as you can.)
     </i>';
-
+    echo '<br><br>';
 		// print the form type here
-    echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
-      echo '<tr>';
+    //echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+      //echo '<tr>';
 
-        echo '<td style="text-align: right;">';
+        //echo '<td style="text-align: right;">';
 					echo '<br>';
 
           library_get_food_categories_dropdown($fc_id);
@@ -273,9 +273,9 @@ while ($row = $stmt->fetch()) {
 					echo '<input type="date" id="log_date" value="'.$log_date.'"></input>';
 					echo '<br>';
 
-        echo '</td>';
+        //echo '</td>';
 
-        echo '<td style="text-align: left;">';
+        //echo '<td style="text-align: left;">';
           echo '<br>';
           echo '<label>Name: </label>';
           echo '<input type="text" id="name" value="'.$name.'"  onchange="update_element_value(this, this.value)"></input>';
@@ -298,20 +298,20 @@ while ($row = $stmt->fetch()) {
           echo '<label>Fat: </label>';
           echo '<input type="number" id="fat" value="'.$fat.'" style="text-align:right;" onchange="update_element_value(this, this.value)"></input>';
           echo '<br>';
-        echo '</td>';
+        //echo '</td>';
 
-      echo '</tr>';
-      echo '<tr>';
+      //echo '</tr>';
+      //echo '<tr>';
 
-        echo '<td colspan=2>';
-          echo '<label>Notes: </label>';
-          echo '<textarea id="notes" style="height:100px; width:300px;">'.$notes.'</textarea>';
-        echo '</td>';
+        //echo '<td colspan=2>';
+          echo '<textarea id="notes" style="height:100px; width:300px;" placeholder="(Notes)">'.$notes.'</textarea>';
+        //echo '</td>';
 
-      echo '</tr>';
-    echo '</table>';
+      //echo '</tr>';
+    //echo '</table>';
 
 		echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+    echo '<br>';
 
   echo '</div>';
 
