@@ -12,7 +12,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
-$show_error = true;
+$show_error = false;
 
 $selected_id = '';
 if (isset($_GET['selected_id'])){
