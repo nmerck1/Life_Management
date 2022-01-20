@@ -5,6 +5,7 @@ class Header {
   private $is_index = 2;
 
   public function show_header(){
+    echo '<link rel="icon" href="../pics/fox.png" style="background-color: transparent;">';
     echo '<title>Life Management</title>';
     echo '<meta charset="utf-8">';
     echo '<meta name="viewport" content="width=device-width, initial-scale=1">';

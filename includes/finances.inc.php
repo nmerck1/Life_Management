@@ -318,8 +318,7 @@ while ($row = $stmt->fetch()) {
 									echo '<label>Date: </label>';
 									echo '<input type="date" id="date" value="'.$date.'"></input>';
 									echo '<br>';
-									echo '<label>Notes: </label>';
-									echo '<textarea id="notes" style="height:100px; width:300px;">'.$notes.'</textarea>';
+									echo '<textarea id="notes" style="height:100px; width:300px;" placeholder="(Notes)">'.$notes.'</textarea>';
 									echo '<br>';
 
 									echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
@@ -351,6 +350,7 @@ while ($row = $stmt->fetch()) {
               if ($selected_id != NULL) {// this is a currently existing record
                 echo '<h1>Edit Bill</h1>';
                 $update_type = 'Update';
+                $editable_name = 'readonly';
                 // load variables from selected_id
                 // get values from selected id in table:
                   $sql = "SELECT * FROM current_bills WHERE bill_id = '".$selected_id."' ";
@@ -373,13 +373,14 @@ while ($row = $stmt->fetch()) {
                 // this is a new record we are creating
                 echo '<h1>Add New Bill</h1>';
                 $update_type = 'Insert';
+                $editable_name = '';
               }
               echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
               // print the form type here
               echo '<div class="container">';
 
                 echo '<label>Name: </label>';
-                echo '<input type="text" id="name" value="'.$name.'" readonly></input>';
+                echo '<input type="text" id="name" value="'.$name.'" '.$editable_name.'></input>';
                 echo '<br>';
                 echo '<label>Amount: </label>';
                 echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;" onchange="update_element_value(this, this.value)"></input>';
