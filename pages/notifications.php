@@ -112,6 +112,7 @@ while ($row = $stmt->fetch()) {
                     n.n_send_date,
                     n.n_read_date,
                     n.is_active,
+                    n.n_to_user,
 
                     ur.role_name AS 'from_role_name',
                     ur.role_color AS 'from_role_color',
@@ -121,11 +122,13 @@ while ($row = $stmt->fetch()) {
                     fu.user_icon AS 'from_icon',
                     fu.user_fname AS 'from_fname',
                     fu.user_lname AS 'from_lname'
+
                   FROM notifications n
                   LEFT JOIN users fu ON n.n_from_user = fu.user_id
                   LEFT JOIN user_roles ur ON fu.id_role = ur.role_id
+
                   WHERE n.is_active = 1
-                  AND n.n_to_user = ".$user_id."
+                  AND n.n_to_user = ".$user_id." OR n.n_to_user = 0
 
                   ORDER BY n.n_send_date DESC;
           ";

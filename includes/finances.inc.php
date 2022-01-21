@@ -100,23 +100,25 @@ while ($row = $stmt->fetch()) {
   		var form_type = document.getElementById('form_type');
   		var user_id = document.getElementById('user_id');
 
-      if (form_type.innerHTML != "Bill") {
+      if (form_type.innerHTML != "Bill" && form_type.innerHTML != "Budget") {
         var company = document.getElementById('company');
       }
-  		var name = document.getElementById('name');
-  		if (form_type.innerHTML == "Expense"){
+      if (form_type.innerHTML != "Budget") {
+    		var name = document.getElementById('name');
+      }
+  		if (form_type.innerHTML == "Expense" || form_type.innerHTML == "Budget" && update_type.innerHTML == "Insert"){
   			var category = document.getElementById('category');
   			var category_value = category.options[category.selectedIndex].value;
   		}
   		var amount = document.getElementById("amount");
-      if (form_type.innerHTML != "Bill") {
+      if (form_type.innerHTML != "Bill" && form_type.innerHTML != "Budget") {
         var date = document.getElementById('date');
         var notes = document.getElementById('notes');
       }
-  		if (form_type.innerHTML == "Bill") {
+  		//if (form_type.innerHTML == "Bill") {
         //var freq = document.getElementById('freq');
   			//var freq_value = freq.options[freq.selectedIndex].value;
-      }
+      //}
 
   		// create link to send GET variables through
   		var query_string = "../ajax/finances.ajax.php";
@@ -125,21 +127,23 @@ while ($row = $stmt->fetch()) {
   		query_string += "&form_type=" + form_type.innerHTML;
   		query_string += "&user_id=" + user_id.innerHTML;
 
-      if (form_type.innerHTML != "Bill") {
+      if (form_type.innerHTML != "Bill" && form_type.innerHTML != "Budget") {
         query_string += "&company=" + company.value;
       }
-  		query_string += "&name=" + name.value;
-  		if (form_type.innerHTML == "Expense"){
+      if (form_type.innerHTML != "Budget") {
+    		query_string += "&name=" + name.value;
+      }
+  		if (form_type.innerHTML == "Expense" || form_type.innerHTML == "Budget"){
   			query_string += "&category=" + category_value;
   		}
   		query_string += "&amount=" + amount.value;
-      if (form_type.innerHTML != "Bill") {
+      if (form_type.innerHTML != "Bill" && form_type.innerHTML != "Budget") {
     		query_string += "&date=" + date.value;
     		query_string += "&notes=" + notes.value;
       }
-      if (form_type.innerHTML == "Bill") {
+      //if (form_type.innerHTML == "Bill") {
         //query_string += "&freq=" + freq_value;
-      }
+      //}
   		//alert(query_string);
 
   		xhttp.onreadystatechange = function() {
@@ -159,11 +163,20 @@ while ($row = $stmt->fetch()) {
 	}
 
   function check_form(){
-    var name = document.getElementById('name');
+    var form_type = document.getElementById('form_type');
+    if (form_type.innerHTML != "Budget") {
+      var name = document.getElementById('name');
+    }
 		var amount = document.getElementById("amount");
 
-    if (name.value == '' || amount.value == 0) {
-      return false;
+    if (form_type.innerHTML != "Budget") {
+      if (name.value == '' || amount.value == 0) {
+        return false;
+      }
+    } else {
+      if (amount.value == 0) {
+        return false;
+      }
     }
     return true;
   }
@@ -382,6 +395,75 @@ while ($row = $stmt->fetch()) {
                 echo '<label>Name: </label>';
                 echo '<input type="text" id="name" value="'.$name.'" '.$editable_name.'></input>';
                 echo '<br>';
+                echo '<label>Amount: </label>';
+                echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;" onchange="update_element_value(this, this.value)"></input>';
+                echo '<br>';
+
+                //library_get_freq_dropdown($freq);
+                echo '<p style="color:grey;">(Per month)</p>';
+
+                echo '<br>';
+                echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+              echo '</div>';
+						} elseif ($form_type == 'Budget') {
+              // default variables
+              $update_type = "";
+              $name = "";
+              $amount = 0.00;
+              $freq = "";
+              // check if there is an id, then we are either editing or deleting an existing record
+              if ($selected_id != NULL) {// this is a currently existing record
+                echo '<h1>Edit Budget</h1>';
+                $update_type = 'Update';
+                $show_dropdown = false;
+                // load variables from selected_id
+                // get values from selected id in table:
+                  $sql = "SELECT *
+                          FROM budgets bud
+                          LEFT JOIN categories cat ON bud.id_category = cat.cat_id
+                          WHERE bud_id = '".$selected_id."'
+                  ";
+                  //echo $sql;
+                  $dbh = new Dbh();
+                  $stmt = $dbh->connect()->query($sql);
+                  //echo $sql;
+                  // should only populate one row of data
+                  while ($row = $stmt->fetch()) {
+                    $name = $row['cat_name'];
+                    $amount = $row['bud_amount'];
+                  }
+              } else {
+                // this is a new record we are creating
+                echo '<h1>Add New Budget</h1>';
+                $update_type = 'Insert';
+                $show_dropdown = true;
+
+                $exclude_names = array(); // define an array to add names to exclude
+                $sql = "SELECT *
+                        FROM budgets bud
+                        LEFT JOIN categories cat ON bud.id_category = cat.cat_id
+                        WHERE bud.is_active = 1;
+                ";
+                //echo $sql;
+                $dbh = new Dbh();
+                $stmt = $dbh->connect()->query($sql);
+                //echo $sql;
+                // should only populate one row of data
+                while ($row = $stmt->fetch()) {
+                  array_push($exclude_names, $row['cat_name']);
+                }
+              }
+              echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
+              // print the form type here
+              echo '<div class="container">';
+
+                if ($show_dropdown == false){
+                  echo '<p style="text-align:center;">'.$name.'</p>';
+                } else {
+                  library_exclude_get_categories_dropdown($exclude_names); // takes an array of the names not to include in the dropdown
+                  echo '<br>';
+                }
+
                 echo '<label>Amount: </label>';
                 echo '<input type="number" id="amount" value="'.$amount.'" placeholder="x.xx" style="text-align:right;" onchange="update_element_value(this, this.value)"></input>';
                 echo '<br>';

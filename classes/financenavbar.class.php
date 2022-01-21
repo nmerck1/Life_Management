@@ -11,9 +11,9 @@ class FinanceNavbar {
       echo '<p>';
         echo '<a href="../pages/yearly.php" class="btn btn-primary btn-sm">Yearly Overview</a>';
       echo '</p>';
-      //echo '<p>';
-        //echo '<a href="../pages/budgets.php" class="btn btn-primary btn-sm">Budgets</a>';
-      //echo '</p>';
+      echo '<p>';
+        echo '<a href="../pages/budgets.php" class="btn btn-primary btn-sm">Budgets</a>';
+      echo '</p>';
       //echo '<p>';
         //echo '<a href="../pages/ious.php" class="btn btn-primary btn-sm">IOUs</a>';
       //echo '</p>';

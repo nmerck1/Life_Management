@@ -4,10 +4,11 @@
 class Footer {
 
   public function show_footer(){
-    $current_version = '1.27.19.4';
+    $current_version = '1.29.25.4';
+
     echo '<footer class="container-fluid text-center">';
-      echo '<p class="bi-egg" style="color:white;"></p>';
-      echo '<p style="text-align:center; padding-left:10px; color:rgb(47, 115, 152);">'.$current_version.'</p>';
+      echo '<p class="bi-egg-fill" style="color:white;"></p>';
+      echo '<p style="text-align:center; color:rgb(47, 115, 152);">'.$current_version.'</p>';
     echo '</footer>';
 
   }

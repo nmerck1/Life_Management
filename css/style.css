@@ -46,6 +46,11 @@ h1 {
   border: none;
 }
 
+.table td, .table th {
+  padding: 0px;
+  vertical-align: middle;
+}
+
 .greyedtable th {
   background: grey; /* rgb(25, 29, 32);  */
 }
@@ -105,7 +110,8 @@ a:hover {
 footer {
   background-color: rgb(25, 29, 32);
   color: white;
-  padding: 15px;
+  padding: 1px;
+  border-top: 2px solid rgb(47, 115, 152);
 }
 
 body {
@@ -129,6 +135,12 @@ ul {
 
 .navbar-brand {
   margin-right: 0;
+  border-bottom: 2px solid rgb(47, 115, 152);
+
+  /* shadow */
+  -webkit-box-shadow: 0 12px 10px -6px black;
+	   -moz-box-shadow: 0 12px 10px -6px black;
+	        box-shadow: 0 12px 10px -6px black;
 }
 
 li {
@@ -163,8 +175,10 @@ li.dropdown, li.navdropdown {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 2;
+
+  -moz-box-shadow:    3px 3px 5px 6px black;
+   -webkit-box-shadow: 3px 3px 5px 6px black;
+   box-shadow:         3px 3px 5px 6px black;
 }
 
  .navbar-content {
@@ -173,8 +187,10 @@ li.dropdown, li.navdropdown {
    position: absolute;
    background-color: #f9f9f9;
    min-width: 160px;
-   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-   z-index: 2;
+
+   -moz-box-shadow:    3px 3px 5px 6px black;
+    -webkit-box-shadow: 3px 3px 5px 6px black;
+    box-shadow:         3px 3px 5px 6px black;
  }
 
 .dropdown-content a, .navbar-content a {

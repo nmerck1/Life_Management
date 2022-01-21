@@ -156,4 +156,5 @@ if ($update_type == 'Delete') {
 
 
 header("Location: ../pages/diet.php");
+header("Location: ../pages/diet.php");
 exit();

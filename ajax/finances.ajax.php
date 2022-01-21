@@ -190,7 +190,19 @@ if ($update_type == 'Delete') {
 
 
   } elseif ($form_type == 'Budget') {
+    //$category = $_GET['category'];
+    $amount = $_GET['amount'];
 
+    $sql = "UPDATE $table
+            SET bud_amount=$amount
+            WHERE $table_id = $selected_id
+            AND id_user = $user_id;
+    ";
+    if ($conn->query($sql) === TRUE) {
+      //echo "New record created successfully";
+    } else {
+    //  echo "Error: " . $sql . "<br>" . $conn->error;
+    }
   }
 
 } elseif ($update_type == 'Insert') {
@@ -205,20 +217,23 @@ if ($update_type == 'Delete') {
         // we want to check the user id and then give a notification to an admin for a specific case of Other company selection
         if ($user_id != 1 && $_GET["company"] == 'Other') {
           // set notification for admins
-          $message = 'User ID: '.$user_id.' is requesting a new company record be added. Check notes for new name.';
+          $message = ' User ID: '.$user_id.' is requesting a new company record be added.<br><br> ';
+          $message .= ' [Notes from user] <br>';
+          $message .= '<p>\"'.$_GET["notes"].'\"</p>';
+
           $sql = "
                   INSERT INTO notifications (n_subject, n_message, n_type, n_from_user, n_to_user)
                   VALUES ('New Company', '".$message."', 'Request', '".$user_id."', '1');
           ";
           //echo $sql. "<br>";
           if ($conn->query($sql) === TRUE) {
-            //echo "New record created successfully";
+            echo "New record created successfully";
           } else {
             echo 'ERROR: DID NOT INSERT';
           }
         }
       } else {
-      //  echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $sql . "<br>" . $conn->error;
       }
 
     } elseif ($form_type == 'Income') {
@@ -226,9 +241,9 @@ if ($update_type == 'Delete') {
               VALUES ('".$_GET["company"]."', '".$_GET["name"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."', '".$_GET["user_id"]."');
       ";
       if ($conn->query($sql) === TRUE) {
-        //echo "New record created successfully";
+        echo "New record created successfully";
       } else {
-      //  echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $sql . "<br>" . $conn->error;
       }
 
     } elseif ($form_type == 'Passive') {
@@ -242,12 +257,23 @@ if ($update_type == 'Delete') {
               VALUES ('".$_GET["name"]."', ".$_GET['amount'].", ".$freq.", '".$_GET["user_id"]."');
       ";
       if ($conn->query($sql) === TRUE) {
-        //echo "New record created successfully";
+        echo "New record created successfully";
       } else {
-      //  echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $sql . "<br>" . $conn->error;
       }
+
+
     } elseif ($form_type == 'Budget') {
-      //$sql = "INSERT INTO budgets SET is_active = 0;";
+      $freq = 'M';  // this is the default for now
+      $sql = "
+              INSERT INTO $table (id_category, bud_amount, bud_notes, bud_freq, id_user)
+              VALUES ('".$_GET["category"]."', ".$_GET['amount'].", '', '".$freq."', '".$_GET["user_id"]."');
+      ";
+      if ($conn->query($sql) === TRUE) {
+        echo "New record created successfully";
+      } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+      }
     }
 
 } elseif ($update_type == 'Next') {
@@ -258,5 +284,6 @@ if ($update_type == 'Delete') {
 
 
 
+header("Location: ../pages/finances.php");
 header("Location: ../pages/finances.php");
 exit();

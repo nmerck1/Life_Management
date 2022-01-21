@@ -51,6 +51,27 @@ function library_get_categories_dropdown($cat_id){
 	echo '</select>';
 }
 
+
+// gets a dropdown based on the categories table, but excludes any with names defined in the array parameter.
+function library_exclude_get_categories_dropdown($exclude_names){
+	echo '<label>Category: </label>';
+	$sql = "SELECT *
+					FROM categories
+					WHERE is_active = 1
+					ORDER BY cat_name ASC;
+	";
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+	echo '<select id="category">';
+		while ($row = $stmt->fetch()) {
+			if ( !in_array($row['cat_name'], $exclude_names) ) {
+				echo '<option value="'.$row['cat_id'].'" selected="selected">'.$row['cat_name'].'</option>';
+			}
+
+		}
+	echo '</select>';
+}
+
 function library_get_num_notifications($user_id){
 	$sql = "
 					SELECT

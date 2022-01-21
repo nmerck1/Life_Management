@@ -98,9 +98,13 @@ while ($row = $stmt->fetch()) {
                 echo '<tr>';
                   echo '<th>Name</th>';
                   echo '<th>Amount</th>';
+                  echo '<th style="background-color: rgb(33, 37, 46);">';
+                    echo '<a href="../includes/finances.inc.php?form_type=Budget&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                  echo '</th>';
                 echo '</tr>';
                 $sql = "
-                        SELECT cat.cat_name,
+                        SELECT bud.bud_id,
+                               cat.cat_name,
                                bud.bud_amount,
                                bud.id_category,
                                bud.is_active,
@@ -121,6 +125,10 @@ while ($row = $stmt->fetch()) {
                   echo '<tr>';
                     echo '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
                     echo '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format(($row['bud_amount']), 2). '</td>';
+                    echo '<td style="background:rgb(33, 37, 46);">';
+                        echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&update_type=Edit&form_type=Budget&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
+                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                    echo '</td>';
                   echo '</tr>';
                 }
 

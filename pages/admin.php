@@ -93,7 +93,9 @@ while ($row = $stmt->fetch()) {
 
             FROM users u
             LEFT JOIN user_roles ur ON u.id_role = ur.role_id
-            WHERE u.is_active = 1;
+            WHERE u.is_active = 1
+
+            ORDER BY u.user_last_logged DESC;
     ";
     //echo $sql;
     $dbh = new Dbh();
