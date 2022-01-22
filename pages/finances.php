@@ -398,6 +398,9 @@ while ($row = $stmt->fetch()) {
                 $stmt = $dbh->connect()->query($sql);
 
                 $build_table = '';
+                $total_spent_amount = 0;
+                $total_budget_amount = 0;
+                $total_over_under_amount = 0;
                 while ($row = $stmt->fetch()) {
                   $build_table .= '<tr>';
                     $build_table .= '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
@@ -408,12 +411,16 @@ while ($row = $stmt->fetch()) {
                     } else {
                       $build_table .= '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($row['bud_amount'], 2). '</td>';
                       // get the difference:
-                      $bud_diff = ($row['bud_amount'] - $row['fe_amount']);
+                      $bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
                       $color = 'red';
                       if ($bud_diff > 0) { $color = 'green'; }
+                      $total_over_under_amount += $bud_diff;
+                      $total_budget_amount += $row['bud_amount'];
+                      $total_spent_amount += $row['fe_amount'];
                       $build_table .= '<td style="text-align:right; background:rgb(25, 29, 32); color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
                     }
                   $build_table .= '</tr>';
+
                 }
                 // check if there was anything to show:
                 if ($build_table == '') {
@@ -429,13 +436,45 @@ while ($row = $stmt->fetch()) {
 
                       echo $build_table;
 
+                      echo '<tr>';
+                        echo '<td colspan=1 style="text-align:left; background-color:rgb(33, 37, 46);">Totals:</td>';
+                        echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_spent_amount, 2).'</td>';
+                        echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_budget_amount, 2).'</td>';
+                        $color = 'red';
+                        if ($bud_diff > 0) { $color = 'green'; }
+                        echo '<td style="text-align:right; background-color:rgb(33, 37, 46); color:'.$color.';">$'.number_format($total_over_under_amount, 2).'</td>';
+                        echo '<td style="background:rgb(33, 37, 46);"></td>';
+                      echo '</tr>';
+
                   echo '</table>';
                 }
 
           echo '</div>';
 
+          /*
+          echo '<div>'; // div for showing month's incomes, expenses and savings totals
+            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Month Totals</p>';
 
-        echo '</div>';
+            echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+                echo '<tr>';
+                  echo '<th>Incomes</th>';
+                  echo '<th>Expenses</th>';
+                  echo '<th>Savings</th>';
+                echo '</tr>';
+
+                echo '<tr>';
+                  echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_spent_amount, 2).'</td>';
+                  echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_budget_amount, 2).'</td>';
+                  $color = 'red';
+                  if ($bud_diff > 0) { $color = 'green'; }
+                  echo '<td style="text-align:right; background-color:rgb(33, 37, 46); color:'.$color.';">$'.number_format($total_over_under_amount, 2).'</td>';
+                  echo '<td style="background:rgb(33, 37, 46);"></td>';
+                echo '</tr>';
+
+            echo '</table>';
+          echo '</div>';
+          */
+        echo '</div>';  // end main div
       ?>
 
 <?php

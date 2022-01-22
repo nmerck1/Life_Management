@@ -4,7 +4,7 @@
 class Footer {
 
   public function show_footer(){
-    $current_version = '1.29.25.4';
+    $current_version = '1.30.27.6';
 
     echo '<footer class="container-fluid text-center">';
       echo '<p class="bi-egg-fill" style="color:white;"></p>';

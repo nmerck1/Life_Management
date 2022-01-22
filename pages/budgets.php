@@ -121,6 +121,7 @@ while ($row = $stmt->fetch()) {
                 $dbh = new Dbh();
                 $stmt = $dbh->connect()->query($sql);
 
+                $total_budget_amount = 0;
                 while ($row = $stmt->fetch()) {
                   echo '<tr>';
                     echo '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
@@ -130,8 +131,14 @@ while ($row = $stmt->fetch()) {
                         echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
                     echo '</td>';
                   echo '</tr>';
+                  $total_budget_amount += (float)$row['bud_amount'];
                 }
 
+                echo '<tr>';
+                  echo '<td colspan=1 style="text-align:left; background-color:rgb(33, 37, 46);">Total:</td>';
+                  echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_budget_amount, 2).'</td>';
+                echo '<td style="background:rgb(33, 37, 46);"></td>';
+                echo '</tr>';
 
             echo '</table>';
           echo '</div>';

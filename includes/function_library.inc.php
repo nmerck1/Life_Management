@@ -72,6 +72,28 @@ function library_exclude_get_categories_dropdown($exclude_names){
 	echo '</select>';
 }
 
+// gets a dropdown based on the categories table, but excludes any with names defined in the array parameter.
+function library_get_users_exclude_current($current_user_id, $user_id_select){
+	$sql = "SELECT *
+					FROM users
+					WHERE is_active = 1
+					AND user_id != $current_user_id
+					ORDER BY user_name ASC;
+	";
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+	echo '<select id="user">';
+		while ($row = $stmt->fetch()) {
+			if ($row['user_id'] == $user_id_select) {
+				echo '<option value="'.$row['user_id'].'" selected="selected">'.$row['user_name'].'</option>';
+			} else {
+				echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
+			}
+
+		}
+	echo '</select>';
+}
+
 function library_get_num_notifications($user_id){
 	$sql = "
 					SELECT
