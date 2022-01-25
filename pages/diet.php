@@ -38,8 +38,7 @@ while ($row = $stmt->fetch()) {
   $user_name = $row['user_name'];
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
-  $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -47,7 +46,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 </head>
 <body>
@@ -89,9 +88,11 @@ while ($row = $stmt->fetch()) {
 
     echo '<br>';
 
+    echo '<div class="div_element_block">';
+
     echo '<div class="container" style="display:contents;">';
-      echo '<p style="text-align:center;">Food Log</p>';
-      echo '<table class="table table-dark" style="background-color:#3a5774; width:400px; margin:auto;">';
+      echo '<h4 style="text-align:center;">Food Log</h4>';
+      echo '<table class="table table-dark" style="width:400px; margin:auto;">';
         echo '<tr>';
 
           $time = strtotime($show_today);
@@ -99,12 +100,12 @@ while ($row = $stmt->fetch()) {
           $format_num = date('m-d', $time);
           echo '<th style="text-align:center;">' .$next_date. ' <span style="color:black;">('.$format_num.')</span></th>';// style="width:225px;"
 
-          echo '<th style="background-color:rgb(33, 37, 46); width:10px;">';
-            echo '<a href="../includes/diet.inc.php?user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+          echo '<th class="end_row_options" width:10px;">';
+            echo '<a href="../includes/diet.inc.php?user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
           echo '</th>';
 
         echo '</tr>';
-        echo '<tr>';
+        echo '<tr class="end_row_options">';
 
             $days_with_logs = 0;
             $total_calories = 0;
@@ -112,7 +113,7 @@ while ($row = $stmt->fetch()) {
             $total_protein = 0;
             $total_fat = 0;
 
-            echo '<td style="background-color: rgb(25, 29, 32);">';
+            echo '<td class="end_row_options">';
               $time_check = date('Y-m-d', strtotime($show_today));
               //echo "time: ".$time."<br>";
               //echo "time_check: ".$time_check."<br>";
@@ -148,18 +149,27 @@ while ($row = $stmt->fetch()) {
               if ($num_rows > 0) {
                 echo '<p class="my_paragraph" style="color:grey; text-align:center;"> [Foods] </p>';
                 echo '<ul class="my_list">';
+                $is_alternate_row = false;
+                $add_alternating_class = '';
                 while ($row = $stmt->fetch()) {
+                  if ($is_alternate_row == false) {
+                    $add_alternating_class = '';
+                    $is_alternate_row = true;
+                  } else {
+                    $add_alternating_class = 'class="alternating_row"';
+                    $is_alternate_row = false;
+                  }
                   $mea_abbr = $row['mea_abbr'];
                   if ($mea_abbr == 'Other') { $mea_abbr = ''; }
 
                   $build_string .= '<li class="my_li">';
 
-                  $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Edit&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"> </p> </a>';
-                  $build_string .= '<a id="diet_li_a" href="../ajax/diet.ajax.php?selected_id='.$row['fl_id'].'&update_type=Delete&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"> </p> </a>';
+                  $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Edit&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+                  $build_string .= '<a id="diet_li_a" href="../ajax/diet.ajax.php?selected_id='.$row['fl_id'].'&update_type=Delete&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
 
                   $build_string .= ' x'.$row['fl_quantity'].' '.$row['fl_name'];//.' ('.$row['fl_amount'].$mea_abbr.')';
 
-                  $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Copy&user_id='.$user_id.'"><p class="bi-clipboard-plus" style="color:white;"> </p> </a>';
+                  $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Copy&user_id='.$user_id.'"><i class="actions"><p class="bi-clipboard-plus"></p></i></a>';
 
                   $build_string .= '</li><br><br>';
 
@@ -222,12 +232,14 @@ while ($row = $stmt->fetch()) {
 
             echo '</td>';
 
-            echo '<td style="background:rgb(33, 37, 46);"></td>';
+            echo '<td class="end_row_options"></td>';
           echo '</tr>';
 
         echo '</table>';
         echo '<br>';
       echo '</div>';
+      echo '</div>';
+
   echo '</div>';
   echo '<br>';
 

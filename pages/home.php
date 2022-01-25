@@ -39,8 +39,7 @@ while ($row = $stmt->fetch()) {
   $user_name = $row['user_name'];
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
-  $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -48,7 +47,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 
 </head>
@@ -60,7 +59,9 @@ while ($row = $stmt->fetch()) {
 
   //echo '<h1 style="text-align:center;">Life Overview</h1>';
   echo '<div class="container" style="height:600px;">';
-    echo '<p style="text-align:center;">(Page is still in development)</p>';
+
+  echo '<h2 style="font-size:34px;">Managing your <i class="actions">Life</i> made easy.</h2>';
+    //echo '<p style="text-align:center;">(Page is still in development)</p>';
   /*
     echo '<table class="table table-dark" style="background-color:#3a5774;">';    // main table
       echo '<tr>';

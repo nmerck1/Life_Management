@@ -38,8 +38,7 @@ while ($row = $stmt->fetch()) {
   $user_name = $row['user_name'];
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
-  $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -47,7 +46,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 </head>
 <body>
@@ -70,6 +69,7 @@ while ($row = $stmt->fetch()) {
   		var current_page_num = document.getElementById('current_page_num');
       var user_id = document.getElementById('user_id');
       var date_search = document.getElementById('date_search');
+      var table_scroll = 'Expenses'
 
   		var action = 'Next';
       if (next_prev_num == 0) {
@@ -86,11 +86,12 @@ while ($row = $stmt->fetch()) {
       if ( can_scroll == true ) {
         // create link to send GET variables through
         var query_string = "../ajax/scroll.ajax.php";
-        query_string += "?current_page_num=" + current_page_num.innerHTML;
+        query_string += "?current_num=" + current_page_num.innerHTML;
         //query_string += "&form_type=" + "Expense";
         query_string += "&user_id=" + user_id.innerHTML;
         query_string += "&action=" + action;
         query_string += "&date_search=" + date_search.innerHTML;
+        query_string += "&table_scroll=" + table_scroll;
 
         xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
@@ -136,6 +137,7 @@ while ($row = $stmt->fetch()) {
         //var_dump($months_of_year);
         // start the outer table
         echo '<div class="container">';
+
           echo '<h1 style="text-align:center;">Monthly Overview</h1>';
           $show_month_year_title = date('F', strtotime($date_search));
           echo '<h2 style="text-align:center;">'.$show_month_year_title.'</h2>';
@@ -153,8 +155,10 @@ while ($row = $stmt->fetch()) {
             echo '<button type="submit" name="submit_search" class="btn btn-primary btn-sm" value="Display">Display Date</button>';
           echo '</form>';
 
-          echo '<div>'; // div for incomes
-            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Incomes</p>';
+          echo '<br>';
+
+          echo '<div class="div_element_block">'; // div for incomes
+            echo '<h4 style="text-align:center;">Incomes</h4>';
             // check which table:
             $sql = "
             SELECT fi.fi_id,
@@ -172,28 +176,38 @@ while ($row = $stmt->fetch()) {
             //echo $sql;
             $dbh = new Dbh();
             $stmt = $dbh->connect()->query($sql);
-            echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+            echo '<table class="table table-dark" style="text-align:center;">';
             echo '<tr>';
               echo '<th>Company</th>';
               echo '<th>Name</th>';
               echo '<th>Date</th>';
-              echo '<th>Amount</th>';
-              echo '<th style="background-color: rgb(33, 37, 46);">';
-                echo '<a href="../includes/finances.inc.php?form_type=Income&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+              echo '<th style="text-align:right;">Amount</th>';
+              echo '<th class="end_row_options">';
+                echo '<a href="../includes/finances.inc.php?form_type=Income&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
               echo '</th>';
             echo '</tr>';
               $total_incomes_amount = 0;
+              $is_alternate_row = false;
+              $add_alternating_class = '';
               while ($row = $stmt->fetch()) {
-                echo '<tr>';
-                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['fi_company']. '</td>';
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['fi_name']. '</td>';
+                  echo '<tr>';
+
+                  if ($is_alternate_row == false) {
+                    $add_alternating_class = '';
+                    $is_alternate_row = true;
+                  } else {
+                    $add_alternating_class = 'class="alternating_row"';
+                    $is_alternate_row = false;
+                  }
+                  echo '<td '.$add_alternating_class.' style="color:grey;">' .$row['fi_company']. '</td>';
+                  echo '<td '.$add_alternating_class.'>' .$row['fi_name']. '</td>';
                   $date_string = strtotime($row['fi_date']);
-                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M, d', $date_string). '</td>';
-                  echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['fi_amount'], 2). '</td>';
-                  echo '<td style="background:rgb(33, 37, 46);">';
+                  echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M, d', $date_string). '</td>';
+                  echo '<td '.$add_alternating_class.' style="text-align:right;">' .number_format((float)$row['fi_amount'], 2). '</td>';
+                  echo '<td class="end_row_options">';
                     echo '<span>'; //style="display:flex;"
-                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['fi_id'].'&update_type=Edit&form_type=Income&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fi_id'].'&update_type=Delete&form_type=Income&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['fi_id'].'&update_type=Edit&form_type=Income&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fi_id'].'&update_type=Delete&form_type=Income&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                     echo '</span>';
                   echo '</td>';
                 echo '</tr>';
@@ -201,24 +215,26 @@ while ($row = $stmt->fetch()) {
                 $total_incomes_amount += (float)$row['fi_amount'];
               }
               echo '<tr>';
-                echo '<td colspan=3 style="text-align:left; background-color:rgb(33, 37, 46);">Total:</td>';
-                echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_incomes_amount, 2).'</td>';
-                echo '<td style="background:rgb(33, 37, 46);"></td>';
+                echo '<td class="end_row_options" colspan=3 style="text-align:left;">Total:</td>';
+                echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_incomes_amount, 2).'</td>';
+                echo '<td class="end_row_options"></td>';
               echo '</tr>';
             echo '</table>';
           echo '</div>';
 
-          echo '<div>';// div for expenses
-            echo '<p style="margin:0px; text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Expenses</p>';
+          echo '<br>';
+
+          echo '<div class="div_element_block">';// div for expenses
+            echo '<h4 style="text-align:center;">Expenses</h4>';
             echo '<p style="width:95%; margin:0px; text-align:center;">';
               echo '<button name="prev_button" onclick="scroll_expenses(0);" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<p class="bi-box-arrow-left" style="color:white;"></p>';
+                echo '<i class="actions"><p class="bi-box-arrow-left"></p></i>';
               echo '</button>';
               echo '<button name="next_button" onclick="scroll_expenses(1);" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<p class="bi-box-arrow-right" style="color:white;"></p>';
+                echo '<i class="actions"><p class="bi-box-arrow-right"></p></i>';
               echo '</button>';
             echo '</p>';
-          echo '</div>';
+
 
           echo '<div id="scroll_div">';
             echo '<p id="current_page_num" style="text-align:center; color:grey; display:none;" value="1">1</p>'; //style="display:none;"
@@ -250,9 +266,9 @@ while ($row = $stmt->fetch()) {
                 //echo '<th>Category</th>';
                 echo '<th>Name</th>';
                 echo '<th>Date</th>';
-                echo '<th>Amount</th>';
-                echo '<th style="background-color: rgb(33, 37, 46);">';
-                  echo '<a href="../includes/finances.inc.php?form_type=Expense&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                echo '<th style="text-align:right;">Amount</th>';
+                echo '<th class="end_row_options">';
+                  echo '<a href="../includes/finances.inc.php?form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
                 echo '</th>';
               echo '</tr>';
               $total_expenses_amount = 0;
@@ -260,19 +276,30 @@ while ($row = $stmt->fetch()) {
               $show_limit = 5;                      // this limit variable is helpful for make next and previous eventually...
               $counter = 1;
               $additional_rows = 0;
+              $is_alternate_row = false;
+              $add_alternating_class = '';
               while ($row = $stmt->fetch()) {
+
                 if ($counter <= $show_limit){
-                  echo '<tr>';
-                    echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['fe_company']. '</td>';
+                    echo '<tr>';
+
+                    if ($is_alternate_row == false) {
+                      $add_alternating_class = '';
+                      $is_alternate_row = true;
+                    } else {
+                      $add_alternating_class = 'class="alternating_row"';
+                      $is_alternate_row = false;
+                    }
+                    echo '<td '.$add_alternating_class.' style="color:grey;">' .$row['fe_company']. '</td>';
                     //echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['cat_name']. '</td>';
-                    echo '<td style="background:rgb(25, 29, 32);">' .$row['fe_name']. '</td>';
+                    echo '<td '.$add_alternating_class.'>' .$row['fe_name']. '</td>';
                     $date_string = strtotime($row['fe_date']);
-                    echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M, d', $date_string). '</td>';
-                    echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['fe_amount'], 2). '</td>';
-                    echo '<td style="background:rgb(33, 37, 46);">';
+                    echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M, d', $date_string). '</td>';
+                    echo '<td '.$add_alternating_class.' style="text-align:right;">' .number_format((float)$row['fe_amount'], 2). '</td>';
+                    echo '<td class="end_row_options">';
                       echo '<span>'; //style="display:flex;"
-                        echo '<a href="../includes/finances.inc.php?selected_id='.$row['fe_id'].'&update_type=Edit&form_type=Expense&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete&form_type=Expense&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                        echo '<a href="../includes/finances.inc.php?selected_id='.$row['fe_id'].'&update_type=Edit&form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete&form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                       echo '</span>';
                     echo '</td>';
                   echo '</tr>';
@@ -287,22 +314,25 @@ while ($row = $stmt->fetch()) {
                 $counter++;
               }
               echo '<tr>';
-                echo '<td colspan=4 style="text-align:left; background-color:rgb(33, 37, 46);">Total: <p style="float:right;">$'.number_format($total_expenses_amount, 2).'</p></td>';
+                echo '<td colspan=4 class="end_row_options" style="text-align:left;">Total: <p style="float:right;">$'.number_format($total_expenses_amount, 2).'</p></td>';
                 //echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_expenses_amount, 2).'</td>';
-                echo '<td style="background:rgb(33, 37, 46);"></td>';
+                echo '<td class="end_row_options"></td>';
               echo '</tr>';
               echo '<tr>';
                 if ($additional_rows > 0) {
-                  echo '<td colspan=4 style="text-align:left;"><i>('.$additional_rows.' more rows...)</i> <p style="float:right;">($'.number_format($total_not_shown_expenses, 2).')</p></td>';
+                  echo '<td colspan=4 class="end_row_options" style="text-align:left;"><i>('.$additional_rows.' more rows...)</i> <p style="float:right;">($'.number_format($total_not_shown_expenses, 2).')</p></td>';
                   //echo '<td style="background:rgb(33, 37, 46);">($'.number_format($total_not_shown_expenses, 2).')</td>';
-                  echo '<td style="background:rgb(33, 37, 46);"></td>';
+                  echo '<td class="end_row_options"></td>';
                 }
               echo '</tr>';
             echo '</table>';
+            echo '</div>';
           echo '</div>';
 
-          echo '<div>'; // div for bills
-            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Bills</p>';
+          echo '<br>';
+
+          echo '<div class="div_element_block">'; // div for bills
+            echo '<h4 style="text-align:center;">Bills</h4>';
             $sql = "
                     SELECT bl.*,
                            cb.bill_id,
@@ -333,25 +363,35 @@ while ($row = $stmt->fetch()) {
             ";
             $dbh = new Dbh();
             $stmt = $dbh->connect()->query($sql);
-            echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+            echo '<table class="table table-dark" style="text-align:center;">';
               echo '<tr>';
                 echo '<th>Name</th>';
-                echo '<th>Amount</th>';
+                echo '<th style="text-align:right;">Amount</th>';
                 echo '<th>Frequency</th>';
-                echo '<th style="background-color: rgb(33, 37, 46);">';
-                  echo '<a href="../includes/finances.inc.php?form_type=Bill&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                echo '<th class="end_row_options">';
+                  echo '<a href="../includes/finances.inc.php?form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
                 echo '</th>';
               echo '</tr>';
               $total_bills_amount = 0;
+              $is_alternate_row = false;
+              $add_alternating_class = '';
               while ($row = $stmt->fetch()) {
-                echo '<tr>';
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['bill_name']. '</td>';
-                  echo '<td style="text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['bl_amount'], 2). '</td>';
-                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['bill_freq']. '</td>';
-                  echo '<td style="background:rgb(33, 37, 46);">';
+                  echo '<tr>';
+
+                  if ($is_alternate_row == false) {
+                    $add_alternating_class = '';
+                    $is_alternate_row = true;
+                  } else {
+                    $add_alternating_class = 'class="alternating_row"';
+                    $is_alternate_row = false;
+                  }
+                  echo '<td '.$add_alternating_class.'>' .$row['bill_name']. '</td>';
+                  echo '<td '.$add_alternating_class.' style="text-align:right;">' .number_format((float)$row['bl_amount'], 2). '</td>';
+                  echo '<td '.$add_alternating_class.' style="color:grey;">' .$row['bill_freq']. '</td>';
+                  echo '<td class="end_row_options">';
                     echo '<span>'; //style="display:flex;"
-                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['bill_id'].'&update_type=Edit&form_type=Bill&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete&form_type=Bill&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                      echo '<a href="../includes/finances.inc.php?selected_id='.$row['bill_id'].'&update_type=Edit&form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete&form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                     echo '</span>';
                   echo '</td>';
                 echo '</tr>';
@@ -360,15 +400,17 @@ while ($row = $stmt->fetch()) {
                 //echo "total_bills_amount: ".$total_bills_amount."<br>";
               }
               echo '<tr>';
-                echo '<td colspan=2 style="text-align:left; background-color:rgb(33, 37, 46);">Total:</td>';
-                echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_bills_amount, 2).'</td>';
-                echo '<td style="background:rgb(33, 37, 46);"></td>';
+                echo '<td class="end_row_options" style="text-align:left;">Total:</td>';
+                echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_bills_amount, 2).'</td>';
+                echo '<td colspan=2 class="end_row_options"></td>';
               echo '</tr>';
             echo '</table>';
           echo '</div>';
 
-          echo '<div>';// div for category spending
-            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Category Spending</p>';
+          echo '<br>';
+
+          echo '<div class="div_element_block">';// div for category spending
+            echo '<h4 style="text-align:center;">Category Spending</h4>';
 
                 $sql = "
                         SELECT SUM(fe.fe_amount) AS 'fe_amount',
@@ -401,49 +443,60 @@ while ($row = $stmt->fetch()) {
                 $total_spent_amount = 0;
                 $total_budget_amount = 0;
                 $total_over_under_amount = 0;
+                $is_alternate_row = false;
+                $add_alternating_class = '';
                 while ($row = $stmt->fetch()) {
                   $build_table .= '<tr>';
-                    $build_table .= '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
-                    $build_table .= '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($row['fe_amount'], 2). '</td>';
+
+                  if ($is_alternate_row == false) {
+                    $add_alternating_class = '';
+                    $is_alternate_row = true;
+                  } else {
+                    $add_alternating_class = 'class="alternating_row"';
+                    $is_alternate_row = false;
+                  }
+
+                    $build_table .= '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
+                    $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['fe_amount'], 2). '</td>';
                     if ($row['bud_amount'] == NULL) {
-                        $build_table .= '<td style="text-align:right; background:rgb(25, 29, 32); color:grey;">(No budget set)</td>';
-                        $build_table .= '<td style="text-align:right; background:rgb(25, 29, 32); color:green;">$0.00</td>';
+                        $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">(No budget set)</td>';
+                        $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:green;">$0.00</td>';
                     } else {
-                      $build_table .= '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format($row['bud_amount'], 2). '</td>';
+                      $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['bud_amount'], 2). '</td>';
                       // get the difference:
                       $bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
                       $color = 'red';
-                      if ($bud_diff > 0) { $color = 'green'; }
+                      if ($bud_diff >= 0) { $color = 'green'; }
                       $total_over_under_amount += $bud_diff;
                       $total_budget_amount += $row['bud_amount'];
                       $total_spent_amount += $row['fe_amount'];
-                      $build_table .= '<td style="text-align:right; background:rgb(25, 29, 32); color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
+                      $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
                     }
                   $build_table .= '</tr>';
 
                 }
                 // check if there was anything to show:
                 if ($build_table == '') {
-                  echo '<p style="color:grey; text-align:center;">(Nothing to show)</p>';
+                  echo '<p class="end_row_options" style="color:grey; text-align:center;">(Nothing to show)</p>';
                 } else {
-                  echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+                  echo '<table class="table table-dark" style="text-align:center;">';
                       echo '<tr>';
                         echo '<th>Category</th>';
-                        echo '<th>Spent</th>';
-                        echo '<th>Budget</th>';
-                        echo '<th>Over/Under</th>';
+                        echo '<th style="text-align:right;">Spent</th>';
+                        echo '<th style="text-align:right;">Budget</th>';
+                        echo '<th style="text-align:right;">Over/Under</th>';
                       echo '</tr>';
 
                       echo $build_table;
 
                       echo '<tr>';
-                        echo '<td colspan=1 style="text-align:left; background-color:rgb(33, 37, 46);">Totals:</td>';
-                        echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_spent_amount, 2).'</td>';
-                        echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_budget_amount, 2).'</td>';
+                        echo '<td colspan=1 class="end_row_options" style="text-align:left;">Totals:</td>';
+                        echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_spent_amount, 2).'</td>';
+                        echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_budget_amount, 2).'</td>';
                         $color = 'red';
-                        if ($bud_diff > 0) { $color = 'green'; }
-                        echo '<td style="text-align:right; background-color:rgb(33, 37, 46); color:'.$color.';">$'.number_format($total_over_under_amount, 2).'</td>';
-                        echo '<td style="background:rgb(33, 37, 46);"></td>';
+                        if ($total_over_under_amount >= 0) { $color = 'green'; }
+                        echo '<td class="end_row_options" style="text-align:right; color:'.$color.';">$'.number_format($total_over_under_amount, 2).'</td>';
+                        echo '<td class="end_row_options"></td>';
                       echo '</tr>';
 
                   echo '</table>';
@@ -451,6 +504,7 @@ while ($row = $stmt->fetch()) {
 
           echo '</div>';
 
+          echo '<br>';
           /*
           echo '<div>'; // div for showing month's incomes, expenses and savings totals
             echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Month Totals</p>';

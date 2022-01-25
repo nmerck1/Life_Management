@@ -38,8 +38,7 @@ while ($row = $stmt->fetch()) {
   $user_name = $row['user_name'];
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
-  $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -47,7 +46,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 </head>
 <body>
@@ -95,8 +94,12 @@ while ($row = $stmt->fetch()) {
   echo '<div class="container" style="text-align:center;">';
     echo '<p>(Actions)</p>';
     echo '<a class="btn btn-primary" href="../includes/profile.inc.php?user_id='.$user_id.'&action=Password">Change Password</a>';
-
+    echo '<br>';
+    echo '<br>';
+    echo '<a class="btn btn-primary" href="../includes/theme.inc.php?user_id='.$user_id.'&action=Theme">Change Theme</a>';
   echo '</div>';
+
+  echo '<br>';
 
   $footer = new Footer();
   $footer->show_footer();

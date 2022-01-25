@@ -2,7 +2,7 @@
 .navbar {
   margin-bottom: 0;
   border-radius: 0;
-  background-color: rgb(25, 29, 32);
+  /* background-color: rgb(25, 29, 32); */
 }
 
 .my_list {
@@ -33,16 +33,16 @@ label {
 }
 
 h1 {
-  color: rgb(47, 115, 152);
+  /*color: rgb(47, 115, 152); */
 }
 
 .table-dark th {
-  background: rgb(47, 115, 152);
+  /*background: rgb(47, 115, 152); */
   border: none;
 }
 
 .table-dark td {
-  background: rgb(33, 37, 46); /* rgb(25, 29, 32);  */
+  /*background: rgb(33, 37, 46);  rgb(25, 29, 32);  */
   border: none;
 }
 
@@ -59,7 +59,7 @@ h1 {
 }
 
 input, select, option, textarea {
-  background: rgb(33, 37, 46);
+/*  background: rgb(33, 37, 46); */
   border: 1px solid grey;
   color: white;
 }
@@ -96,26 +96,18 @@ a:hover {
   width: 20%;
 }
 
-/* these class styles below are for the coloring of finances and each type */
-.incomes {
-  color: rgb(77, 255, 77);
-
-}
-.expenses {
-  color: rgb(68, 68, 255);
-}
-
 
 /* Set black background color, white text and some padding */
 footer {
-  background-color: rgb(25, 29, 32);
+  /* background-color: rgb(25, 29, 32); */
   color: white;
   padding: 1px;
-  border-top: 2px solid rgb(47, 115, 152);
+  /* border-top: 2px solid rgb(47, 115, 152); */
+  border: none; 
 }
 
 body {
-  background-color: rgb(33, 37, 46);
+  /* background-color: rgb(33, 37, 46); */
   color: white;
   height: 100%;
 }
@@ -126,7 +118,7 @@ ul {
   margin: 0;
   padding: 0;
   /* overflow: hidden; */
-  background: rgb(25, 29, 32);
+  /* background: rgb(25, 29, 32); */
   position: -webkit-sticky; /* Safari */
   position: sticky;
   top: 0;

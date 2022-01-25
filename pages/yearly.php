@@ -38,8 +38,7 @@ while ($row = $stmt->fetch()) {
   $user_name = $row['user_name'];
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
-  $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -47,7 +46,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 </head>
 <body>
@@ -62,9 +61,54 @@ while ($row = $stmt->fetch()) {
   $finance_nav->show_header_nav();
 ?>
 
+<script type="text/javascript">
+	function scroll_years(next_prev_num){
+      // setup the ajax request
+  		var xhttp = new XMLHttpRequest();
+      // get variables from inputs below:
+  		var current_year_num = document.getElementById('current_year_num');
+      var user_id = document.getElementById('user_id');
+      var date_search = document.getElementById('date_search');
+      var table_scroll = 'Yearly'
 
+  		var action = 'Next';
+      if (next_prev_num == 0) {
+        action = 'Prev';
+      }
+
+      var can_scroll = true;
+      if (action == 'Prev') {
+        if (current_year_num.innerHTML == '2019') { // I first made the life management system back in 2019
+          can_scroll = false;
+        }
+      }
+
+      if ( can_scroll == true ) {
+        // create link to send GET variables through
+        var query_string = "../ajax/scroll.ajax.php";
+        query_string += "?current_num=" + current_year_num.innerHTML;
+        //query_string += "&form_type=" + "Expense";
+        query_string += "&user_id=" + user_id.innerHTML;
+        query_string += "&action=" + action;
+        query_string += "&date_search=" + date_search.innerHTML;
+        query_string += "&table_scroll=" + table_scroll;
+
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+           document.getElementById("scroll_div").innerHTML = this.responseText;
+          }
+        };
+        xhttp.open("GET", query_string, true);
+        xhttp.send();
+
+        // when the data is returned after ajax, it redirects back to inventory
+        //window.location = "../pages/finances.php";
+      }
+	}
+</script>
 
       <?php
+      echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
         // this is for looking at previous finance dates in the system
         $date_search = date('Y-m-d');
         if (isset($_POST['date_search'])) {
@@ -93,7 +137,7 @@ while ($row = $stmt->fetch()) {
           $show_month_year_title = date('F', strtotime($date_search));
           //echo '<h2 style="text-align:center;">'.$show_month_year_title.'</h2>';
           // mini form for displaying different dates in history
-          echo '<form method="post" action="../pages/yearly.php" style="text-align:center;">';
+          //echo '<form method="post" action="../pages/yearly.php" style="text-align:center;">';
             //echo '<select>';
             //foreach ($months_of_year as $month) {
             //  echo '<option></option>';
@@ -101,10 +145,10 @@ while ($row = $stmt->fetch()) {
             //echo '</select>';
             //echo $date_search;
             //$date = date('Y-m-d');	// default to today
-            echo '<input type="date" name="date_search" value="'.$date_search.'"></input>';
+            //echo '<input type="date" name="date_search" value="'.$date_search.'"></input>';
 
-            echo '<button type="submit" name="submit_search" class="btn btn-primary btn-sm" value="Display">Display Date</button>';
-          echo '</form>';
+            //echo '<button type="submit" name="submit_search" class="btn btn-primary btn-sm" value="Display">Display Date</button>';
+          //echo '</form>';
 
           echo '<br>';
           /*
@@ -151,22 +195,34 @@ while ($row = $stmt->fetch()) {
 
           echo '<br>';
 
-          echo '<div>';// div for yearly savings overview
+          echo '<div class="div_element_block">';// div for yearly savings overview
+          //  echo '<h2 style="text-align:center;">'.$this_year.'</h2>';
+            echo '<p style="width:100%; margin:0px; text-align:center;">';
+              echo '<button name="prev_button" onclick="scroll_years(0);" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+                echo '<i class="actions"><p class="bi-box-arrow-left"></p></i>';
+              echo '</button>';
+              echo '<button name="next_button" onclick="scroll_years(1);" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+                echo '<i class="actions"><p class="bi-box-arrow-right"></p></i>';
+              echo '</button>';
+            echo '</p>';
 
-            //echo '<h1 style="text-align:center;">Year</h1>';
-            echo '<h2 style="text-align:center;">'.$this_year.'</h2>';
 
-            echo '<table class="table table-dark" style="text-align:center;">'; // table where rows are incomes, expenses and savings, and columns are months
-              echo '<tr>';
-                echo '<th></th>';
-                //foreach ($months_of_year as $month) {
-                  //echo '<th>'.$month.'</th>';
-                //}
-                echo '<th>Incomes</th>';
-                echo '<th>Expenses</th>';
-                echo '<th>Savings</th>';
-              echo '</tr>';
-              //echo '<tr>';
+            echo '<div id="scroll_div">';
+              echo '<h3 id="current_year_num" style="text-align:center;" value="'.$this_year.'">'.$this_year.'</h3>'; //style="display:none;"
+              echo '<p id="date_search" style="display:none;" value="'.$date_search.'">'.$date_search.'</p>';
+
+              echo '<table class="table table-dark" style="text-align:center;">'; // table where rows are incomes, expenses and savings, and columns are months
+                echo '<tr>';
+                  echo '<th></th>';
+                  //foreach ($months_of_year as $month) {
+                    //echo '<th>'.$month.'</th>';
+                  //}
+                  echo '<th>Incomes</th>';
+                  echo '<th>Expenses</th>';
+                  echo '<th>Savings</th>';
+                  echo '<th>Savings (If all Loans are paid)</th>';
+                echo '</tr>';
+                //echo '<tr>';
                 //echo '<td style="background:rgb(25, 29, 32);">Incomes</td>';
                 $income_monthly_totals = array();
                 $sql = "
@@ -300,7 +356,36 @@ while ($row = $stmt->fetch()) {
                   }
 
                 }
-*/
+              */
+              //  get the total savings if all your loans are paid off
+              $sql = "
+                      SELECT SUM(i.iou_amount_owed) AS 'amount_owed',
+                             SUM(i.iou_amount_paid) AS 'amount_paid',
+                             i.iou_loaner_id,
+                             i.iou_is_active
+                      FROM ious i
+
+                      WHERE i.iou_is_active = 1
+                      AND i.iou_loaner_id = ".$user_id."
+                      AND YEAR(i.iou_owe_date)=YEAR('".$date_search."')
+                      AND i.iou_is_paid_off = 0;
+              ";
+              //echo $sql.'<br>';
+              $dbh = new Dbh();
+              $stmt = $dbh->connect()->query($sql);
+
+              $total_loan_amount_owed = 0;
+              //$total_loan_amount_paid = 0;
+              while ($row = $stmt->fetch()) {
+                $total_loan_amount_owed = $row['amount_owed'];
+                //$total_loan_amount_paid = $row['amount_paid'];
+              }
+              // get calculation of what is remaining:
+              //$total_loan_amount_remaining = ($total_loan_amount_owed - $total_loan_amount_paid);
+
+
+
+
 
               //echo '</tr>';
 
@@ -308,69 +393,95 @@ while ($row = $stmt->fetch()) {
               $total_yearly_expenses = 0;
               $total_yearly_incomes = 0;
               $total_yearly_savings = 0;
-
+              $total_yearly_loan_savings = 0;
+              $is_alternate_row = false;
+              $add_alternating_class = '';
               foreach ($months_of_year as $month) {
                 $this_total = '~';
                 $color = 'grey';
 
+                $month_savings = 0;
+                $month_savings_with_loans = 0;
+
+                if ($is_alternate_row == false) {
+                  $add_alternating_class = '';
+                  $is_alternate_row = true;
+                } else {
+                  $add_alternating_class = 'class="alternating_row"';
+                  $is_alternate_row = false;
+                }
+
                 echo '<tr>';
                   // month name
-                  echo '<td style="color:grey; background:rgb(25, 29, 32);">'.$month.'</td>';
+                  echo '<td '.$add_alternating_class.' style="color:grey;">'.$month.'</td>';
                   // incomes
                   if (array_key_exists($month, $income_monthly_totals)) {
                     $total_yearly_incomes += $income_monthly_totals[$month];
 
                     $this_total = '$'.$income_monthly_totals[$month];
-                    $color = 'white';
-                    echo '<td style="color:'.$color.'; background:rgb(25, 29, 32);">'.$this_total.'</td>';
+                    echo '<td '.$add_alternating_class.'>'.$this_total.'</td>';
                   } else {
-                    echo '<td style="color:grey; background:rgb(25, 29, 32);">~</td>';
+                    echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
                   }
                   // expenses
                   if (array_key_exists($month, $expense_monthly_totals)) {
                     $add_bills_total = $total_history_bills + $expense_monthly_totals[$month];
                     $total_yearly_expenses += $add_bills_total;
 
-                    $color = 'white';
                     if (array_key_exists($month, $income_monthly_totals)) {
                       $month_savings = ($income_monthly_totals[$month] - $add_bills_total);
                     } else {
-                      $month_savings = 0 - $add_bills_total;
+                      $month_savings = (0 - $add_bills_total);
                     }
+                    $month_savings_with_loans = ($month_savings + $total_loan_amount_owed); // regardless we add loans to savings
                     $total_yearly_savings += $month_savings;
+                    $total_yearly_loan_savings += $month_savings_with_loans;
                     // check if positive
-                    $save_color = 'red';
+                    $save_color1 = 'red';
                     if ($month_savings >= 0) {
-                      $save_color = 'green';
+                      $save_color1 = 'green';
                     }
                     //$savings_total_string .= '<td style="color:'.$save_color.';">$'.number_format($month_savings, 2).'</td>';
-                    echo '<td style="color:white; background:rgb(25, 29, 32);">$'.number_format($add_bills_total, 2).'</td>';
-                    echo '<td style="color:'.$save_color.'; background:rgb(25, 29, 32);">$'.number_format($month_savings, 2).'</td>';
+                    echo '<td '.$add_alternating_class.'>$'.number_format($add_bills_total, 2).'</td>';
+                    echo '<td '.$add_alternating_class.' style="color:'.$save_color1.';">$'.number_format($month_savings, 2).'</td>';
+                    $save_color2 = 'red';
+                    if ($month_savings_with_loans >= 0) {
+                      $save_color2 = 'green';
+                    }
+                    echo '<td '.$add_alternating_class.' style="color:'.$save_color2.';">$'.number_format($month_savings_with_loans, 2).'</td>';
                   } else {
                     //$savings_total_string .= '<td style="color:grey;">~</td>';
-                    echo '<td style="color:grey; background:rgb(25, 29, 32);">~</td>';
-                    echo '<td style="color:grey; background:rgb(25, 29, 32);">~</td>';
+                    echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
+                    echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
+                    echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
                   }
                 echo '</tr>';
               }
 
 
               echo '<tr>';
-                echo '<td style="color:grey;">(Yearly Totals)</td>';
-                echo '<td>$'.number_format($total_yearly_incomes, 2).'</td>';
-                echo '<td>$'.number_format($total_yearly_expenses, 2).'</td>';
+                echo '<td class="end_row_options" tyle="color:grey;">(Yearly Totals)</td>';
+                echo '<td class="end_row_options">$'.number_format($total_yearly_incomes, 2).'</td>';
+                echo '<td class="end_row_options">$'.number_format($total_yearly_expenses, 2).'</td>';
                 $save_color = 'red';
                 if ($total_yearly_savings >= 0) {
                   $save_color = 'green';
                 }
-                echo '<td style="color:'.$save_color.';">$'.number_format($total_yearly_savings, 2).'</td>';
+                echo '<td class="end_row_options" style="color:'.$save_color.';">$'.number_format($total_yearly_savings, 2).'</td>';
+                $save_color = 'red';
+                if ($total_yearly_loan_savings >= 0) {
+                  $save_color = 'green';
+                }
+                echo '<td class="end_row_options" style="color:'.$save_color.';">$'.number_format($total_yearly_loan_savings, 2).'</td>';
               echo '</tr>';
 
 
             echo '</table>';
           echo '</div>';
-
+          echo '</div>';
         echo '</div>';
+
+        echo '<br>';
       ?>
 
 <?php

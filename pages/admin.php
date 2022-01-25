@@ -45,7 +45,7 @@ while ($row = $stmt->fetch()) {
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
   $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -53,7 +53,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 </head>
 <body>
@@ -101,17 +101,27 @@ while ($row = $stmt->fetch()) {
     $dbh = new Dbh();
     $stmt = $dbh->connect()->query($sql);
 
+    $is_alternate_row = false;
+    $add_alternating_class = '';
     while ($row = $stmt->fetch()) {
-      echo '<tr>';
+        echo '<tr>';
+
+        if ($is_alternate_row == false) {
+          $add_alternating_class = '';
+          $is_alternate_row = true;
+        } else {
+          $add_alternating_class = 'class="alternating_row"';
+          $is_alternate_row = false;
+        }
         $this_user_id = $row['user_id'];
         $role_color = $row['role_color'];
         //echo 'this_user_id: '.$this_user_id.'<br>';
-        echo '<td style="background:rgb(25, 29, 32);">'.$row['user_name'].'</td>';
-        echo '<td style="background:rgb(25, 29, 32); color:'.$role_color.';">'.$row['role_name'].'</td>';
-        echo '<td style="background:rgb(25, 29, 32);">'.$row['user_fname'].' '.$row['user_lname'].'</td>';
+        echo '<td '.$add_alternating_class.'>'.$row['user_name'].'</td>';
+        echo '<td '.$add_alternating_class.' style="color:'.$role_color.';">'.$row['role_name'].'</td>';
+        echo '<td '.$add_alternating_class.'>'.$row['user_fname'].' '.$row['user_lname'].'</td>';
 
         $date_string = strtotime($row['user_last_logged']);
-        echo '<td style="background:rgb(25, 29, 32); color:grey;">'.date('m-d-Y h:iA', $date_string).'</td>';
+        echo '<td '.$add_alternating_class.' style="color:grey;">'.date('m-d-Y h:iA', $date_string).'</td>';
 
         // now for each row and each user, let's print out their stats
         $sql_stats = "
@@ -136,9 +146,9 @@ while ($row = $stmt->fetch()) {
         $stmt_stats = $dbh->connect()->query($sql_stats);
 
         while ($row = $stmt_stats->fetch()) {
-          echo '<td style="background:rgb(25, 29, 32);">'.$row['num_incomes'].'</td>';
-          echo '<td style="background:rgb(25, 29, 32);">'.$row['num_expenses'].'</td>';
-          echo '<td style="background:rgb(25, 29, 32);">'.$row['num_food_logs'].'</td>';
+          echo '<td '.$add_alternating_class.'>'.$row['num_incomes'].'</td>';
+          echo '<td '.$add_alternating_class.'>'.$row['num_expenses'].'</td>';
+          echo '<td '.$add_alternating_class.'>'.$row['num_food_logs'].'</td>';
         }
 
       echo '</tr>';

@@ -158,14 +158,14 @@ function library_get_companies_dropdown($comp_name){
 	$stmt = $dbh->connect()->query($sql);
 	echo '<select id="company" name="company">';
 		while ($row = $stmt->fetch()) {
-			$color = 'white';
+			$color = '';
 			if ($comp_name == $row['comp_name']) {
 				if ($row['comp_name'] == 'Other') {
-					$color = 'red';
+					$color = 'color:red;';
 				}
-				echo '<option value="'.$row['comp_name'].'" selected="selected" style="color:'.$color.';">'.$row['comp_name'].'</option>';
+				echo '<option value="'.$row['comp_name'].'" selected="selected" style="'.$color.'">'.$row['comp_name'].'</option>';
 			} else {
-				echo '<option value="'.$row['comp_name'].'" style="color:'.$color.';">'.$row['comp_name'].'</option>';
+				echo '<option value="'.$row['comp_name'].'" style="'.$color.'">'.$row['comp_name'].'</option>';
 			}
 
 		}

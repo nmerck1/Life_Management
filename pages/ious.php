@@ -38,8 +38,7 @@ while ($row = $stmt->fetch()) {
   $user_name = $row['user_name'];
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
-  $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -47,7 +46,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 </head>
 <body>
@@ -75,13 +74,13 @@ while ($row = $stmt->fetch()) {
 
           $loaner = '=';
           $debtor = '!=';
-          $color = 'white';
+          $color = '';
           $form_type = 'Loan';
           // check to see if this is owed by current user or not:
           if ($current_user_owes == true) {
             $loaner = '!=';
             $debtor = '=';
-            $color = 'red';
+            $color = 'color:red;';
             $form_type = 'Debt';
           }
 
@@ -129,7 +128,7 @@ while ($row = $stmt->fetch()) {
           //echo $sql;
           $dbh = new Dbh();
           $stmt = $dbh->connect()->query($sql);
-          echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+          echo '<table class="table table-dark" style="text-align:center;">';
           echo '<tr>';
             echo '<th>Reason</th>';
             if ($current_user_owes == true) {
@@ -138,54 +137,65 @@ while ($row = $stmt->fetch()) {
               echo '<th>Debtor</th>';
             }
             if ($paid_off == false) {
-              echo '<th>Owed</th>'; //echo '<th>Amount Owed</th>';
+              echo '<th style="text-align:right;">Owed</th>'; //echo '<th>Amount Owed</th>';
             }
-            echo '<th>Paid</th>'; // echo '<th>Amount Paid</th>';
+            echo '<th style="text-align:right;">Paid</th>'; // echo '<th>Amount Paid</th>';
             if ($paid_off == false) {
-              echo '<th>Left</th>'; // echo '<th>Amount Left</th>';
+              echo '<th style="text-align:right;">Remaining</th>'; // echo '<th>Amount Left</th>';
             }
             echo '<th>Owe Date</th>';
             if ($paid_off == true) {
               echo '<th>Paid Off Date</th>';  // this is only visible in the paid off tables
             }
-            echo '<th style="background-color: rgb(33, 37, 46);">';
+            echo '<th class="end_row_options">';
             if ($paid_off == false) {
-              echo '<a href="../includes/ious.inc.php?form_type='.$form_type.'&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+              echo '<a href="../includes/ious.inc.php?form_type='.$form_type.'&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
             }
             echo '</th>';
           echo '</tr>';
             $total_owed_amount = 0;
             $total_paid_amount = 0;
             $total_left_amount = 0;
+            $is_alternate_row = false;
+            $add_alternating_class = '';
             while ($row = $stmt->fetch()) {
               echo '<tr>';
-                echo '<td style="background:rgb(25, 29, 32); color:grey;">' .$row['iou_reason']. '</td>';
+
+              if ($is_alternate_row == false) {
+                $add_alternating_class = '';
+                $is_alternate_row = true;
+              } else {
+                $add_alternating_class = 'class="alternating_row"';
+                $is_alternate_row = false;
+              }
+
+                echo '<td '.$add_alternating_class.' style="color:grey;">' .$row['iou_reason']. '</td>';
                 if ($current_user_owes == true) {
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['loaner_user_name']. '</td>';
+                  echo '<td '.$add_alternating_class.'>' .$row['loaner_user_name']. '</td>';
                 } else {
-                  echo '<td style="background:rgb(25, 29, 32);">' .$row['debtor_user_name']. '</td>';
+                  echo '<td '.$add_alternating_class.'>' .$row['debtor_user_name']. '</td>';
                 }
                 if ($paid_off == false) {
-                  echo '<td style="color:'.$color.'; text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['iou_amount_owed'], 2). '</td>';
+                  echo '<td '.$add_alternating_class.' style="'.$color.' text-align:right; ">' .number_format((float)$row['iou_amount_owed'], 2). '</td>';
                 }
-                echo '<td style="color:green; text-align:right; background:rgb(25, 29, 32);">' .number_format((float)$row['iou_amount_paid'], 2). '</td>';
+                echo '<td '.$add_alternating_class.' style="color:green; text-align:right;">' .number_format((float)$row['iou_amount_paid'], 2). '</td>';
                 if ($paid_off == false) {
                   $amount_left = ($row['iou_amount_owed'] - $row['iou_amount_paid']);
-                  echo '<td style="color:'.$color.'; text-align:right; background:rgb(25, 29, 32);">' .number_format($amount_left, 2). '</td>';
+                  echo '<td '.$add_alternating_class.' style="'.$color.' text-align:right;">' .number_format($amount_left, 2). '</td>';
                 }
                 $date_string1 = strtotime($row['iou_owe_date']);
-                echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M d, Y', $date_string1). '</td>';
+                echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M d, Y', $date_string1). '</td>';
                 if ($row['iou_is_paid_off'] == 1) {
                   $date_string2 = strtotime($row['iou_paid_off_date']); // only visible when paid off is equal to true or 1
-                  echo '<td style="background:rgb(25, 29, 32); color:grey;">' .date('M d, Y', $date_string2). '</td>';
+                  echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M d, Y', $date_string2). '</td>';
                 }
 
                 // below options/actions are only visible when the created by is the current user
-                echo '<td style="background:rgb(33, 37, 46);">';
+                echo '<td class="end_row_options">';
                   if ($row['iou_created_by'] == $user_id && $row['iou_is_paid_off'] == 0) {
                     echo '<span>'; //style="display:flex;"
-                      echo '<a href="../includes/ious.inc.php?selected_id='.$row['iou_id'].'&update_type=Update&form_type='.$form_type.'&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                      echo '<a href="../ajax/ious.ajax.php?selected_id='.$row['iou_id'].'&update_type=Delete&form_type='.$form_type.'&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+                      echo '<a href="../includes/ious.inc.php?selected_id='.$row['iou_id'].'&update_type=Update&form_type='.$form_type.'&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+                      echo '<a href="../ajax/ious.ajax.php?selected_id='.$row['iou_id'].'&update_type=Delete&form_type='.$form_type.'&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                     echo '</span>';
                   }
                 echo '</td>';
@@ -198,15 +208,15 @@ while ($row = $stmt->fetch()) {
               }
             }
             echo '<tr>';
-              echo '<td colspan=2 style="text-align:left; background-color:rgb(33, 37, 46);">Totals:</td>';
+              echo '<td colspan=2 class="end_row_options" style="text-align:left;">Totals:</td>';
               if ($paid_off == false) {
-                echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_owed_amount, 2).'</td>';
+                echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_owed_amount, 2).'</td>';
               }
-              echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_paid_amount, 2).'</td>';
+              echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_paid_amount, 2).'</td>';
               if ($paid_off == false) {
-                echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_left_amount, 2).'</td>';
+                echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_left_amount, 2).'</td>';
               }
-              echo '<td colspan=3 style="background:rgb(33, 37, 46);"></td>';
+              echo '<td class="end_row_options" colspan=3></td>';
             echo '</tr>';
           echo '</table>';
         }
@@ -220,15 +230,17 @@ while ($row = $stmt->fetch()) {
                     It will also show you what debts have been paid off both by you and your previous debtors.)';
           echo '</i>';
 
-          echo '<div>'; // div for owed to you
-            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Your Loans</p>';
+          echo '<div class="div_element_block">'; // div for owed to you
+            echo '<h4 style="text-align:center;">Your Loans</h4>';
 
             get_ious_table($user_id, false, false);
 
           echo '</div>';
 
-          echo '<div>'; // div for you owe
-            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Your Debts</p>';
+          echo '<br>';
+
+          echo '<div class="div_element_block">'; // div for you owe
+            echo '<h4 style="text-align:center;">Your Debts</h4>';
 
             get_ious_table($user_id, true, false);
 
@@ -237,19 +249,23 @@ while ($row = $stmt->fetch()) {
           echo '<br>';
           echo '<br>';
 
-          echo '<div>'; // div for your paid loans
-            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Your PAID Loans</p>';
+          echo '<div class="div_element_block">'; // div for your paid loans
+            echo '<h4 style="text-align:center;">Your PAID Loans</h4>';
 
             get_ious_table($user_id, false, true);
 
           echo '</div>';
 
-          echo '<div>'; // div for your paid debts
-            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Your PAID Debts</p>';
+          echo '<br>';
+
+          echo '<div class="div_element_block">'; // div for your paid debts
+            echo '<h4 style="text-align:center;">Your PAID Debts</h4>';
 
             get_ious_table($user_id, true, true);
 
           echo '</div>';
+
+          echo '<br>';
 
         echo '</div>';  // end main div
       ?>

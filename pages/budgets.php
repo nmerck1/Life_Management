@@ -39,7 +39,7 @@ while ($row = $stmt->fetch()) {
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
   $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -47,7 +47,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 </head>
 <body>
@@ -90,16 +90,20 @@ while ($row = $stmt->fetch()) {
         // start the outer table
         echo '<div class="container">';
           echo '<h1 style="text-align:center;">Budgets</h1>';
+          echo '<i style="color:grey;">';
+            echo '(This is where you can create your own monthly budgets.
+                  You can change or delete these at any time to reflect your
+                  current finance goals.)';
+          echo '</i>';
 
-
-          echo '<div>';// div for category spending
-            echo '<p style="text-align:center; background: rgb(33, 37, 46); border-right:2px solid rgb(33, 37, 46); border-top:2px solid rgb(33, 37, 46);">Custom Budgets</p>';
+          echo '<div class="div_element_block">';// div for budgets
+            echo '<h4 style="text-align:center;">Custom Budgets</h4>';
             echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
                 echo '<tr>';
                   echo '<th>Name</th>';
-                  echo '<th>Amount</th>';
-                  echo '<th style="background-color: rgb(33, 37, 46);">';
-                    echo '<a href="../includes/finances.inc.php?form_type=Budget&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
+                  echo '<th style="text-align:right;">Amount</th>';
+                  echo '<th class="end_row_options">';
+                    echo '<a href="../includes/finances.inc.php?form_type=Budget&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
                   echo '</th>';
                 echo '</tr>';
                 $sql = "
@@ -122,27 +126,38 @@ while ($row = $stmt->fetch()) {
                 $stmt = $dbh->connect()->query($sql);
 
                 $total_budget_amount = 0;
+                $is_alternate_row = false;
+                $add_alternating_class = '';
                 while ($row = $stmt->fetch()) {
                   echo '<tr>';
-                    echo '<td style="background:rgb(25, 29, 32);">' .$row['cat_name']. '</td>';
-                    echo '<td style="text-align:right; background:rgb(25, 29, 32);">$' .number_format(($row['bud_amount']), 2). '</td>';
-                    echo '<td style="background:rgb(33, 37, 46);">';
-                        echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&update_type=Edit&form_type=Budget&user_id='.$user_id.'"><p class="bi-pencil-fill" style="color:white;"></p></a>';
-                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget&user_id='.$user_id.'"><p class="bi-trash-fill" style="color:white;"></p></a>';
+
+                  if ($is_alternate_row == false) {
+                    $add_alternating_class = '';
+                    $is_alternate_row = true;
+                  } else {
+                    $add_alternating_class = 'class="alternating_row"';
+                    $is_alternate_row = false;
+                  }
+                    echo '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
+                    echo '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format(($row['bud_amount']), 2). '</td>';
+                    echo '<td class="end_row_options">';
+                        echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&update_type=Edit&form_type=Budget&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                     echo '</td>';
                   echo '</tr>';
                   $total_budget_amount += (float)$row['bud_amount'];
                 }
 
                 echo '<tr>';
-                  echo '<td colspan=1 style="text-align:left; background-color:rgb(33, 37, 46);">Total:</td>';
-                  echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_budget_amount, 2).'</td>';
-                echo '<td style="background:rgb(33, 37, 46);"></td>';
+                  echo '<td colspan=1 class="end_row_options" style="text-align:left;">Total:</td>';
+                  echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_budget_amount, 2).'</td>';
+                echo '<td class="end_row_options"></td>';
                 echo '</tr>';
 
             echo '</table>';
           echo '</div>';
 
+          echo '<br>';
 
         echo '</div>';
       ?>

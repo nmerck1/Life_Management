@@ -38,8 +38,7 @@ while ($row = $stmt->fetch()) {
   $user_name = $row['user_name'];
   $user_fname = $row['user_fname'];
   $user_lname = $row['user_lname'];
-  $pass_word = $row['pass_word'];
-  //echo "user_fname: ".$user_fname."<br>";
+  $user_theme = $row['user_theme'];
 }
 ?>
 <!DOCTYPE html>
@@ -47,7 +46,7 @@ while ($row = $stmt->fetch()) {
 <head>
   <?php
     $header = new Header();
-    $header->show_header();
+    $header->show_header($user_theme);
   ?>
 </head>
 <body>
@@ -141,13 +140,13 @@ while ($row = $stmt->fetch()) {
           /* store the result in an internal buffer */
           $num_stmt->store_result();
           if ($num_stmt->num_rows > 0) {
-            echo '<table class="table table-dark" style="background-color:#3a5774; width:100%;">'; // mini table to display months
+            echo '<table class="table table-dark" style="width:100%;">'; // mini table to display months
               echo '<tr>';
                 echo '<th>Type</th>';
                 echo '<th>From</th>';
                 echo '<th>Subject</th>';
                 echo '<th>Sent</th>';
-                echo '<th style="background-color: rgb(33, 37, 46);">';
+                echo '<th class="end_row_options">';
                   //echo '<a href="../ajax/messages.ajax.php?form_type=Income&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
                 echo '</th>';
               echo '</tr>';
@@ -157,36 +156,35 @@ while ($row = $stmt->fetch()) {
 
 
 
+          $is_alternate_row = false;
+          $add_alternating_class = '';
           while ($row = $stmt->fetch()) {
             echo '<tr>';
+
+            if ($is_alternate_row == false) {
+              $add_alternating_class = '';
+              $is_alternate_row = true;
+            } else {
+              $add_alternating_class = 'class="alternating_row"';
+              $is_alternate_row = false;
+            }
               //echo '<td style="display:none;"><p id="msg_id" name="msg_id" value="'.$row['msg_id'].'">'.$row['msg_id'].'</p></td>';
               //echo '<td>'.$row['from_fname'].' '.$row['from_lname'].'</td>';
-              $list_style = 'none';
+              $font_weight = 'font-weight:normal;';
               if ($row['n_read_date'] < date('2020-01-01 00:00:00')) {
-                $list_style = 'square';
+                $font_weight = 'font-weight:bold;';
               }
 
-              echo '<td>';
-                echo '<ul>';
-                  echo '<li style="list-style-type:'.$list_style.'; color:rgb(0 114 255);">';
-                    echo '<p style="color:white;">'.$row['n_type'].'</p>';
-                  echo '</li>';
-                echo '</ul>';
+              echo '<td '.$add_alternating_class.' style="'.$font_weight.'">'.$row['n_type'].'</td>';
+              echo '<td '.$add_alternating_class.' style="'.$font_weight.'">';
+                echo '<i style="color:'.$row['from_role_color'].'; style="'.$font_weight.'"">'.$row['from_username'].' ('.$row['from_role_name'].')</i>';
               echo '</td>';
-
-              echo '<td>';
-                //echo '<ul>';
-                  //echo '<li style="list-style-type:'.$list_style.'; color:rgb(0 114 255);">';
-                    echo '<p style="color:'.$row['from_role_color'].';">'.$row['from_username'].' ('.$row['from_role_name'].')</p>';
-                  //echo '</li>';
-                //echo '</ul>';
-              echo '</td>';
-              echo '<td>'.$row['n_subject'].'</td>';
+              echo '<td '.$add_alternating_class.' style="'.$font_weight.'">'.$row['n_subject'].'</td>';
               $date_string = strtotime($row['n_send_date']);
-              echo '<td style="color:grey;">' .date('M, d', $date_string). '</td>';
-              echo '<td style="background:rgb(33, 37, 46);">';
+              echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M, d', $date_string). '</td>';
+              echo '<td class="end_row_options">';
                 //echo '<a href="../includes/messages.ajax.php?user_id='.$user_id.'"><p class="bi-eye-fill" style="color:white;"></p></a>';
-                echo '<button style="text-align:center; margin:auto; background-color:rgb(33, 37, 46); color:white; border:none;" name="view" onclick="view_msg('.$row['n_id'].');" value="View" class="bi-eye-fill"></button>';
+                echo '<button class="end_row_options" style="text-align:center; margin:auto; color:white; background-color:black; border:none;" name="view" onclick="view_msg('.$row['n_id'].');" value="View"><i class="actions"><p class="bi-eye-fill"></p></i></button>';
               echo '</td>';
             echo '</tr>';
           }

@@ -15,7 +15,7 @@ if (isset($_GET['user_id'])) {
 //echo "msg_id: ".$msg_id."<br>";
 //echo "user_id: ".$user_id."<br>";
 
-echo '<div>';
+echo '<div class="div_element_block">';
 
     $sql = "
             SELECT
@@ -47,22 +47,14 @@ echo '<div>';
     $stmt = $dbh->connect()->query($sql);
 
     $msg_read_date = '';
-    echo '<table class="table table-dark" style="background-color:#3a5774; width:100%;">';
       while ($row = $stmt->fetch()) {
         $msg_read_date = $row['n_read_date'];
-        echo '<tr style="text-align:left; border:1px solid rgb(47, 115, 152);">';
-          echo '<td><i style="color:grey;">Subject: </i>"'.$row['n_subject'].'"</td>';
-        echo '</tr>';
-        echo '<tr style="text-align:left; border:1px solid rgb(47, 115, 152);">';
-          echo '<td><i style="color:grey;">From: </i>'.$row['from_icon'].' <span style="color:'.$row['from_role_color'].';">'.$row['from_username'].' ('.$row['from_role_name'].')</span></td>';
-        echo '</tr>';
-        echo '<tr style="text-align:left; border:1px solid rgb(47, 115, 152);">';
-          echo '<td><i style="color:grey;">Message: </i><br>'.$row['n_message'].'</td>';
-        echo '</tr>';
+          echo '<td><i><h4>"'.$row['n_subject'].'"</h4></i></td>';
+          echo '<td class="message_block"><i style="color:grey;">'.$row['n_message'].'</i></td>';
       }
-    echo '</table>';
 echo '</div>';
 
+echo '<br>';
 // set the date of being read and viewed now only if it hasn't been read
 //echo "msg_read_date: ".$msg_read_date."<br>";
 if ($msg_read_date < date('2020-01-01 00:00:00')) {

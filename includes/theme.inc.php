@@ -69,7 +69,7 @@ while ($row = $stmt->fetch()) {
 	function send_to_ajax(){
     // first check form is good
     if (check_form() == 1) {
-    //alert('Form is good, sending to ajax.');
+      alert('Form is good, sending to ajax.');
   		// setup the ajax request
   		var xhttp = new XMLHttpRequest();
   		// get variables from inputs below:
@@ -147,30 +147,20 @@ while ($row = $stmt->fetch()) {
 
   echo '<div class="container text-center"  style="height:600px;">';
 
-    // get values from selected id in table:
-    $sql = "SELECT * FROM users WHERE user_id = '".$user_id."' ";
-    $dbh = new Dbh();
-    $stmt = $dbh->connect()->query($sql);
-    // should only populate one row of data
-    while ($row = $stmt->fetch()) {
-      $saved_old_password = $row['pass_word'];
-    }
-
-		echo '<p id="action" value="'.$action.'" style="display:none;">'.$action.'</p>';
-    echo '<p id="saved_old_password" value="'.$saved_old_password.'" style="display:none;">'.$saved_old_password.'</p>'; //
-
-		//echo '<br>';
-		//echo '<label>Old Password: </label>';
-		//echo '<input type="password" id="old_password" value="" onchange="update_element_value(this, this.value);"></input>';
-    echo '<br>';
-    echo '<label>New Password: </label>';
-    echo '<input type="password" id="new_password" value="" onchange="update_element_value(this, this.value);"></input>';
-    echo '<br>';
-    echo '<label>Confirm Password: </label>';
-    echo '<input type="password" id="confirm_password" value="" onchange="update_element_value(this, this.value);"></input>';
-
-
-		echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+    echo '<div class="div_element_block">';
+      echo '<label>Themes: </label>';
+      echo '<br>';
+      // get values from selected id in table:
+      $sql = "SELECT * FROM themes WHERE theme_is_active = 1; ";
+      $dbh = new Dbh();
+      $stmt = $dbh->connect()->query($sql);
+      // should only populate one row of data
+      while ($row = $stmt->fetch()) {
+          echo '<a class="btn btn-primary" href="../ajax/theme.ajax.php?user_id='.$user_id.'&theme_file='.$row['theme_file'].'">'.$row['theme_name'].'</a>';
+          echo '<br>';
+          echo '<br>';
+      }
+    echo '</div>';
 
   echo '</div>';
 

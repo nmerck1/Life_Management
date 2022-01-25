@@ -74,6 +74,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           $user_fname = $row['user_fname'];
           $user_lname = $row['user_lname'];
           $pass_word = $row['pass_word'];
+          $user_theme = $row['user_theme'];
         }
         // hash the password given
         //$hashed_password = md5($password);
@@ -82,7 +83,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // check if passwords match
         if (isset($pass_word) && $password == $pass_word) {  //  && $pass_word == $hashed_password
           // Password is correct, so start a new session
-          session_start();
+          //session_start();
 
           // Store data in session variables
           $_SESSION["loggedin"] = true;
@@ -117,7 +118,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
     $header = new Header();
-    $header->show_header();
+    $header->show_header('');
 
   ?>
 

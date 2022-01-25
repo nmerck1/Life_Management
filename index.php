@@ -1,5 +1,5 @@
 <?php
-include 'includes/autoloader.inc.php';
+
 //include 'includes/function_library.inc.php';
 
 // Check if the user is logged in, if not then redirect him to login page
@@ -10,7 +10,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 header("location: ../pages/home.php");
 exit;
 
-
+include 'includes/autoloader.inc.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
