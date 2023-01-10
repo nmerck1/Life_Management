@@ -11,6 +11,8 @@ $update_type = $_GET['update_type'];
 $form_type = $_GET['form_type'];
 $user_id = $_GET['user_id'];
 
+//echo 'SENT TO AJAX...';
+
 $table = '';
 $table_id = '';
 if ($form_type == 'Expense'){
@@ -30,6 +32,36 @@ if ($form_type == 'Expense'){
   $table_id = 'bud_id';
 }
 
+// here we are going to check if company name is new so we can insert new company name into the database
+if ($_GET['company']) {
+  $company = $_GET['company'];
+  $sql = "
+          SELECT *
+          FROM companies
+          WHERE comp_name = '".$company."'
+          AND is_active = 1
+  ";
+  $dbh = new Dbh();
+  $stmt = $dbh->connect()->query($sql);
+
+  if ($result = mysqli_query($conn, $sql)) {
+    // Return the number of rows in result set
+    $num_rows = mysqli_num_rows( $result );
+    //echo "num_rows: ".$num_rows."<br>";
+    if ($num_rows == 0) {
+      // create new company here
+      $sql_insert = "
+            INSERT INTO companies (comp_name)
+              VALUES ('".$company."');
+      ";
+      //echo $sql_insert;
+      if ($conn->query($sql_insert)) {
+          echo "Added new company record!";
+      }
+    }
+  }
+}
+
 // here we check these variables
 if ($update_type == 'Delete') {
   // get form type so we know the table:
@@ -46,6 +78,9 @@ if ($update_type == 'Delete') {
 
   if ($form_type == 'Expense'){
     $company = $_GET['company'];
+    if ($company == "Other") {
+      $company = $_GET['new_company_name'];
+    }
     $name = $_GET['name'];
     $category = $_GET['category'];
     $amount = $_GET['amount'];
@@ -60,15 +95,48 @@ if ($update_type == 'Delete') {
     ";
     //echo $sql;
     if ($conn->query($sql) === TRUE) {
-      //echo "New record created successfully";
-    } else {
-    //  echo "Error: " . $sql . "<br>" . $conn->error;
+      echo "New expense record created successfully";
+        if ($_GET['company'] == "Other") {
+          $sql_insert = "
+                INSERT INTO companies (comp_name)
+                  VALUES ('".$company."');
+          ";
+          //echo $sql_insert;
+          if ($conn->query($sql_insert)) {
+            echo "Added new company record!";
+            // we want to check the user id and then give a notification to an admin for a specific case of Other company selection
+            if ($user_id != 1 && $_GET["company"] == 'Other') {
+              // set notification for admins
+              $message = ' User ID: '.$user_id.' added a new company.<br> ';
+              $message .= ' Company Name: '.$company.'.';
+              $message .= '<br><br>';
+
+              $sql = "
+                      INSERT INTO notifications (n_subject, n_message, n_type, n_from_user, n_to_user)
+                      VALUES ('New Company', '".$message."', 'Message', '".$user_id."', '1');
+              ";
+              //echo $sql. "<br>";
+              if ($conn->query($sql) === TRUE) {
+                echo "New record created successfully";
+              } else {
+                echo 'ERROR: DID NOT INSERT';
+              }
+            }
+          } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+          }
+        } else {
+          echo "Error: " . $sql . "<br>" . $conn->error;
+        }
     }
 
   } elseif ($form_type == 'Income') {
     $company = $_GET['company'];
+    if ($company == "Other") {
+      $company = $_GET['new_company_name'];
+    }
     $name = $_GET['name'];
-    $category = $_GET['category'];
+    //$category = $_GET['category'];    // there is no category for incomes, only expenses
     $amount = $_GET['amount'];
     $date = $_GET['date'];
     $notes = $_GET['notes'];
@@ -80,13 +148,77 @@ if ($update_type == 'Delete') {
             AND id_user = $user_id;
     ";
     if ($conn->query($sql) === TRUE) {
-      //echo "New record created successfully";
+      echo "New income record created successfully";
+        if ($_GET['company'] == "Other") {
+          $sql_insert = "
+                INSERT INTO companies (comp_name)
+                  VALUES ('".$company."');
+          ";
+          //echo $sql_insert;
+          if ($conn->query($sql_insert)) {
+            echo "Added new company record!";
+            // we want to check the user id and then give a notification to an admin for a specific case of Other company selection
+            if ($user_id != 1 && $_GET["company"] == 'Other') {
+              // set notification for admins
+              $message = ' User ID: '.$user_id.' added a new company.<br> ';
+              $message .= ' Company Name: '.$company.'.';
+              $message .= '<br><br>';
+
+              $sql = "
+                      INSERT INTO notifications (n_subject, n_message, n_type, n_from_user, n_to_user)
+                      VALUES ('New Company', '".$message."', 'Message', '".$user_id."', '1');
+              ";
+              //echo $sql. "<br>";
+              if ($conn->query($sql) === TRUE) {
+                echo "New record created successfully";
+              } else {
+                echo 'ERROR: DID NOT INSERT';
+              }
+            }
+          } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+          }
+        } else {
+          echo "Error: " . $sql . "<br>" . $conn->error;
+        }
     } else {
-    //  echo "Error: " . $sql . "<br>" . $conn->error;
+      echo "Error: " . $sql . "<br>" . $conn->error;
     }
 
-  } elseif ($form_type == 'Passive') {
+  } elseif ($form_type == 'Notification_Expense') {
+    $new_company = $_GET['new_company'];
+    echo 'new_company: '.$new_company.'<br>';
+    echo 'selected_id: '.$selected_id.'<br>';
+    echo 'user_id: '.$user_id.'<br>';
 
+    $sql = "UPDATE finance_expenses
+            SET fe_company='$new_company'
+            WHERE fe_id = $selected_id
+            AND id_user = $user_id;
+    ";
+    //echo $sql;
+    if ($conn->query($sql) === TRUE) {
+      echo "New record created successfully";
+    } else {
+      echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+  } elseif ($form_type == 'Notification_Income') {
+    $new_company = $_GET['new_company'];
+    echo 'new_company: '.$new_company.'<br>';
+    echo 'selected_id: '.$selected_id.'<br>';
+    echo 'user_id: '.$user_id.'<br>';
+
+    $sql = "UPDATE finance_incomes
+            SET fi_company='$new_company'
+            WHERE fi_id = $selected_id
+            AND id_user = $user_id;
+    ";
+    //echo $sql;
+    if ($conn->query($sql) === TRUE) {
+      echo "New record created successfully";
+    } else {
+      echo "Error: " . $sql . "<br>" . $conn->error;
+    }
   } elseif ($form_type == 'Bill') {
     $name = $_GET['name'];
     $amount = $_GET['amount'];
@@ -208,22 +340,90 @@ if ($update_type == 'Delete') {
 } elseif ($update_type == 'Insert') {
   // $sql = "INSERT INTO finance_expenses $column_names_string";\
     if ($form_type == 'Expense'){
-      $sql = "INSERT INTO $table (fe_company, fe_name, id_category, fe_amount, fe_date, fe_notes, id_user)
-              VALUES ('".$_GET["company"]."', '".$_GET["name"]."', '".$_GET["category"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."', '".$_GET["user_id"]."');
+      $company = $_GET["company"];
+      if ($_GET["company"] == "Other") {
+        $company = $_GET["new_company_name"];
+      }
+      $sql = "
+              INSERT INTO $table (fe_company, fe_name, id_category, fe_amount, fe_date, fe_notes, id_user)
+              VALUES ('".$company."', '".$_GET["name"]."', '".$_GET["category"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."', '".$_GET["user_id"]."');
       ";
       //echo $sql. "<br>";
       if ($conn->query($sql)) {
-        //echo "query is good!<br>";
+        echo "New expense record created successfully";
+          if ($_GET["company"] == "Other") {
+            $sql_insert = "
+                  INSERT INTO companies (comp_name)
+                    VALUES ('".$company."');
+            ";
+            echo $sql_insert;
+            if ($conn->query($sql_insert)) {
+              echo "Added new company record!";
+            } else {
+              echo "Error: " . $sql . "<br>" . $conn->error;
+            }
+          } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+          }
+          // we want to check the user id and then give a notification to an admin for a specific case of Other company selection
+          if ($user_id != 1 && $_GET["company"] == 'Other') {
+            // set notification for admins
+            $message = ' User ID: '.$user_id.' added a new company.<br> ';
+            $message .= ' Company Name: '.$company.'.';
+            $message .= '<br><br>';
+
+            $sql = "
+                    INSERT INTO notifications (n_subject, n_message, n_type, n_from_user, n_to_user)
+                    VALUES ('New Company', '".$message."', 'Message', '".$user_id."', '1');
+            ";
+            //echo $sql. "<br>";
+            if ($conn->query($sql) === TRUE) {
+              echo "New record created successfully";
+            } else {
+              echo 'ERROR: DID NOT INSERT';
+            }
+          }
+      } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+      }
+
+    } elseif ($form_type == 'Income') {
+      $company = $_GET["company"];
+      if ($_GET["company"] == "Other") {
+        $company = $_GET["new_company_name"];
+      }
+      $sql = "
+              INSERT INTO $table (fi_company, fi_name, fi_amount, fi_date, fi_notes, id_user)
+              VALUES ('".$company."', '".$_GET["name"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."', '".$_GET["user_id"]."');
+      ";
+      //echo $sql. "<br>";
+      if ($conn->query($sql)) {
+        echo "New income record created successfully";
+          if ($_GET["company"] == "Other") {
+            $sql_insert = "
+                  INSERT INTO companies (comp_name)
+                    VALUES ('".$company."');
+            ";
+            //echo $sql_insert;
+            if ($conn->query($sql_insert)) {
+              echo "Added new company record!";
+            } else {
+              echo "Error: " . $sql . "<br>" . $conn->error;
+            }
+          } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+          }
+
         // we want to check the user id and then give a notification to an admin for a specific case of Other company selection
         if ($user_id != 1 && $_GET["company"] == 'Other') {
           // set notification for admins
-          $message = ' User ID: '.$user_id.' is requesting a new company record be added.<br><br> ';
-          $message .= ' [Notes from user] <br>';
-          $message .= '<p>\"'.$_GET["notes"].'\"</p>';
+          $message = ' User ID: '.$user_id.' added a new company.<br> ';
+          $message .= ' Company Name: '.$company.'.';
+          $message .= '<br><br>';
 
           $sql = "
                   INSERT INTO notifications (n_subject, n_message, n_type, n_from_user, n_to_user)
-                  VALUES ('New Company', '".$message."', 'Request', '".$user_id."', '1');
+                  VALUES ('New Company', '".$message."', 'Message', '".$user_id."', '1');
           ";
           //echo $sql. "<br>";
           if ($conn->query($sql) === TRUE) {
@@ -232,16 +432,7 @@ if ($update_type == 'Delete') {
             echo 'ERROR: DID NOT INSERT';
           }
         }
-      } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-      }
 
-    } elseif ($form_type == 'Income') {
-      $sql = "INSERT INTO $table (fi_company, fi_name, fi_amount, fi_date, fi_notes, id_user)
-              VALUES ('".$_GET["company"]."', '".$_GET["name"]."', ".$_GET['amount'].", '".$_GET["date"]."', '".$_GET["notes"]."', '".$_GET["user_id"]."');
-      ";
-      if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
       } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
       }
@@ -254,10 +445,23 @@ if ($update_type == 'Delete') {
       $freq = 'M';  // this is the default for now
       $sql = "
               INSERT INTO $table (bill_name, bill_amount, bill_freq, id_user)
-              VALUES ('".$_GET["name"]."', ".$_GET['amount'].", ".$freq.", '".$_GET["user_id"]."');
+              VALUES ('".$_GET["name"]."', ".$_GET['amount'].", '".$freq."', '".$_GET["user_id"]."');
       ";
+      echo $sql.'<br>';
       if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
+        echo "New Bill created successfully";
+        $last_id = $conn->insert_id;
+        // because amount is new, we are going to add a new record for most recent valid date
+        $sql_insert = "
+              INSERT INTO bill_logs (bl_id_bill, bl_amount, id_user)
+                VALUES ('".$last_id."', ".$_GET['amount'].", '".$_GET["user_id"]."');
+        ";
+        //echo $sql_insert;
+        if ($conn->query($sql_insert)) {
+          echo "Added first bill log attachment for current date";
+        } else {
+          echo "Error: " . $sql . "<br>" . $conn->error;
+        }
       } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
       }
@@ -284,6 +488,5 @@ if ($update_type == 'Delete') {
 
 
 
-header("Location: ../pages/finances.php");
 header("Location: ../pages/finances.php");
 exit();

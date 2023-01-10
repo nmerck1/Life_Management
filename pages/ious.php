@@ -1,5 +1,5 @@
 <?php
-//declare(strict_types = 1);
+////declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 include '../includes/function_library.inc.php';
 
@@ -60,9 +60,103 @@ while ($row = $stmt->fetch()) {
   $finance_nav = new FinanceNavbar();
   $finance_nav->show_header_nav();
 ?>
+  <script type="text/javascript">
+  	function scroll_loans(next_prev_num){
+        // setup the ajax request
+    		var xhttp = new XMLHttpRequest();
+        // get variables from inputs below:
+    		var current_page_num = document.getElementById('current_loan_page');
+        var user_id = document.getElementById('user_id');
+        var date_search = document.getElementById('date_search');
+        var table_scroll = 'Loans'
 
+    		var action = 'Next';
+        if (next_prev_num == 0) {
+          action = 'Prev';
+        }
+
+        var can_scroll = true;
+        if (action == 'Prev') {
+          if (current_page_num.innerHTML == 1) {
+            can_scroll = false;
+          }
+        }
+
+        if ( can_scroll == true ) {
+          // create link to send GET variables through
+          var query_string = "../ajax/scroll.ajax.php";
+          query_string += "?current_num=" + current_page_num.innerHTML;
+          //query_string += "&form_type=" + "Expense";
+          query_string += "&user_id=" + user_id.innerHTML;
+          query_string += "&action=" + action;
+          query_string += "&date_search=" + date_search.innerHTML;
+          query_string += "&table_scroll=" + table_scroll;
+
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+             document.getElementById("scroll_div_loans").innerHTML = this.responseText;
+            }
+          };
+          xhttp.open("GET", query_string, true);
+          xhttp.send();
+
+          // when the data is returned after ajax, it redirects back to inventory
+          //window.location = "../pages/finances.php";
+        }
+  	}
+    function scroll_debts(next_prev_num){
+        // setup the ajax request
+    		var xhttp = new XMLHttpRequest();
+        // get variables from inputs below:
+    		var current_page_num = document.getElementById('current_debt_page');
+        var user_id = document.getElementById('user_id');
+        var date_search = document.getElementById('date_search');
+        var table_scroll = 'Debts'
+
+    		var action = 'Next';
+        if (next_prev_num == 0) {
+          action = 'Prev';
+        }
+
+        var can_scroll = true;
+        if (action == 'Prev') {
+          if (current_page_num.innerHTML == 1) {
+            can_scroll = false;
+          }
+        }
+
+        if ( can_scroll == true ) {
+          // create link to send GET variables through
+          var query_string = "../ajax/scroll.ajax.php";
+          query_string += "?current_num=" + current_page_num.innerHTML;
+          //query_string += "&form_type=" + "Expense";
+          query_string += "&user_id=" + user_id.innerHTML;
+          query_string += "&action=" + action;
+          query_string += "&date_search=" + date_search.innerHTML;
+          query_string += "&table_scroll=" + table_scroll;
+
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+             document.getElementById("scroll_div_debts").innerHTML = this.responseText;
+            }
+          };
+          xhttp.open("GET", query_string, true);
+          xhttp.send();
+
+          // when the data is returned after ajax, it redirects back to inventory
+          //window.location = "../pages/finances.php";
+        }
+  	}
+  </script>
       <?php
+        echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
+        // this is for looking at previous finance dates in the system
+        $date_search = date('Y-m-d');
+        if (isset($_POST['date_search'])) {
+          $date_search = $_POST['date_search'];
+        }
 
+        echo '<p id="date_search" style="display:none;" value="'.$date_search.'">'.$date_search.'</p>';
         // this makes it more modular and we can add in simple parameters to change the query
         // $paid_off: this is whether or not we want to show the paid off table
         // $current_user_owes: this is whether or not we are filtering the current user owes or is owed
@@ -121,7 +215,8 @@ while ($row = $stmt->fetch()) {
             AND i.iou_loaner_id ".$loaner." '".$user_id."'
             AND i.iou_debtor_id ".$debtor." '".$user_id."'
 
-            ORDER BY i.iou_owe_date DESC;
+            ORDER BY i.iou_owe_date DESC
+            LIMIT 0, 5;
           ";
           // loaners.user_name AS 'loaner_user_name',      # this is the current user's info who is the loaner
           // debtors.user_name AS 'debtor_user_name',      # this is the debtor's info of the current user
@@ -195,7 +290,7 @@ while ($row = $stmt->fetch()) {
                   if ($row['iou_created_by'] == $user_id && $row['iou_is_paid_off'] == 0) {
                     echo '<span>'; //style="display:flex;"
                       echo '<a href="../includes/ious.inc.php?selected_id='.$row['iou_id'].'&update_type=Update&form_type='.$form_type.'&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
-                      echo '<a href="../ajax/ious.ajax.php?selected_id='.$row['iou_id'].'&update_type=Delete&form_type='.$form_type.'&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+                      echo '<a href="../ajax/ious.ajax.php?selected_id='.$row['iou_id'].'&update_type=Delete&form_type='.$form_type.'&user_id='.$user_id.'" onclick="return confirm(\'Delete: '.$row['iou_reason'].' '.$form_type.'?\')"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                     echo '</span>';
                   }
                 echo '</td>';
@@ -232,8 +327,20 @@ while ($row = $stmt->fetch()) {
 
           echo '<div class="div_element_block">'; // div for owed to you
             echo '<h4 style="text-align:center;">Your Loans</h4>';
+            echo '<p style="width:95%; margin:0px; text-align:center;">';
+              echo '<button name="prev_button" onclick="scroll_loans(0);" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+              echo '</button>';
+              echo '<button name="next_button" onclick="scroll_loans(1);" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+              echo '</button>';
+            echo '</p>';
 
-            get_ious_table($user_id, false, false);
+            echo '<div id="scroll_div_loans">';
+              echo '<p id="current_loan_page" style="text-align:center; display:none;" value="1">1</p>'; //style="display:none;"
+              echo '<p id="page_show" style="text-align:center; color:grey;">(Page 1)</p>';
+              get_ious_table($user_id, false, false);
+            echo '</div>';
 
           echo '</div>';
 
@@ -241,8 +348,20 @@ while ($row = $stmt->fetch()) {
 
           echo '<div class="div_element_block">'; // div for you owe
             echo '<h4 style="text-align:center;">Your Debts</h4>';
+            echo '<p style="width:95%; margin:0px; text-align:center;">';
+              echo '<button name="prev_button" onclick="scroll_debts(0);" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+              echo '</button>';
+              echo '<button name="next_button" onclick="scroll_debts(1);" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+              echo '</button>';
+            echo '</p>';
 
-            get_ious_table($user_id, true, false);
+            echo '<div id="scroll_div_debts">';
+              echo '<p id="current_debt_page" style="text-align:center; display:none;" value="1">1</p>'; //style="display:none;"
+              echo '<p id="page_show" style="text-align:center; color:grey;">(Page 1)</p>';
+              get_ious_table($user_id, true, false);
+              echo '</div>';
 
           echo '</div>';
 

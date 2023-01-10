@@ -1,5 +1,5 @@
 <?php
-//declare(strict_types = 1);
+////declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 include '../includes/function_library.inc.php';
 
@@ -165,7 +165,7 @@ while ($row = $stmt->fetch()) {
                   $build_string .= '<li class="my_li">';
 
                   $build_string .= '<a id="diet_li_a" href="../includes/diet.inc.php?selected_id='.$row['fl_id'].'&update_type=Edit&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
-                  $build_string .= '<a id="diet_li_a" href="../ajax/diet.ajax.php?selected_id='.$row['fl_id'].'&update_type=Delete&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+                  $build_string .= '<a id="diet_li_a" href="../ajax/diet.ajax.php?selected_id='.$row['fl_id'].'&update_type=Delete&user_id='.$user_id.'" onclick="return confirm(\'Are you sure you want to delete?\')"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
 
                   $build_string .= ' x'.$row['fl_quantity'].' '.$row['fl_name'];//.' ('.$row['fl_amount'].$mea_abbr.')';
 

@@ -51,7 +51,15 @@ echo '<div class="div_element_block">';
         $msg_read_date = $row['n_read_date'];
           echo '<td><i><h4>"'.$row['n_subject'].'"</h4></i></td>';
           echo '<td class="message_block"><i style="color:grey;">'.$row['n_message'].'</i></td>';
+          if ($row['n_type'] == "Request") {
+            //echo '<input name="new_company" id="new_company" value="" onchange="update_element_value(this, this.value)"></input><br>';
+
+            //echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Create" class="btn btn-primary btn-md">Create</button>';
+            //echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete&form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+
+        }
       }
+
 echo '</div>';
 
 echo '<br>';

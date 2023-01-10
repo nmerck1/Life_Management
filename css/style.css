@@ -103,7 +103,7 @@ footer {
   color: white;
   padding: 1px;
   /* border-top: 2px solid rgb(47, 115, 152); */
-  border: none; 
+  border: none;
 }
 
 body {
@@ -197,4 +197,25 @@ li.dropdown, li.navdropdown {
 
 .dropdown:hover .dropdown-content, .navdropdown:hover .navbar-content {
   display: block;
+}
+
+
+
+/* my custom popup styles */
+
+.searchPopup {
+    z-index: 30;
+    position: absolute;
+    font-size: 20px;
+    color: red;
+    width: 200px;
+    /* height: 200px; */
+}
+
+.search_popup_table, .search_popup_table tr, .search_popup_table td, .search_popup_table button {
+    width: 100%;
+}
+
+.search_popup_table button {
+    border-radius: 10px;
 }

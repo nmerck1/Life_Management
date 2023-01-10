@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+//declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 include '../includes/function_library.inc.php';
 
@@ -81,6 +81,7 @@ while ($row = $stmt->fetch()) {
     echo '</tr>';
 
     // first select each user that is active and then loop through each one
+    $user_ids = array();
     $sql = "
             SELECT u.user_id,
                   u.user_name,
@@ -114,6 +115,7 @@ while ($row = $stmt->fetch()) {
           $is_alternate_row = false;
         }
         $this_user_id = $row['user_id'];
+
         $role_color = $row['role_color'];
         //echo 'this_user_id: '.$this_user_id.'<br>';
         echo '<td '.$add_alternating_class.'>'.$row['user_name'].'</td>';
@@ -123,6 +125,7 @@ while ($row = $stmt->fetch()) {
         $date_string = strtotime($row['user_last_logged']);
         echo '<td '.$add_alternating_class.' style="color:grey;">'.date('m-d-Y h:iA', $date_string).'</td>';
 
+        $build_rows = '';
         // now for each row and each user, let's print out their stats
         $sql_stats = "
               SELECT u.user_id,
@@ -141,7 +144,7 @@ while ($row = $stmt->fetch()) {
               AND fe.is_active = 1
               AND fl.is_active = 1;
         ";
-        //echo $sql_stats;
+        //echo $sql_stats.'<br><br>';
         $dbh = new Dbh();
         $stmt_stats = $dbh->connect()->query($sql_stats);
 

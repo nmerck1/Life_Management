@@ -1,5 +1,5 @@
 <?php
-//declare(strict_types = 1);
+////declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 include '../includes/function_library.inc.php';
 
@@ -105,10 +105,20 @@ while ($row = $stmt->fetch()) {
         //window.location = "../pages/finances.php";
       }
 	}
-</script>
+  </script>
+
+
+
+
 
 
       <?php
+      /* <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+          google.charts.load("current", {packages:["corechart"]});
+          //google.charts.setOnLoadCallback(drawChart);
+
+        </script>*/
         echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
 
         // this is for looking at previous finance dates in the system
@@ -140,7 +150,7 @@ while ($row = $stmt->fetch()) {
 
           echo '<h1 style="text-align:center;">Monthly Overview</h1>';
           $show_month_year_title = date('F', strtotime($date_search));
-          echo '<h2 style="text-align:center;">'.$show_month_year_title.'</h2>';
+          echo '<h2 style="text-align:center;"><i class="bi-calendar"> </i>'.$show_month_year_title.'</h2>';
           // mini form for displaying different dates in history
           echo '<form method="post" action="../pages/finances.php" style="text-align:center;">';
             //echo '<select>';
@@ -158,7 +168,7 @@ while ($row = $stmt->fetch()) {
           echo '<br>';
 
           echo '<div class="div_element_block">'; // div for incomes
-            echo '<h4 style="text-align:center;">Incomes</h4>';
+            echo '<h4 style="text-align:center;"><i class="bi-plus-square"> </i>Incomes</h4>';
             // check which table:
             $sql = "
             SELECT fi.fi_id,
@@ -207,7 +217,7 @@ while ($row = $stmt->fetch()) {
                   echo '<td class="end_row_options">';
                     echo '<span>'; //style="display:flex;"
                       echo '<a href="../includes/finances.inc.php?selected_id='.$row['fi_id'].'&update_type=Edit&form_type=Income&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
-                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fi_id'].'&update_type=Delete&form_type=Income&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fi_id'].'&update_type=Delete&form_type=Income&user_id='.$user_id.'" onclick="return confirm(\'Delete: '.$row['fi_name'].' Income?\')"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                     echo '</span>';
                   echo '</td>';
                 echo '</tr>';
@@ -225,13 +235,13 @@ while ($row = $stmt->fetch()) {
           echo '<br>';
 
           echo '<div class="div_element_block">';// div for expenses
-            echo '<h4 style="text-align:center;">Expenses</h4>';
+            echo '<h4 style="text-align:center;"><i class="bi-dash-square"> </i>Expenses</h4>';
             echo '<p style="width:95%; margin:0px; text-align:center;">';
               echo '<button name="prev_button" onclick="scroll_expenses(0);" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-box-arrow-left"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
               echo '</button>';
               echo '<button name="next_button" onclick="scroll_expenses(1);" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-box-arrow-right"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
               echo '</button>';
             echo '</p>';
 
@@ -299,7 +309,7 @@ while ($row = $stmt->fetch()) {
                     echo '<td class="end_row_options">';
                       echo '<span>'; //style="display:flex;"
                         echo '<a href="../includes/finances.inc.php?selected_id='.$row['fe_id'].'&update_type=Edit&form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
-                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete&form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete&form_type=Expense&user_id='.$user_id.'" onclick="return confirm(\'Delete: '.$row['fe_name'].' Expense?\')"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                       echo '</span>';
                     echo '</td>';
                   echo '</tr>';
@@ -332,7 +342,7 @@ while ($row = $stmt->fetch()) {
           echo '<br>';
 
           echo '<div class="div_element_block">'; // div for bills
-            echo '<h4 style="text-align:center;">Bills</h4>';
+            echo '<h4 style="text-align:center;"><i class="bi-receipt-cutoff"> </i>Bills</h4>';
             $sql = "
                     SELECT bl.*,
                            cb.bill_id,
@@ -391,7 +401,7 @@ while ($row = $stmt->fetch()) {
                   echo '<td class="end_row_options">';
                     echo '<span>'; //style="display:flex;"
                       echo '<a href="../includes/finances.inc.php?selected_id='.$row['bill_id'].'&update_type=Edit&form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
-                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete&form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+                      echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete&form_type=Bill&user_id='.$user_id.'" onclick="return confirm(\'Delete: '.$row['bill_name'].' Bill?\')"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                     echo '</span>';
                   echo '</td>';
                 echo '</tr>';
@@ -412,77 +422,83 @@ while ($row = $stmt->fetch()) {
           echo '<div class="div_element_block">';// div for category spending
             echo '<h4 style="text-align:center;">Category Spending</h4>';
 
-                $sql = "
-                        SELECT SUM(fe.fe_amount) AS 'fe_amount',
-                               fe.fe_date,
-                               fe.is_active,
-                               cat.cat_name,
-                               bud.bud_amount
-                        FROM finance_expenses fe
-                        LEFT JOIN users u ON fe.id_user = u.user_id
-                        LEFT JOIN categories cat ON fe.id_category = cat.cat_id
-                        LEFT JOIN budgets bud ON fe.id_category = bud.id_category
+            $sql = "
+                    SELECT SUM(fe.fe_amount) AS 'fe_amount',
+                           fe.fe_date,
+                           fe.is_active,
+                           cat.cat_name,
+                           bud.bud_amount
+                    FROM finance_expenses fe
+                    LEFT JOIN users u ON fe.id_user = u.user_id
+                    LEFT JOIN categories cat ON fe.id_category = cat.cat_id
+                    LEFT JOIN budgets bud ON fe.id_category = bud.id_category
+                    WHERE fe.is_active = 1
+                    AND bud.is_active = 1
+                    AND u.user_id = ".$user_id."
+                    AND bud.id_user = ".$user_id."
+                    AND YEAR(fe.fe_date)=YEAR('".$date_search."')
+                    AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+                    GROUP BY cat.cat_name
+                    ORDER BY cat.cat_name ASC;
+            ";
+            //echo $sql .'<br>';
+            $dbh = new Dbh();
+            $stmt = $dbh->connect()->query($sql);
 
-                        WHERE fe.is_active = 1
-                        AND bud.is_active = 1
+            $build_table = '';
+            $total_spent_amount = 0;
+            $total_budget_amount = 0;
+            $total_over_under_amount = 0;
+            $is_alternate_row = false;
+            $add_alternating_class = '';
+            while ($row = $stmt->fetch()) {
+              $build_table .= '<tr>';
 
-                        AND u.user_id = ".$user_id."
-                        AND bud.id_user = ".$user_id."
-
-                        AND YEAR(fe.fe_date)=YEAR('".$date_search."')
-                        AND MONTH(fe.fe_date)=MONTH('".$date_search."')
-
-                        GROUP BY cat.cat_name
-                        ORDER BY cat.cat_name ASC;
-                ";
-                //echo $sql .'<br>';
-                $dbh = new Dbh();
-                $stmt = $dbh->connect()->query($sql);
-
-                $build_table = '';
-                $total_spent_amount = 0;
-                $total_budget_amount = 0;
-                $total_over_under_amount = 0;
-                $is_alternate_row = false;
+              if ($is_alternate_row == false) {
                 $add_alternating_class = '';
-                while ($row = $stmt->fetch()) {
-                  $build_table .= '<tr>';
+                $is_alternate_row = true;
+              } else {
+                $add_alternating_class = 'class="alternating_row"';
+                $is_alternate_row = false;
+              }
 
-                  if ($is_alternate_row == false) {
-                    $add_alternating_class = '';
-                    $is_alternate_row = true;
-                  } else {
-                    $add_alternating_class = 'class="alternating_row"';
-                    $is_alternate_row = false;
-                  }
-
-                    $build_table .= '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
-                    $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['fe_amount'], 2). '</td>';
-                    if ($row['bud_amount'] == NULL) {
-                        $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">(No budget set)</td>';
-                        $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:green;">$0.00</td>';
-                    } else {
-                      $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['bud_amount'], 2). '</td>';
-                      // get the difference:
-                      $bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
-                      $color = 'red';
-                      if ($bud_diff >= 0) { $color = 'green'; }
-                      $total_over_under_amount += $bud_diff;
-                      $total_budget_amount += $row['bud_amount'];
-                      $total_spent_amount += $row['fe_amount'];
-                      $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
-                    }
-                  $build_table .= '</tr>';
-
+                $build_table .= '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
+                $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['fe_amount'], 2). '</td>';
+                if ($row['bud_amount'] == NULL) {
+                    $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">(No budget set)</td>';
+                    $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:green;">$0.00</td>';
+                } else {
+                  $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['bud_amount'], 2). '</td>';
+                  // get the difference:
+                  $bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
+                  $color = 'red';
+                  if ($bud_diff >= 0) { $color = 'green'; }
+                  $total_over_under_amount += $bud_diff;
+                  $total_budget_amount += $row['bud_amount'];
+                  $total_spent_amount += $row['fe_amount'];
+                  $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
                 }
+              $build_table .= '</tr>';
+
+            }
+
+
+
+
+                //echo "number of loops: ".$loops.'<br>';
                 // check if there was anything to show:
                 if ($build_table == '') {
-                  echo '<p class="end_row_options" style="color:grey; text-align:center;">(Nothing to show)</p>';
+                  echo '<p class="end_row_options" style="color:grey; text-align:center;">(Data will show here when you set your budget in a category)</p>';
                 } else {
+                  //echo '<i style="color:grey;">';
+                    //echo '(The "μ" symbol in parenthesis next to the column for "Spent" amounts, represents the average amount
+                            //spent per day in this category.)';
+                  //echo '</i>';
+
                   echo '<table class="table table-dark" style="text-align:center;">';
                       echo '<tr>';
                         echo '<th>Category</th>';
-                        echo '<th style="text-align:right;">Spent</th>';
+                        echo '<th style="text-align:right;">Spent</th>';// (μ)
                         echo '<th style="text-align:right;">Budget</th>';
                         echo '<th style="text-align:right;">Over/Under</th>';
                       echo '</tr>';
@@ -502,7 +518,90 @@ while ($row = $stmt->fetch()) {
                   echo '</table>';
                 }
 
+
+                //echo '<p id="cat_names">'.$cat_names.'</p>';
+                //echo '<p id="cat_amounts">'.$cat_amounts.'</p>';
+
+
+
+
           echo '</div>';
+
+          echo '<br>';
+
+          //echo '<div class="div_element_block">';
+            //echo '<h4 style="text-align:center;">Metrics</h4>';
+
+              $sql = "
+                      SELECT SUM(fe.fe_amount) AS 'fe_amount',
+                             fe.fe_date,
+                             fe.is_active,
+                             cat.cat_name
+                      FROM finance_expenses fe
+                      LEFT JOIN users u ON fe.id_user = u.user_id
+                      LEFT JOIN categories cat ON fe.id_category = cat.cat_id
+
+                      WHERE fe.is_active = 1
+
+                      AND u.user_id = ".$user_id."
+
+                      AND YEAR(fe.fe_date)=YEAR('".$date_search."')
+                      AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+
+                      GROUP BY cat.cat_name
+                      ORDER BY cat.cat_name ASC;
+              ";
+              //echo $sql .'<br>';
+              $dbh = new Dbh();
+              $stmt = $dbh->connect()->query($sql);
+
+            // build the pie chart using database data
+            ?>
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+            <script type="text/javascript">
+              // Load the Visualization API library and the piechart library.
+              google.load('visualization', '1.0', {'packages':['corechart']});
+              google.setOnLoadCallback(drawChart);
+                //google.charts.setOnLoadCallback(drawChart);
+                //alert("calling script");
+                  function drawChart() {
+                    //alert("calling drawchart");
+                      // Create and populate the data table.
+                      var data = google.visualization.arrayToDataTable([
+                          ['Category', 'Spent'],
+                          <?php
+                          while( $row = $stmt->fetch() ){
+                              extract($row);
+                              //$add_comma = ',';
+                            //if (!empty($row['fe_id'])) { $add_comma = ''; }
+                              echo "['{$row['cat_name']}', {$row['fe_amount']}],";//.$add_comma;
+                          }
+                          ?>
+                      ]);
+
+                      // Create and draw the visualization.
+                      var options = {
+                        pieHole: 0.4,
+                        backgroundColor: 'transparent',
+                        pieSliceText: 'none',
+                        legend: {
+                          position: 'none',
+                          textStyle: {
+                            color: 'white',
+                            fontSize: 13}}
+                      };
+
+                      var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                      chart.draw(data, options);
+                  }
+              </script>
+              <?php
+
+            //echo '<div id="donutchart" style="width:100%; height:100%; background-color:transparent;"></div>'; //
+            //echo '<br>';
+
+          //echo '</div>';
 
           echo '<br>';
           /*

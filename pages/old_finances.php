@@ -1,5 +1,5 @@
 <?php
-//declare(strict_types = 1);
+////declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 include '../includes/function_library.inc.php';
 

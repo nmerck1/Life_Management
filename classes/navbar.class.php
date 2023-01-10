@@ -10,7 +10,8 @@ class Navbar {
         echo '<a href="javascript:void(0)" class="dropnavbtn"><i class="bi-arrows-expand"></i></a>';
         echo '<div class="navbar-content">';
           echo '<a href="../pages/finances.php">Finances</a>';
-          echo '<a href="../pages/diet.php">Diet</a>';
+          //echo '<a href="../pages/diet.php">Diet</a>';
+          //echo '<a href="../pages/routine.php">Routine</a>';
           if ($id_role == 1) {
             echo '<a style="color:rgb(215 46 46);" href="../pages/admin.php">Admin</a>';
           }
@@ -44,10 +45,13 @@ class Navbar {
            echo '</div>';
          echo '</li>';
 
-        echo '<li style="float:right; font-size:17px;"><a class="bi-envelope-fill" href="../pages/notifications.php"> '.$messages.'</a></li>';
+        $icon = 'bi-envelope-fill';//bi-envelope-exclamation
+        $show = '';
+        if ($messages > 0) { $show = $messages; }
+        echo '<li style="float:right; font-size:17px;"><a class="'.$icon.'" href="../pages/notifications.php"> '.$show.'</a></li>';
       }
       //echo '<a class="navbar-brand" href="../pages/vision.php">Vision</a>';
-      //echo '<a class="navbar-brand" href="../pages/routine.php">Routine</a>';
+
 
     echo '</ul>';
   }

@@ -1,5 +1,5 @@
 <?php
-//declare(strict_types = 1);
+////declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 include '../includes/function_library.inc.php';
 
@@ -117,19 +117,23 @@ while ($row = $stmt->fetch()) {
 
         $this_year = date('Y', strtotime($date_search));
         $first_month = date('Y-m-d', strtotime('first day of January'.$this_year));
-        //$next_year = date('Y-m-d', strtotime('+1 year'));
-
-        //echo "first_month: ".$first_month."<br><br>";
+        $last_day_of_year = date('Y-m-d', strtotime('12/31'));
+        $this_month = date("M");
+        //echo "this_month: ".$this_month."<br><br>";
         //echo "next_year: ".$next_year."<br>";
         //echo "month: ".$month."<br>";
         $months_of_year = array();
+        $full_name_months = array();
         for ($i = 0; $i < 12; $i++) {
              // echo date('F Y', $month);
              $next_month = strtotime("+".$i." month", strtotime($first_month));
              $show_month = date('M', $next_month);
+             $show_full = date('F', $next_month);
              //echo "month: ".$show_month."<br>";
              array_push($months_of_year, $show_month);
+             array_push($full_name_months, $show_full);
         }
+
         //var_dump($months_of_year);
         // start the outer table
         echo '<div class="container">';
@@ -199,10 +203,10 @@ while ($row = $stmt->fetch()) {
           //  echo '<h2 style="text-align:center;">'.$this_year.'</h2>';
             echo '<p style="width:100%; margin:0px; text-align:center;">';
               echo '<button name="prev_button" onclick="scroll_years(0);" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-box-arrow-left"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>'; // -box-arrow-left
               echo '</button>';
               echo '<button name="next_button" onclick="scroll_years(1);" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-box-arrow-right"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
               echo '</button>';
             echo '</p>';
 
@@ -217,12 +221,18 @@ while ($row = $stmt->fetch()) {
                   //foreach ($months_of_year as $month) {
                     //echo '<th>'.$month.'</th>';
                   //}
-                  echo '<th>Incomes</th>';
-                  echo '<th>Expenses</th>';
-                  echo '<th>Savings</th>';
-                  echo '<th>Savings (If all Loans are paid)</th>';
+                  echo '<th><i class="bi-plus-square"></i></th>'; // Incomes
+                  echo '<th><i class="bi-dash-square"></i></th>'; // Expenses
+                  echo '<th><i class="bi-currency-dollar"></i></th>'; // Savings // <i class="bi-piggy-bank"></i>
+                  echo '<th><i class="bi-currency-dollar"></i> (+Loans)</th>'; // <i class="bi-piggy-bank"></i>
                 echo '</tr>';
                 //echo '<tr>';
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
+                // This is the variable that is collecting data from these queries and organizing it into a string //
+                $year_data_string = "";
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                 //echo '<td style="background:rgb(25, 29, 32);">Incomes</td>';
                 $income_monthly_totals = array();
                 $sql = "
@@ -328,6 +338,8 @@ while ($row = $stmt->fetch()) {
 
                   $expense_monthly_totals[$get_formatted_date] = $row['fe_amount'];
                 }
+
+
                 /*
                 // expenses
                 foreach ($months_of_year as $month) {
@@ -396,7 +408,12 @@ while ($row = $stmt->fetch()) {
               $total_yearly_loan_savings = 0;
               $is_alternate_row = false;
               $add_alternating_class = '';
+              $end_year_data = false;
               foreach ($months_of_year as $month) {
+                if ($end_year_data == false) {
+                  $year_data_string .= "['".$month."', ";
+                }
+
                 $this_total = '~';
                 $color = 'grey';
 
@@ -418,10 +435,16 @@ while ($row = $stmt->fetch()) {
                   if (array_key_exists($month, $income_monthly_totals)) {
                     $total_yearly_incomes += $income_monthly_totals[$month];
 
-                    $this_total = '$'.$income_monthly_totals[$month];
-                    echo '<td '.$add_alternating_class.'>'.$this_total.'</td>';
+                    $this_total = $income_monthly_totals[$month];
+                    echo '<td '.$add_alternating_class.'>$'.number_format($this_total, 2).'</td>';
+                    if ($end_year_data == false) {
+                      $year_data_string .= $this_total .", ";
+                    }
                   } else {
                     echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
+                    if ($end_year_data == false) {
+                      $year_data_string .= "0, ";
+                    }
                   }
                   // expenses
                   if (array_key_exists($month, $expense_monthly_totals)) {
@@ -444,23 +467,34 @@ while ($row = $stmt->fetch()) {
                     //$savings_total_string .= '<td style="color:'.$save_color.';">$'.number_format($month_savings, 2).'</td>';
                     echo '<td '.$add_alternating_class.'>$'.number_format($add_bills_total, 2).'</td>';
                     echo '<td '.$add_alternating_class.' style="color:'.$save_color1.';">$'.number_format($month_savings, 2).'</td>';
+
+                    if ($end_year_data == false) {
+                      $year_data_string .= $add_bills_total .", ". $month_savings ."], ";
+                    }
                     $save_color2 = 'red';
                     if ($month_savings_with_loans >= 0) {
                       $save_color2 = 'green';
                     }
                     echo '<td '.$add_alternating_class.' style="color:'.$save_color2.';">$'.number_format($month_savings_with_loans, 2).'</td>';
+
                   } else {
                     //$savings_total_string .= '<td style="color:grey;">~</td>';
                     echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
                     echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
                     echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
+                    if ($end_year_data == false) {
+                      $year_data_string .= "0, 0], ";
+                    }
                   }
                 echo '</tr>';
+                if ($this_month == $month) {
+                  $end_year_data = true;  // next loop iteration will not add values to next months in graph string creation
+                }
               }
 
 
               echo '<tr>';
-                echo '<td class="end_row_options" tyle="color:grey;">(Yearly Totals)</td>';
+                echo '<td class="end_row_options" style="color:grey;">(Totals)</td>';
                 echo '<td class="end_row_options">$'.number_format($total_yearly_incomes, 2).'</td>';
                 echo '<td class="end_row_options">$'.number_format($total_yearly_expenses, 2).'</td>';
                 $save_color = 'red';
@@ -482,6 +516,143 @@ while ($row = $stmt->fetch()) {
         echo '</div>';
 
         echo '<br>';
+
+
+        // here we are going to retrieve data from database to show each months incomes, expenses and savings for each month on a line chart
+        //echo "incomes: ". var_dump($income_monthly_totals)."<br>";
+        $income_data_points = array();
+        //echo "incomes: ". $savings."<br>";
+        //for ($i=0; $i<count($expense_monthly_totals); $i++) {
+        $counter = 0;
+        foreach ($income_monthly_totals as $month=>$total) {
+          if ($total != NULL) {
+            array_push($income_data_points, array("y" => $total, "label" => $month));
+          }
+          $counter++;
+        }
+      //  var_dump($income_data_points);
+
+        //echo "expenses: ". var_dump($expense_monthly_totals)."<br>";
+        // array for data points
+        $expense_months = array();
+        $expense_totals = array();
+        //echo "incomes: ". $savings."<br>";
+        //for ($i=0; $i<count($expense_monthly_totals); $i++) {
+        $counter = 0;
+        foreach ($expense_monthly_totals as $month=>$total) {
+          if ($total != NULL) {
+            array_push($expense_months, $month);
+            array_push($expense_totals, $total);
+          }
+          $counter++;
+        }
+        //var_dump($expense_months);
+        //var_dump($expense_totals);
+
+        if ($id_role == 1){
+          echo $year_data_string;
+          // the new library method to generate the graph
+          library_year_line_graph($year_data_string);
+
+
+
+          // here we get all the current active categories to loop through each one and get each month totals for the year
+          $cat_monthly_data_string = "";
+          $cat_title_data_string = "['Month', ";  // categories get added to this each time
+          $cat_names_array = array();
+          $dont_add = false;
+
+          // for each month, get each category and sum the amounts for each month
+          foreach ($full_name_months as $month) {
+
+            $sql_cat = "
+              SELECT * FROM categories WHERE is_active = 1;
+            ";
+            //echo $sql_cat.'<br>';
+            $dbh = new Dbh();
+            $stmt_cat = $dbh->connect()->query($sql_cat);
+
+            $cat_monthly_data_string .= "['" .$month. "', ";
+
+            while ($row = $stmt_cat->fetch()) {
+              //echo "cat: ". $row['cat_id'] ."<br>";
+              //echo "cat name: ". $row['cat_name'] ."<br>";
+              //echo "month: ". $month ."<br>";
+              $cat_name = $row['cat_name'];
+
+              if ($dont_add == false) {
+                array_push($cat_names_array, $cat_name);
+              }
+
+              //$cat_title_data_string .= $cat_name. ", ";
+
+              // for each cat, get each month total
+              $sql_month_cat = "
+                    SELECT
+                           c.cat_name AS 'cat_name',
+                           SUM(fe.fe_amount) AS 'fe_amount',
+                           fe.fe_date,
+                           c.cat_id
+                    FROM finance_expenses fe
+                    LEFT JOIN users u ON fe.id_user = u.user_id
+                    LEFT JOIN categories c ON fe.id_category = c.cat_id
+
+                    WHERE fe.is_active = 1
+                    AND u.user_id = ".$user_id."
+
+                    AND MONTHNAME(fe.fe_date) = '".$month."'
+                    AND YEAR(fe.fe_date) = YEAR('".$last_day_of_year."')
+                    AND c.cat_id = ".$row['cat_id']."
+
+                    GROUP BY c.cat_name, MONTH(fe.fe_date)
+                    ORDER BY fe.fe_date ASC;
+              ";
+              //echo $sql_month_cat.'<br>';
+              $dbh = new Dbh();
+              $stmt_month_cat = $dbh->connect()->query($sql_month_cat);
+
+              if ($result = mysqli_query($conn, $sql_month_cat)) {
+                // Return the number of rows in result set
+                $num_rows = mysqli_num_rows( $result );
+                //echo "num_rows: ".$num_rows."<br>";
+                if ($num_rows == 0) {
+                  $cat_monthly_data_string .= "0, ";
+                }
+              }
+              while ($row = $stmt_month_cat->fetch()) {
+                $expense_date = strtotime($row['fe_date']);
+                $get_formatted_date = date('M', $expense_date);
+
+                if ($row['fe_amount'] == 0 || $row['fe_amount'] == null) {
+                  $cat_monthly_data_string .= "0, ";
+                } else {
+                  $cat_monthly_data_string .= $row['fe_amount'].", ";
+                }
+
+
+
+                //$expense_monthly_totals[$get_formatted_date] = $row['fe_amount'];
+              }
+              //
+            }
+            $dont_add = true;
+            $cat_monthly_data_string .= "], ";
+          }
+          //$cat_monthly_data_string .= "], ";
+
+          for ($i = 0; $i < count($cat_names_array); $i++){
+            //echo "cat_names_array: ". $cat_names_array[$i]."<br>";
+            $cat_title_data_string .= "'" .str_replace(' ', '_', $cat_names_array[$i]) ."', ";
+          }
+          $cat_title_data_string .= "], ";
+
+          //echo "cat_title_data_string: ".$cat_title_data_string;
+          //echo "cat_monthly_data_string: ".$cat_monthly_data_string;
+          library_line_month_cat_graph($cat_title_data_string, $cat_monthly_data_string);
+
+
+        }
+
       ?>
 
 <?php

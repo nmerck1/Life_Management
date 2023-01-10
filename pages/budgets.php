@@ -1,5 +1,5 @@
 <?php
-//declare(strict_types = 1);
+////declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 include '../includes/function_library.inc.php';
 
@@ -142,7 +142,7 @@ while ($row = $stmt->fetch()) {
                     echo '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format(($row['bud_amount']), 2). '</td>';
                     echo '<td class="end_row_options">';
                         echo '<a href="../includes/finances.inc.php?selected_id='.$row['bud_id'].'&update_type=Edit&form_type=Budget&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
-                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+                        echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bud_id'].'&update_type=Delete&form_type=Budget&user_id='.$user_id.'" onclick="return confirm(\'Delete: '.$row['cat_name'].' Budget?\')"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
                     echo '</td>';
                   echo '</tr>';
                   $total_budget_amount += (float)$row['bud_amount'];

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <?php
-//declare(strict_types = 1);
+////declare(strict_types = 1);
 include '../includes/autoloader.inc.php';
 //include '/home3/lifement/public_html/classes/header.class.php';
 include '../includes/function_library.inc.php';
@@ -93,11 +93,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
           //echo "user_id: ".$user_id."<br>";
           //echo "username: ".$username."<br>";
-
+          $date_now = date('Y-m-d H:i:s');  // Removed CURRENT_TIMESTAMP and put this instead 
           // update last logged in to current timestamp
-          $sql = "UPDATE users
-                  SET user_last_logged = TIMESTAMP(CURRENT_TIMESTAMP)
-                  WHERE user_id = $user_id;
+          $sql = "
+                  UPDATE users
+                  SET user_last_logged = TIMESTAMP('".$date_now."')
+                  WHERE user_id = ".$user_id.";
           ";
           //echo $sql;
           if ($conn->query($sql) === TRUE) {

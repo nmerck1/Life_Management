@@ -97,7 +97,17 @@ while ($row = $stmt->fetch()) {
         var company = document.getElementById('company');
       }
       if (form_type.innerHTML != "Budget") {
-    		var name = document.getElementById('name');
+    		var name_value = document.getElementById('name').value;
+        //alert("name_value: " + name_value);
+        var remove_apostrophes = name_value.replace(/[^\w\s]/gi, '');
+        var name_string = remove_apostrophes.replace(/[^a-zA-Z0-9]/g, ' ');
+        //alert("name_string: " + name_string);
+        // I don't think I want any f#$@ing candy Martha!!!??
+      }
+      if (form_type.innerHTML == "Expense" || form_type.innerHTML == "Income") {
+        var new_company_name_value = document.getElementById('new_company_name').value;
+        var remove_apostrophes = new_company_name_value.replace(/[^\w\s]/gi, '');
+        var new_company_name_string = remove_apostrophes.replace(/[^a-zA-Z0-9]/g, ' ');
       }
   		if (form_type.innerHTML == "Expense" || form_type.innerHTML == "Budget" && update_type.innerHTML == "Insert"){
   			var category = document.getElementById('category');
@@ -106,7 +116,11 @@ while ($row = $stmt->fetch()) {
   		var amount = document.getElementById("amount");
       if (form_type.innerHTML != "Bill" && form_type.innerHTML != "Budget") {
         var date = document.getElementById('date');
-        var notes = document.getElementById('notes');
+        var notes_value = document.getElementById('notes').value;
+        //alert("notes_value: " + notes_value);
+        var remove_apostrophes = notes_value.replace(/[^.\w\s]/gi, '');
+        var notes_string = remove_apostrophes.replace(/[^a-zA-Z0-9.]/g, ' ');
+        //alert("notes_string: " + notes_string);
       }
   		//if (form_type.innerHTML == "Bill") {
         //var freq = document.getElementById('freq');
@@ -123,8 +137,11 @@ while ($row = $stmt->fetch()) {
       if (form_type.innerHTML != "Bill" && form_type.innerHTML != "Budget") {
         query_string += "&company=" + company.value;
       }
+      if (form_type.innerHTML == "Expense" || form_type.innerHTML == "Income") {
+        query_string += "&new_company_name=" + new_company_name_string;
+      }
       if (form_type.innerHTML != "Budget") {
-    		query_string += "&name=" + name.value;
+    		query_string += "&name=" + name_string;
       }
   		if (form_type.innerHTML == "Expense" || form_type.innerHTML == "Budget"){
   			query_string += "&category=" + category_value;
@@ -132,7 +149,7 @@ while ($row = $stmt->fetch()) {
   		query_string += "&amount=" + amount.value;
       if (form_type.innerHTML != "Bill" && form_type.innerHTML != "Budget") {
     		query_string += "&date=" + date.value;
-    		query_string += "&notes=" + notes.value;
+    		query_string += "&notes=" + notes_string;
       }
       //if (form_type.innerHTML == "Bill") {
         //query_string += "&freq=" + freq_value;
@@ -155,10 +172,52 @@ while ($row = $stmt->fetch()) {
 
 	}
 
+  function update_input_search(new_string) {
+      //alert("typed key");
+      // setup the ajax request
+  		var xhttp = new XMLHttpRequest();
+  		// create link to send GET variables through
+  		var query_string = "../ajax/search_companies.ajax.php";
+  		query_string += "?comp_name=" + new_string;
+
+  		xhttp.onreadystatechange = function() {
+  			if (this.readyState == 4 && this.status == 200) {
+  			     document.getElementById("search_options_popup").innerHTML = this.responseText;
+  			}
+  		};
+  		xhttp.open("GET", query_string, true);
+  		xhttp.send();
+
+      // show the popup
+      close_popup(false);
+	}
+
+  function insert_selected_name(new_comp_name) {
+      var company_input = document.getElementById('company');
+      company_input.value = new_comp_name;
+      company_input.innerHTML = new_comp_name;
+      close_popup(true);
+  }
+
+  function close_popup(bool) {
+    if (bool) {
+        document.getElementById("search_options_popup").style.display = "none";
+    } else {
+        document.getElementById("search_options_popup").style.display = "block";
+    }
+  }
+
   function check_form(){
     var form_type = document.getElementById('form_type');
     if (form_type.innerHTML != "Budget") {
       var name = document.getElementById('name');
+    }
+    if (form_type.innerHTML == "Expense" || form_type.innerHTML == "Income") {
+      var new_company_name = document.getElementById('new_company_name');
+      var company = document.getElementById('company');
+      if (new_company_name.value == '' && company.value == 'Other') {
+        return false;
+      }
     }
 		var amount = document.getElementById("amount");
 
@@ -177,11 +236,20 @@ while ($row = $stmt->fetch()) {
   function update_element_value(element, value){
     element.value = value;
   }
+
+  function show_new_input(that){
+    if (that.value == "Other") {
+        //alert("check");
+        document.getElementById("new_company").style.display = "block";
+    } else {
+        document.getElementById("new_company").style.display = "none";
+    }
+  }
 </script>
 
 <?php
 	echo '<p id="selected_id" style="display:none;" value="'.$selected_id.'">'.$selected_id.'</p>';
-	echo '<p id="form_type" style="display:none;" value="'.$form_type.'">'.$form_type.'</p>';
+	echo '<p id="form_type" style="display:none;" value="'.$form_type.'">'.$form_type.'</p>'; //
 	echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
 
 	echo '<p id="test"></p>';
@@ -196,7 +264,7 @@ while ($row = $stmt->fetch()) {
 						if ($form_type == 'Expense') {
 							// default variables
 							$update_type = "";
-							$company = "Other";  // default for now
+							$company = "";  // default for now
 							$name = "";
 							$cat_id = "";
 							$amount = 0.00;
@@ -246,6 +314,11 @@ while ($row = $stmt->fetch()) {
 								//echo '<input type="text" id="company" value="'.$company.'" placeholder="Ingles, QT, Wal-Mart, etc."></input>';
                 library_get_companies_dropdown($company);
 
+                echo '<p id="new_company" style="display:none;">';
+                echo '<label>New Company: </label>';
+                echo '<input type="text" id="new_company_name" value="" onchange="update_element_value(this, this.value)"></input>';
+                echo '</p>';
+
 								echo '<br>';
 								echo '<label>Name: </label>';
 								echo '<input type="text" id="name" value="'.$name.'" onchange="update_element_value(this, this.value)"></input>';
@@ -269,7 +342,7 @@ while ($row = $stmt->fetch()) {
 						} elseif ($form_type == 'Income') {
 								// default variables
 								$update_type = "";
-								$company = "Other";
+								$company = "";
 								$name = "";
 								$amount = 0.00;
 								$date = date('Y-m-d');	// default to today
@@ -313,6 +386,11 @@ while ($row = $stmt->fetch()) {
 								echo '<div class="container">';
 
 									library_get_companies_dropdown($company);
+
+                  echo '<p id="new_company" style="display:none;">';
+                  echo '<label>New Company: </label>';
+  								echo '<input type="text" id="new_company_name" value="" onchange="update_element_value(this, this.value)"></input>';
+                  echo '</p>';
 
 									echo '<br>';
 									echo '<label>Name: </label>';

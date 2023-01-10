@@ -6,7 +6,7 @@ class Dbh {
 	private $host = "localhost";
 	private $user = "root";
 	private $pass = "";
-	private $db = "life_management";
+	private $db = "lifement_life_management";
 
 	private $is_server = false;
 

@@ -7,7 +7,7 @@ $g_servername = "localhost";
 //$g_servername = "lifemanagement.me";
 $g_username = "root";
 $g_password = "";
-$g_database = "life_management";
+$g_database = "lifement_life_management";
 $g_port = 3306;
 
 $is_server = false;
@@ -148,6 +148,7 @@ function library_get_freq_dropdown($freq_value){
 // I have full control of what companies get added so just make sure they are distinct names, otherwise
 // it will get duplicate records. Use SELECT DISTINCT comp_name in query for searching...
 function library_get_companies_dropdown($comp_name){
+	/*
 	echo '<label>Company: </label>';
 	$sql = "SELECT *
 					FROM companies
@@ -156,20 +157,31 @@ function library_get_companies_dropdown($comp_name){
 	";
 	$dbh = new Dbh();
 	$stmt = $dbh->connect()->query($sql);
-	echo '<select id="company" name="company">';
+	*/
+	//echo '<select id="company" name="company" onchange="show_new_input(this);">';
+	echo '<label>Company: </label>';
+	echo '<input id="company" name="company" oninput="update_input_search(this.value);" value="'.$comp_name.'"></input>';
+	echo '<div id="search_options_popup" name="search_options_popup" class="searchPopup">';
+			// content gets dynamically made into here //
+			//echo '<table style="width:100%;">';
+				//echo '<tr style="width:100%;"><td style="width:100%;"><button style="width:100%;"> test </button></td></tr>';
+			//echo '</table>';
+	echo '</div>';
+	/*
 		while ($row = $stmt->fetch()) {
 			$color = '';
 			if ($comp_name == $row['comp_name']) {
 				if ($row['comp_name'] == 'Other') {
-					$color = 'color:red;';
+					$color = 'style="color:red;"';
 				}
-				echo '<option value="'.$row['comp_name'].'" selected="selected" style="'.$color.'">'.$row['comp_name'].'</option>';
+				echo '<option value="'.$row['comp_name'].'" selected="selected" '.$color.'>'.$row['comp_name'].'</option>';
 			} else {
-				echo '<option value="'.$row['comp_name'].'" style="'.$color.'">'.$row['comp_name'].'</option>';
+				echo '<option value="'.$row['comp_name'].'" '.$color.'>'.$row['comp_name'].'</option>';
 			}
 
 		}
-	echo '</select>';
+		*/
+	//echo '</select>';
 }
 
 function library_get_food_categories_dropdown($fc_id) {
@@ -228,6 +240,82 @@ function library_get_meal_time_dropdown($meal_time){
 	echo '</select>';
 }
 
+// this method creates a line graph based on three arrays: incomes, expenses, savings (all for each month of the given year)
+// $year_num, $incomes_array, $expenses_array, $savings_array
+function library_year_line_graph($year_data_string) {
 
+echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
+
+	?>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	 <script type="text/javascript">
+		 google.charts.load('current', {'packages':['corechart']});
+		 google.charts.setOnLoadCallback(drawChart);
+
+		 function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+				['Month', 'Incomes', 'Expenses', 'Savings'],
+				<?php
+					echo $year_data_string;
+			  ?>
+			]);
+
+			 var options = {
+				 title: 'Incomes, Expenses & Savings',
+				 curveType: 'function',
+				 legend: { position: 'bottom' },
+				 backgroundColor: 'black',
+			 };
+
+			 var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+			 chart.draw(data, options);
+			 }
+		</script>
+		<?php
+		echo '<div id="curve_chart" style="width: 90%; margin:auto; height: 500px"></div>';
+		echo '<br>';
+}
+
+
+
+// this method creates a line graph based on three arrays: incomes, expenses, savings (all for each month of the given year)
+// $year_num, $incomes_array, $expenses_array, $savings_array
+function library_line_month_cat_graph($cat_title_data_string, $data_string) {
+
+echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
+
+	?>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	 <script type="text/javascript">
+		 google.charts.load('current', {'packages':['corechart']});
+		 google.charts.setOnLoadCallback(drawChart);
+
+		 function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+				//['Month', 'Expenses'],
+				<?php
+					echo $cat_title_data_string;//['Month', 'Category1', 'Category2', ...],
+					echo $data_string;
+			  ?>
+			]);
+
+			 var options = {
+				 title: 'Monthly Categories Spending',
+				 lineWidth: 3,
+				 curveType: 'function',
+				 legend: { position: 'bottom' },
+				 backgroundColor: 'black',
+			 };
+
+			 var chart = new google.visualization.LineChart(document.getElementById('cat_monthly_curve_chart'));
+
+			 chart.draw(data, options);
+			 }
+		</script>
+		<?php
+		echo '<div id="cat_monthly_curve_chart" style="width: 90%; margin:auto; height: 500px"></div>';
+		echo '<br>';
+}
 
 ?>
