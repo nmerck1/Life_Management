@@ -423,21 +423,22 @@ while ($row = $stmt->fetch()) {
             echo '<h4 style="text-align:center;">Category Spending</h4>';
 
             $sql = "
-                    SELECT SUM(fe.fe_amount) AS 'fe_amount',
-                           fe.fe_date,
-                           fe.is_active,
-                           cat.cat_name,
-                           bud.bud_amount
+                    SELECT cat.cat_name,
+                    SUM(fe.fe_amount) AS 'fe_amount',
+                    IF (bud.bud_amount IS NULL, NULL, bud.bud_amount)  AS 'bud_amount',
+                    fe.is_active
                     FROM finance_expenses fe
+
                     LEFT JOIN users u ON fe.id_user = u.user_id
                     LEFT JOIN categories cat ON fe.id_category = cat.cat_id
                     LEFT JOIN budgets bud ON fe.id_category = bud.id_category
+
                     WHERE fe.is_active = 1
-                    AND bud.is_active = 1
                     AND u.user_id = ".$user_id."
-                    AND bud.id_user = ".$user_id."
+                    AND (bud.id_user = '".$user_id."' OR bud.id_user IS NULL)
                     AND YEAR(fe.fe_date)=YEAR('".$date_search."')
                     AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+
                     GROUP BY cat.cat_name
                     ORDER BY cat.cat_name ASC;
             ";
@@ -462,22 +463,26 @@ while ($row = $stmt->fetch()) {
                 $is_alternate_row = false;
               }
 
-                $build_table .= '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
-                $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['fe_amount'], 2). '</td>';
-                if ($row['bud_amount'] == NULL) {
-                    $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">(No budget set)</td>';
-                    $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:green;">$0.00</td>';
-                } else {
-                  $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['bud_amount'], 2). '</td>';
-                  // get the difference:
-                  $bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
-                  $color = 'red';
-                  if ($bud_diff >= 0) { $color = 'green'; }
-                  $total_over_under_amount += $bud_diff;
-                  $total_budget_amount += $row['bud_amount'];
-                  $total_spent_amount += $row['fe_amount'];
-                  $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
+              $build_table .= '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
+              $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['fe_amount'], 2). '</td>';
+              if ($row['bud_amount'] == NULL) {
+                  $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">~</td>';
+                  $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">~</td>';
+              } else {
+                $show_budget = "~";
+                if ($row['bud_amount'] != NULL) {
+                    $show_budget = number_format($row['bud_amount'], 2);
                 }
+                $build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .$show_budget. '</td>';
+                // get the difference:
+                $bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
+                $color = 'red';
+                if ($bud_diff >= 0) { $color = 'green'; }
+                $total_over_under_amount += $bud_diff;
+                $total_budget_amount += $row['bud_amount'];
+                $total_spent_amount += $row['fe_amount'];
+                $build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
+              }
               $build_table .= '</tr>';
 
             }

@@ -64,15 +64,25 @@ if ($_GET['company']) {
 
 // here we check these variables
 if ($update_type == 'Delete') {
-  // get form type so we know the table:
-  // find selected id in table, then make is_active equal zero
-  $sql = "UPDATE $table
-          SET is_active = 0
-          WHERE $table_id = $selected_id
-          AND id_user = $user_id;
-  ";
-  $dbh = new Dbh();
-  $stmt = $dbh->connect()->query($sql);
+  // we need to make a delete exception for budgets since there are issues when we keep them on is_active: 0
+  if ($form_type == 'Budget') {
+    $sql = "DELETE FROM $table
+            WHERE $table_id = $selected_id
+            AND id_user = $user_id;
+    ";
+    $dbh = new Dbh();
+    $stmt = $dbh->connect()->query($sql);
+  } else {
+    // get form type so we know the table:
+    // find selected id in table, then make is_active equal zero
+    $sql = "UPDATE $table
+            SET is_active = 0
+            WHERE $table_id = $selected_id
+            AND id_user = $user_id;
+    ";
+    $dbh = new Dbh();
+    $stmt = $dbh->connect()->query($sql);
+  }
 
 } elseif ($update_type == 'Update') {
 
