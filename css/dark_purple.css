@@ -15,7 +15,9 @@
 }
 
 
-
+.monthly_action {
+   color: var(--body_text_color);
+}
 
 /* Remove the navbar's default margin-bottom and rounded borders */
 .navbar {

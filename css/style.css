@@ -97,6 +97,11 @@ a:hover {
 }
 
 
+.monthly_action {
+  color: white;
+  font-size: 25px;
+}
+
 /* Set black background color, white text and some padding */
 footer {
   /* background-color: rgb(25, 29, 32); */

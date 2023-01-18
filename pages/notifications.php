@@ -148,14 +148,15 @@ while ($row = $stmt->fetch()) {
     element.value = value;
   }
 
-  function scroll_notifications(next_prev_num){
+  function scroll_notifications(next_prev_num, table_scroll){
       // setup the ajax request
       var xhttp = new XMLHttpRequest();
       // get variables from inputs below:
-      var current_page_num = document.getElementById('current_page_num');
+      var current_page_num = document.getElementById(table_scroll + '_current_page_num');
       var user_id = document.getElementById('user_id');
       var date_search = document.getElementById('date_search');
-      var table_scroll = 'Notifications'
+      var scroll_div_name = table_scroll + "_scroll_div";
+      var show_per_page = 5;
 
       var action = 'Next';
       if (next_prev_num == 0) {
@@ -178,10 +179,11 @@ while ($row = $stmt->fetch()) {
         query_string += "&action=" + action;
         query_string += "&date_search=" + date_search.innerHTML;
         query_string += "&table_scroll=" + table_scroll;
+        query_string += "&show_per_page=" + show_per_page;
 
         xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
-           document.getElementById("scroll_div").innerHTML = this.responseText;
+           document.getElementById(scroll_div_name).innerHTML = this.responseText;
           }
         };
         xhttp.open("GET", query_string, true);
@@ -196,14 +198,6 @@ while ($row = $stmt->fetch()) {
 
 
 <div class="container text-center">
-  <!--
-  <div class="row content">
-    <div id="left_sidenav" class="col-sm-2 sidenav">
-      <p class="bi-card-list" style="font-size: 1rem; color: white;"><a href="#"> Plans</a></p>
-      <p class="bi-list-check" style="font-size: 1rem; color: white;"><a href="#"> Goals</a></p>
-      <p class="bi-lightbulb" style="font-size: 1rem; color: white;"><a href="#"> Ideas</a></p>
-    </div>
-  -->
     <div class="container" style="height:600px; display:contents;">
       <?php
       echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
@@ -221,107 +215,16 @@ while ($row = $stmt->fetch()) {
       echo '<div class="div_element_block">';
         echo '<h4 style="text-align:center;"><i class="bi-mailbox"> </i>Inbox</h4>';
         echo '<p style="width:95%; margin:0px; text-align:center;">';
-          echo '<button name="prev_button" onclick="scroll_notifications(0);" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+          echo '<button name="prev_button" onclick="scroll_notifications(0, \'Notifications\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
             echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
           echo '</button>';
-          echo '<button name="next_button" onclick="scroll_notifications(1);" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+          echo '<button name="next_button" onclick="scroll_notifications(1, \'Notifications\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
             echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
           echo '</button>';
         echo '</p>';
 
-        echo '<div id="scroll_div">';
-          echo '<p id="current_page_num" style="text-align:center; display:none;" value="1">1</p>'; //style="display:none;"
-          echo '<p id="page_show" style="text-align:center; color:grey;">(Page 1)</p>';
-            $sql = "
-                    SELECT
-                      n.n_id,
-                      n.n_subject,
-                      n.n_message,
-                      n.n_type,
-                      n.n_send_date,
-                      n.n_read_date,
-                      n.is_active,
-                      n.n_to_user,
-
-                      ur.role_name AS 'from_role_name',
-                      ur.role_color AS 'from_role_color',
-
-                      fu.id_role AS 'from_role',
-                      fu.user_name AS 'from_username',
-                      fu.user_icon AS 'from_icon',
-                      fu.user_fname AS 'from_fname',
-                      fu.user_lname AS 'from_lname'
-
-                    FROM notifications n
-                    LEFT JOIN users fu ON n.n_from_user = fu.user_id
-                    LEFT JOIN user_roles ur ON fu.id_role = ur.role_id
-
-                    WHERE n.is_active = 1
-                    AND n.n_to_user = ".$user_id." OR n.n_to_user = 0
-
-                    ORDER BY n.n_send_date DESC
-                    LIMIT 0, 5;
-            ";
-            //echo $sql;
-            $dbh = new Dbh();
-            $stmt = $dbh->connect()->query($sql);
-            // get num rows to check
-            $num_stmt = $conn->prepare($sql);
-            $num_stmt->execute();
-            /* store the result in an internal buffer */
-            $num_stmt->store_result();
-            if ($num_stmt->num_rows > 0) {
-              echo '<table class="table table-dark" style="width:100%;">'; // mini table to display months
-                echo '<tr>';
-                  echo '<th>Type</th>';
-                  echo '<th>From</th>';
-                  echo '<th>Subject</th>';
-                  echo '<th>Sent</th>';
-                  echo '<th class="end_row_options">';
-                    //echo '<a href="../ajax/messages.ajax.php?form_type=Income&user_id='.$user_id.'"><p class="bi-plus-circle" style="color:white;"></p></a>';
-                  echo '</th>';
-                echo '</tr>';
-            } else {
-              echo '<p style="text-align:center;">(There are no notifications)</p>';
-            }
-
-
-
-            $is_alternate_row = false;
-            $add_alternating_class = '';
-            while ($row = $stmt->fetch()) {
-              echo '<tr>';
-
-              if ($is_alternate_row == false) {
-                $add_alternating_class = '';
-                $is_alternate_row = true;
-              } else {
-                $add_alternating_class = 'class="alternating_row"';
-                $is_alternate_row = false;
-              }
-                //echo '<td style="display:none;"><p id="msg_id" name="msg_id" value="'.$row['msg_id'].'">'.$row['msg_id'].'</p></td>';
-                //echo '<td>'.$row['from_fname'].' '.$row['from_lname'].'</td>';
-                $font_weight = 'font-weight:normal;';
-                if ($row['n_read_date'] < date('2020-01-01 00:00:00')) {
-                  $font_weight = 'font-weight:bold;';
-                }
-
-                echo '<td '.$add_alternating_class.' style="'.$font_weight.'">'.$row['n_type'].'</td>';
-                echo '<td '.$add_alternating_class.' style="'.$font_weight.'">';
-                  echo '<i style="color:'.$row['from_role_color'].'; style="'.$font_weight.'"">'.$row['from_username'].' ('.$row['from_role_name'].')</i>';
-                echo '</td>';
-                echo '<td '.$add_alternating_class.' style="'.$font_weight.'">'.$row['n_subject'].'</td>';
-                $date_string = strtotime($row['n_send_date']);
-                echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M, d', $date_string). '</td>';
-                echo '<td class="end_row_options">';
-                  //echo '<a href="../includes/messages.ajax.php?user_id='.$user_id.'"><p class="bi-eye-fill" style="color:white;"></p></a>';
-                  echo '<button class="end_row_options" style="text-align:center; margin:auto; color:white; background-color:black; border:none;" name="view" onclick="view_msg('.$row['n_id'].');" value="View"><i class="actions"><p class="bi-eye-fill"></p></i></button>';
-                echo '</td>';
-              echo '</tr>';
-            }
-
-        echo '</table>';
-        echo '<br>';
+        echo '<div id="Notifications_scroll_div">';
+            library_notifications_table($user_id, "First", 1, $date_search, 5, $conn);
         echo '</div>';
       echo '</div>';
       echo '<br>';

@@ -14,7 +14,9 @@
   --alternate_table_row_color: rgb(240, 186, 230);
 }
 
-
+.monthly_action {
+   color: var(--body_text_color);
+}
 
 
 /* Remove the navbar's default margin-bottom and rounded borders */
