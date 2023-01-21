@@ -58,7 +58,7 @@ while ($row = $stmt->fetch()) {
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
   $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav();
+  $finance_nav->show_header_nav('Monthly');
 ?>
 
 <script type="text/javascript">
@@ -68,6 +68,9 @@ while ($row = $stmt->fetch()) {
   		var xhttp = new XMLHttpRequest();
       // get variables from inputs below:
   		var current_page_num = document.getElementById(table_scroll + '_current_page_num');
+      if (table_scroll == 'DetailedCat') {// one exception
+        var current_cat_id = document.getElementById(table_scroll + '_current_cat_id');
+      }
       var user_id = document.getElementById('user_id');
       var date_search = document.getElementById('date_search');
       var show_per_page = 5;
@@ -89,12 +92,14 @@ while ($row = $stmt->fetch()) {
         // create link to send GET variables through
         var query_string = "../ajax/scroll.ajax.php";
         query_string += "?current_num=" + current_page_num.innerHTML;
-        //query_string += "&form_type=" + "Expense";
         query_string += "&user_id=" + user_id.innerHTML;
         query_string += "&action=" + action;
         query_string += "&date_search=" + date_search.innerHTML;
         query_string += "&table_scroll=" + table_scroll;
         query_string += "&show_per_page=" + show_per_page;
+        if (table_scroll == 'DetailedCat') {// one exception
+          query_string += "&cat_id=" + current_cat_id.innerHTML;
+        }
 
         xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
@@ -169,6 +174,53 @@ while ($row = $stmt->fetch()) {
       //window.location = "../pages/finances.php";
     }
   }
+
+  // this method is for selecting a category button in order to show more detail about that category spending this month & year //
+  function select_cat(cat_id, table_scroll) {
+      // setup the ajax request
+      var xhttp = new XMLHttpRequest();
+      // get variables from inputs below:
+      var current_page_num = document.getElementById(table_scroll + '_current_page_num');
+      var user_id = document.getElementById('user_id');
+      var date_search = document.getElementById('date_search');
+      var show_per_page = 5;
+      var scroll_div_name = table_scroll + "_scroll_div";
+
+      // reset page number too
+      current_page_num.innerHTML = 0;
+      // update the current set cat id to be regular class for style
+      var current_cat_id = document.getElementById(table_scroll + '_current_cat_id');
+      var get_current_cat_button = document.getElementById('cat_button_' + current_cat_id.innerHTML);
+      var get_new_cat_button = document.getElementById('cat_button_' + cat_id);
+      //alert("current cat id: " + current_cat_id.innerHTML);
+      //alert("new cat id: " + cat_id);
+      // remove from this previous cat button
+      get_current_cat_button.className = "btn btn-primary btn-sm";
+      // add to new
+      get_new_cat_button.className = "btn btn-dark btn-sm";
+
+      // create link to send GET variables through
+      var query_string = "../ajax/scroll.ajax.php";
+      query_string += "?current_num=" + cat_id;
+      query_string += "&user_id=" + user_id.innerHTML;
+      query_string += "&action=" + "SelectCategoryTable";
+      query_string += "&date_search=" + date_search.innerHTML;
+      query_string += "&table_scroll=" + table_scroll;
+      query_string += "&show_per_page=" + show_per_page;
+
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+         document.getElementById(scroll_div_name).innerHTML = this.responseText;
+        }
+      };
+      xhttp.open("GET", query_string, true);
+      xhttp.send();
+
+      // when the data is returned after ajax, it redirects back to inventory
+      //window.location = "../pages/finances.php";
+  }
+
+
   </script>
 
 

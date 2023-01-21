@@ -10,6 +10,10 @@ $action = $_GET['action'];
 $date_search = $_GET['date_search'];
 $table_scroll = $_GET['table_scroll'];
 $show_per_page = $_GET['show_per_page'];
+$cat_id = 0;
+if (isset($_GET['cat_id'])) {
+  $cat_id = $_GET['cat_id'];
+}
 
 if ($table_scroll == 'Expenses') {
   library_expenses_table($user_id, $action, $current_num, $date_search, $show_per_page);
@@ -25,7 +29,14 @@ if ($table_scroll == 'Expenses') {
   library_notifications_table($user_id, $action, $current_num, $date_search, $show_per_page, $conn);
 } elseif ($table_scroll == 'Monthly') {
   library_monthly_tables($action, $date_search, $user_id);
+} elseif ($table_scroll == 'DetailedCat') {
+  if ($action == 'SelectCategoryTable') {   // In this specific case, we are going to use current_num as the cat_id so I don't have to update a bunch of GETs...
+      library_detailed_category_spending_table($user_id, $date_search, $current_num, $action, $current_num, $show_per_page);
+  } else {  // elseif ($action == 'ScrollCategoryTable')
+      library_detailed_category_spending_table($user_id, $date_search, $cat_id, $action, $current_num, $show_per_page);
+  }
 }
+
 
 //header("Location: ../pages/finances.php");
 //exit();

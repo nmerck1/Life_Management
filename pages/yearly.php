@@ -58,7 +58,7 @@ while ($row = $stmt->fetch()) {
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
   $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav();
+  $finance_nav->show_header_nav('Yearly');
 ?>
 
 <script type="text/javascript">

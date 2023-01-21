@@ -533,7 +533,7 @@ function library_category_spending_table($user_id, $date_search) {
 
 		// check if there was anything to show:
 		if ($build_table == '') {
-			echo '<p class="end_row_options" style="color:grey; text-align:center;">(Data will show here when you set your budget in a category)</p>';
+			echo '<p class="end_row_options" style="color:grey; text-align:center;">(Nothing to show)</p>';
 		} else {
 			//echo '<i style="color:grey;">';
 				//echo '(The "μ" symbol in parenthesis next to the column for "Spent" amounts, represents the average amount
@@ -1232,7 +1232,8 @@ function library_monthly_tables($action, $date_search_time, $user_id) {
 	echo '<br>';
 
 	echo '<div class="div_element_block">'; // div for bills
-		echo '<h4 style="text-align:center;"><i class="bi-receipt-cutoff"> </i>Bills</h4>';
+		//echo '<h4 style="text-align:center;"><i class="bi-receipt-cutoff"> </i>Bills</h4>';
+		echo '<h4 style="text-align:center;"><i class="bi-cash-stack"> </i>Bills</h4>';
 		$sql = "
 						SELECT bl.*,
 									 cb.bill_id,
@@ -1316,6 +1317,178 @@ function library_monthly_tables($action, $date_search_time, $user_id) {
 
 	echo '<br>';
 
+	// detail category spending
+	echo '<div class="div_element_block">'; // div for incomes
+		echo '<h4 style="text-align:center;"><i class="bi-card-list"> </i>Detailed Category View</h4>';
+
+		echo '<div id="cat_select_buttons" style="text-align:center;">';
+			$first_cat_id = library_get_current_spending_category_buttons($user_id, $get_date_normal);
+		echo '</div>';
+
+		echo '<p style="width:95%; margin:0px; text-align:center;">';
+			echo '<button name="prev_button" onclick="scroll_table(0, \'DetailedCat\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+			echo '</button>';
+			echo '<button name="next_button" onclick="scroll_table(1, \'DetailedCat\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+			echo '</button>';
+		echo '</p>';
+
+		echo '<div id="DetailedCat_scroll_div">';
+				// need to get the cat id from the first cat button shown to click on since we are basing the visibility of this table on the categories that are spending categories
+				library_detailed_category_spending_table($user_id, $get_date_normal, $first_cat_id, "First", 1, 5);
+		echo '</div>';
+	echo '</div>';
+
+
+	echo '<br>';
+
 } // end monthly tables
 
+function library_detailed_category_spending_table($user_id, $date_search, $cat_id, $action, $current_page_num, $show_per_page) {
+		// add or subtract the page number depending on the action
+	  $get_current_page_num = 1;
+	  if ($action == "Next") {
+			$get_current_page_num = $current_page_num + 1;
+		} elseif ($action == "Prev") {
+			$get_current_page_num = $current_page_num - 1;
+		}
+	  echo '<p id="DetailedCat_current_page_num" style="text-align:center; display:none;" value="'.$get_current_page_num.'">'.$get_current_page_num.'</p>'; //style="display:none;"
+	  echo '<p id="DetailedCat_page_show" style="text-align:center; color:grey;">(Page '.$get_current_page_num.')</p>';
+		echo '<p id="DetailedCat_current_cat_id" style="text-align:center; display:none;" value="'.$cat_id.'">'.$cat_id.'</p>';
+
+	  $get_sql_limit_min = ($show_per_page * $get_current_page_num) - $show_per_page;
+
+		$sql = "
+				SELECT cat.*,
+								fe.*
+				FROM finance_expenses fe
+
+				LEFT JOIN users u ON fe.id_user = u.user_id
+				LEFT JOIN categories cat ON fe.id_category = cat.cat_id
+
+				WHERE fe.is_active = 1
+				AND u.user_id = '".$user_id."'
+				AND cat.is_active = 1
+
+				AND YEAR(fe.fe_date)=YEAR('".$date_search."')
+				AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+
+				AND cat.cat_id = '".$cat_id."'
+
+				ORDER BY fe.fe_date DESC
+				LIMIT ".$get_sql_limit_min.",".$show_per_page .";
+		";
+	  $dbh = new Dbh();
+	  $stmt = $dbh->connect()->query($sql);
+
+		$build_header_for_table = '';
+		$build_main_content_for_table = '';
+
+	 	$build_header_for_table .= '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+	    $build_header_for_table .= '<tr>';
+				$build_header_for_table .= '<th>Category</th>';
+	      $build_header_for_table .= '<th>Company</th>';
+	      $build_header_for_table .= '<th>Name</th>';
+	      $build_header_for_table .= '<th>Date</th>';
+	      $build_header_for_table .= '<th style="text-align:right;">Amount</th>';
+	      //$build_header_for_table .= '<th class="end_row_options">';
+	      //$build_header_for_table .= '<a href="../includes/finances.inc.php?form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
+	      //$build_header_for_table .= '</th>';
+	    $build_header_for_table .= '</tr>';
+
+	    $total_expenses_amount = 0;
+	    $total_not_shown_expenses = 0;
+	    //$show_limit = 5;                      // this limit variable is helpful for make next and previous eventually...
+	    $counter = 1;
+	    $is_alternate_row = false;
+	    $add_alternating_class = '';
+	    while ($row = $stmt->fetch()) {
+          $build_main_content_for_table .= '<tr>';
+          if ($is_alternate_row == false) {
+            $add_alternating_class = '';
+            $is_alternate_row = true;
+          } else {
+            $add_alternating_class = 'class="alternating_row"';
+            $is_alternate_row = false;
+          }
+					$build_main_content_for_table .= '<td '.$add_alternating_class.' style="color:grey;">' .$row['cat_name']. '</td>';
+          $build_main_content_for_table .= '<td '.$add_alternating_class.' style="color:grey;">' .$row['fe_company']. '</td>';
+          $build_main_content_for_table .= '<td '.$add_alternating_class.'>' .$row['fe_name']. '</td>';
+          $date_string = strtotime($row['fe_date']);
+          $build_main_content_for_table .= '<td '.$add_alternating_class.' style="color:grey;">' .date('M, d', $date_string). '</td>';
+          $build_main_content_for_table .= '<td '.$add_alternating_class.' style="text-align:right;">' .number_format((float)$row['fe_amount'], 2). '</td>';
+          //echo '<td class="end_row_options">';
+            //echo '<span>'; //style="display:flex;"
+              //echo '<a href="../includes/finances.inc.php?selected_id='.$row['fe_id'].'&update_type=Edit&form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+              //echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete&form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+            //echo '</span>';
+          //echo '</td>';
+        $build_main_content_for_table .= '</tr>';
+	      // get variables for savings:
+	      $total_expenses_amount += (float)$row['fe_amount'];
+	      // always add to the total amount for all the rows
+	      $total_not_shown_expenses += (float)$row['fe_amount'];
+	      $counter++;
+	    }
+
+			if ($build_main_content_for_table == '') {
+				echo '<p class="end_row_options" style="color:grey; text-align:center;">(Nothing to show)</p>';
+			} else {
+				echo $build_header_for_table;
+				echo $build_main_content_for_table;
+				// the rest:
+			    echo '<tr>';
+			      echo '<td colspan=5 class="end_row_options" style="text-align:left;">Total: <p style="float:right;">$'.number_format($total_expenses_amount, 2).'</p></td>';
+			      //echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_expenses_amount, 2).'</td>';
+			      echo '<td class="end_row_options"></td>';
+			    echo '</tr>';
+			    echo '<tr>';
+			    echo '</tr>';
+			  echo '</table>';
+			}
+}// end detailed category spending table
+
+// this method returns all of the category names that have expenses associated with them.
+function library_get_current_spending_category_buttons($user_id, $date_search) {
+	$sql = "
+		SELECT cat.cat_id,
+			cat.cat_name
+		FROM finance_expenses fe
+
+		LEFT JOIN users u ON fe.id_user = u.user_id
+		LEFT JOIN categories cat ON fe.id_category = cat.cat_id
+
+		WHERE fe.is_active = 1
+		AND u.user_id = '".$user_id."'
+		AND cat.is_active = 1
+
+		AND YEAR(fe.fe_date)=YEAR('".$date_search."')
+		AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+
+		GROUP BY cat.cat_name
+		ORDER BY cat.cat_name ASC;
+	";
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+
+  $first_cat_id_in_list = 0;
+	$default_style = 'primary';	// default
+	$current_style = $default_style;
+
+	while ($row = $stmt->fetch()) {
+			if ($first_cat_id_in_list == 0) {
+				$first_cat_id_in_list = $row['cat_id'];
+				$current_style = 'dark';
+			} else {
+				$current_style = $default_style;
+			}
+
+			echo '<button id="cat_button_'.$row['cat_id'].'" class="btn btn-'.$current_style.' btn-sm" onclick="select_cat('.$row['cat_id'].', \'DetailedCat\');" style="margin:5px;">';
+			echo $row['cat_name'];
+			echo '</button>';
+	}
+
+	return $first_cat_id_in_list;
+} // end get current spending category names
 ?>
