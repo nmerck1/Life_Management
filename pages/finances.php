@@ -202,7 +202,7 @@ while ($row = $stmt->fetch()) {
         // start the outer table
         echo '<div class="container">';   // main div
 
-          echo '<h1 style="text-align:center;">Monthly Overview</h1>';
+          echo '<h1 style="text-align:center;">Monthly</h1>';
 
           echo '<div id="scroll_month_div" name="scroll_month_div">';   // scroll div
 

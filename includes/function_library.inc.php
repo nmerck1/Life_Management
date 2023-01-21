@@ -1144,7 +1144,7 @@ function library_monthly_tables($action, $date_search_time, $user_id) {
 	$get_date_normal = date('Y-m-d', $date_search_time);
 	// default show current month and year dates
 	$show_month = date('F', $date_search_time);
-	$show_year = date('Y', $date_search_time);
+	$show_year = date('y', $date_search_time);
 	$next_month = strtotime("+1 month", $date_search_time);
 	$prev_month = strtotime("-1 month", $date_search_time);
 	$current_date_set = $date_search_time;
@@ -1152,12 +1152,12 @@ function library_monthly_tables($action, $date_search_time, $user_id) {
 	if ($action == "Next") {
 		$current_date_set = $next_month;
 		$show_month = date('F', $next_month);
-		$show_year = date('Y', $next_month);
+		$show_year = date('y', $next_month);
 		$get_date_normal = date('Y-m-d', $next_month);
 	} elseif ($action == "Prev") {
 		$current_date_set = $prev_month;
 		$show_month = date('F', $prev_month);
-		$show_year = date('Y', $prev_month);
+		$show_year = date('y', $prev_month);
 		$get_date_normal = date('Y-m-d', $prev_month);
 	}
 	// set date search current:
@@ -1171,7 +1171,7 @@ function library_monthly_tables($action, $date_search_time, $user_id) {
 				echo '<i class="monthly_action"><p class="bi-arrow-left-square"></p></i>';
 			echo '</button>';
 
-			echo '<i class="bi-calendar"> </i>'.$show_month.' <span style="color: grey;">('. $show_year.')</span>';
+			echo '<i class="bi-calendar"> </i>'.$show_month.' <span style="color: grey;">(\''. $show_year.')</span>';
 
 			echo '<button class="next_button" onclick="scroll_month(1, '.$current_date_set.', \'Monthly\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
 				echo '<i class="monthly_action"><p class="bi-arrow-right-square"></p></i>';

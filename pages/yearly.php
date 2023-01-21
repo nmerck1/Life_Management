@@ -121,7 +121,7 @@ while ($row = $stmt->fetch()) {
 
         // start the outer table
         echo '<div class="container">';
-          echo '<h1 style="text-align:center;">Yearly Overview</h1>';
+          echo '<h1 style="text-align:center;">Yearly</h1>';
           $show_month_year_title = date('F', strtotime($date_search));
 
           echo '<br>';
