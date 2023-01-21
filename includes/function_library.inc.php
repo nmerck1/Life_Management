@@ -1136,5 +1136,186 @@ function get_this_month() {
 	return date("M");
 }
 
+// function for populating finance page essentially //
+
+function library_monthly_tables($action, $date_search_time, $user_id) {
+	// hidden inputs //
+	// get date how I want it normally
+	$get_date_normal = date('Y-m-d', $date_search_time);
+	// default show current month and year dates
+	$show_month = date('F', $date_search_time);
+	$show_year = date('Y', $date_search_time);
+	$next_month = strtotime("+1 month", $date_search_time);
+	$prev_month = strtotime("-1 month", $date_search_time);
+	$current_date_set = $date_search_time;
+
+	if ($action == "Next") {
+		$current_date_set = $next_month;
+		$show_month = date('F', $next_month);
+		$show_year = date('Y', $next_month);
+		$get_date_normal = date('Y-m-d', $next_month);
+	} elseif ($action == "Prev") {
+		$current_date_set = $prev_month;
+		$show_month = date('F', $prev_month);
+		$show_year = date('Y', $prev_month);
+		$get_date_normal = date('Y-m-d', $prev_month);
+	}
+	// set date search current:
+	echo '<p id="date_search" style="display:none;" value="'.$get_date_normal.'">'.$get_date_normal.'</p>';
+  echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
+
+	// main content //
+	echo '<span>';
+		echo '<h2 style="text-align:center;">';
+			echo '<button class="prev_button" onclick="scroll_month(0, '.$current_date_set.', \'Monthly\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="monthly_action"><p class="bi-arrow-left-square"></p></i>';
+			echo '</button>';
+
+			echo '<i class="bi-calendar"> </i>'.$show_month.' <span style="color: grey;">('. $show_year.')</span>';
+
+			echo '<button class="next_button" onclick="scroll_month(1, '.$current_date_set.', \'Monthly\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="monthly_action"><p class="bi-arrow-right-square"></p></i>';
+			echo '</button>';
+		echo '</h2>';
+	echo '</span>';
+
+	// mini form for displaying different dates in history
+	echo '<form method="post" action="../pages/finances.php" style="text-align:center;">';
+		//echo '<select>';
+		//foreach ($months_of_year as $month) {
+		//  echo '<option></option>';
+		//}
+		//echo '</select>';
+		//echo $date_search;
+		//$date = date('Y-m-d');	// default to today
+		//echo '<input type="date" name="date_search" value="'.$date_search.'"></input>';
+
+		//echo '<button type="submit" name="submit_search" class="btn btn-primary btn-sm" value="Display">Display Date</button>';
+	echo '</form>';
+
+	echo '<br>';
+
+	echo '<div class="div_element_block">'; // div for incomes
+		echo '<h4 style="text-align:center;"><i class="bi-plus-square"> </i>Incomes</h4>';
+		echo '<p style="width:95%; margin:0px; text-align:center;">';
+			echo '<button name="prev_button" onclick="scroll_table(0, \'Incomes\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+			echo '</button>';
+			echo '<button name="next_button" onclick="scroll_table(1, \'Incomes\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+			echo '</button>';
+		echo '</p>';
+
+		echo '<div id="Incomes_scroll_div">';
+				library_incomes_table($user_id, "First", 1, $get_date_normal, 5);
+		echo '</div>';
+	echo '</div>';
+
+	echo '<br>';
+
+	echo '<div class="div_element_block">';// div for expenses
+		echo '<h4 style="text-align:center;"><i class="bi-dash-square"> </i>Expenses</h4>';
+		echo '<p style="width:95%; margin:0px; text-align:center;">';
+			echo '<button name="prev_button" onclick="scroll_table(0, \'Expenses\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+			echo '</button>';
+			echo '<button name="next_button" onclick="scroll_table(1, \'Expenses\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+			echo '</button>';
+		echo '</p>';
+
+		echo '<div id="Expenses_scroll_div">';
+				library_expenses_table($user_id, "First", 1, $get_date_normal, 5);
+		echo '</div>';
+	echo '</div>';
+
+	echo '<br>';
+
+	echo '<div class="div_element_block">'; // div for bills
+		echo '<h4 style="text-align:center;"><i class="bi-receipt-cutoff"> </i>Bills</h4>';
+		$sql = "
+						SELECT bl.*,
+									 cb.bill_id,
+									 cb.bill_name,
+									 cb.bill_freq
+						FROM bill_logs bl
+
+						INNER JOIN current_bills cb ON bl.bl_id_bill = cb.bill_id
+
+						INNER JOIN
+								(SELECT bl_id,
+												bl_id_bill,
+												bl_amount,
+												MAX(bl_valid_date) AS MaxDateTime
+									FROM bill_logs
+									WHERE is_active = 1
+									GROUP BY bl_id_bill
+								) bl2
+						ON bl.bl_valid_date = bl2.MaxDateTime
+
+						LEFT JOIN users u ON bl.id_user = u.user_id
+
+						WHERE cb.bill_freq = 'M'
+						AND cb.is_active = 1
+						AND u.user_id = ".$user_id."
+
+						GROUP BY bl.bl_id_bill;
+		";
+		$dbh = new Dbh();
+		$stmt = $dbh->connect()->query($sql);
+		echo '<table class="table table-dark" style="text-align:center;">';
+			echo '<tr>';
+				echo '<th>Name</th>';
+				echo '<th style="text-align:right;">Amount</th>';
+				echo '<th>Frequency</th>';
+				echo '<th class="end_row_options">';
+					echo '<a href="../includes/finances.inc.php?form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
+				echo '</th>';
+			echo '</tr>';
+			$total_bills_amount = 0;
+			$is_alternate_row = false;
+			$add_alternating_class = '';
+			while ($row = $stmt->fetch()) {
+					echo '<tr>';
+
+					if ($is_alternate_row == false) {
+						$add_alternating_class = '';
+						$is_alternate_row = true;
+					} else {
+						$add_alternating_class = 'class="alternating_row"';
+						$is_alternate_row = false;
+					}
+					echo '<td '.$add_alternating_class.'>' .$row['bill_name']. '</td>';
+					echo '<td '.$add_alternating_class.' style="text-align:right;">' .number_format((float)$row['bl_amount'], 2). '</td>';
+					echo '<td '.$add_alternating_class.' style="color:grey;">' .$row['bill_freq']. '</td>';
+					echo '<td class="end_row_options">';
+						echo '<span>'; //style="display:flex;"
+							echo '<a href="../includes/finances.inc.php?selected_id='.$row['bill_id'].'&update_type=Edit&form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+							echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['bill_id'].'&update_type=Delete&form_type=Bill&user_id='.$user_id.'" onclick="return confirm(\'Delete: '.$row['bill_name'].' Bill?\')"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+						echo '</span>';
+					echo '</td>';
+				echo '</tr>';
+				// get variables for savings:
+				$total_bills_amount += (float)$row['bl_amount'];
+				//echo "total_bills_amount: ".$total_bills_amount."<br>";
+			}
+			echo '<tr>';
+				echo '<td class="end_row_options" style="text-align:left;">Total:</td>';
+				echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_bills_amount, 2).'</td>';
+				echo '<td colspan=2 class="end_row_options"></td>';
+			echo '</tr>';
+		echo '</table>';
+	echo '</div>';
+
+	echo '<br>';
+
+	echo '<div class="div_element_block">';// div for category spending
+		echo '<h4 style="text-align:center;"><i class="bi-cup-hot"> </i>Category Spending</h4>';
+		library_category_spending_table($user_id, $get_date_normal);
+	echo '</div>';
+
+	echo '<br>';
+
+} // end monthly tables
 
 ?>

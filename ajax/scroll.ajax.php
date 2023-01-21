@@ -23,9 +23,9 @@ if ($table_scroll == 'Expenses') {
   library_ious_table($user_id, $action, $current_num, $date_search, $show_per_page, true, false);
 } elseif ($table_scroll == 'Notifications') {
   library_notifications_table($user_id, $action, $current_num, $date_search, $show_per_page, $conn);
-} //elseif ($table_scroll == 'Monthly') {
-  //show_monthly_tables($user_id, $action, $current_num, $date_search, $conn);
-//}
+} elseif ($table_scroll == 'Monthly') {
+  library_monthly_tables($action, $date_search, $user_id);
+}
 
 //header("Location: ../pages/finances.php");
 //exit();
