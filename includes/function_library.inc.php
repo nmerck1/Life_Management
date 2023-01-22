@@ -1340,6 +1340,38 @@ function library_monthly_tables($action, $date_search_time, $user_id) {
 		echo '</div>';
 	echo '</div>';
 
+	echo '<br>';
+
+	echo '<div class="div_element_block">';// div for company spending
+		echo '<h4 style="text-align:center;"><i class="bi-shop"> </i>Company Spending</h4>';
+		library_company_spending_table($user_id, $get_date_normal);
+	echo '</div>';
+
+	echo '<br>';
+
+	// detail category spending
+	echo '<div class="div_element_block">'; // div for incomes
+		echo '<h4 style="text-align:center;"><i class="bi-card-list"> </i>Detailed Company View</h4>';
+
+		echo '<div id="cat_select_buttons" style="text-align:center;">';
+			$first_comp_id = library_get_current_spending_company_buttons($user_id, $get_date_normal);
+		echo '</div>';
+
+		echo '<p style="width:95%; margin:0px; text-align:center;">';
+			echo '<button name="prev_button" onclick="scroll_table(0, \'DetailedComp\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+			echo '</button>';
+			echo '<button name="next_button" onclick="scroll_table(1, \'DetailedComp\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+				echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+			echo '</button>';
+		echo '</p>';
+
+		echo '<div id="DetailedComp_scroll_div">';
+				// need to get the cat id from the first cat button shown to click on since we are basing the visibility of this table on the categories that are spending categories
+				library_detailed_company_spending_table($user_id, $get_date_normal, $first_comp_id, "First", 1, 5);
+		echo '</div>';
+	echo '</div>';
+
 
 	echo '<br>';
 
@@ -1491,4 +1523,246 @@ function library_get_current_spending_category_buttons($user_id, $date_search) {
 
 	return $first_cat_id_in_list;
 } // end get current spending category names
+
+
+function library_company_spending_table($user_id, $date_search) {
+	$sql = "
+					SELECT  fe.is_active,
+									comp.*,
+									SUM(fe.fe_amount) AS 'fe_amount'
+					FROM finance_expenses fe
+
+					LEFT JOIN users u ON fe.id_user = u.user_id
+					LEFT JOIN companies comp ON fe.fe_company = comp.comp_name
+
+					WHERE fe.is_active = 1
+					AND u.user_id = ".$user_id."
+					AND comp.is_active = 1
+
+					AND YEAR(fe.fe_date)=YEAR('".$date_search."')
+					AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+
+					GROUP BY comp.comp_name
+					ORDER BY comp.comp_name ASC;
+	";
+	//echo $sql .'<br>';
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+
+	$build_table = '';
+	$total_spent_amount = 0;
+	$total_budget_amount = 0;
+	$total_over_under_amount = 0;
+	$is_alternate_row = false;
+	$add_alternating_class = '';
+	while ($row = $stmt->fetch()) {
+		$build_table .= '<tr>';
+
+		if ($is_alternate_row == false) {
+			$add_alternating_class = '';
+			$is_alternate_row = true;
+		} else {
+			$add_alternating_class = 'class="alternating_row"';
+			$is_alternate_row = false;
+		}
+
+		$build_table .= '<td '.$add_alternating_class.'>' .$row['comp_name']. '</td>';
+		$build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['fe_amount'], 2). '</td>';
+		//if ($row['bud_amount'] == NULL) {
+		//		$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">~</td>';
+		//		$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">~</td>';
+		//} else {
+			//$show_budget = "~";
+			//if ($row['bud_amount'] != NULL) {
+			//		$show_budget = number_format($row['bud_amount'], 2);
+			//}
+			//$build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .$show_budget. '</td>';
+			// get the difference:
+			//$bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
+			//$color = 'red';
+			//if ($bud_diff >= 0) { $color = 'green'; }
+			//$total_over_under_amount += $bud_diff;
+			//$total_budget_amount += $row['bud_amount'];
+			$total_spent_amount += $row['fe_amount'];
+			//$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
+		//}
+		$build_table .= '</tr>';
+
+	}
+
+		// check if there was anything to show:
+		if ($build_table == '') {
+			echo '<p class="end_row_options" style="color:grey; text-align:center;">(Nothing to show)</p>';
+		} else {
+			//echo '<i style="color:grey;">';
+				//echo '(The "μ" symbol in parenthesis next to the column for "Spent" amounts, represents the average amount
+								//spent per day in this category.)';
+			//echo '</i>';
+
+			echo '<table class="table table-dark" style="text-align:center;">';
+					echo '<tr>';
+						echo '<th>Company</th>';
+						echo '<th style="text-align:right;">Total Spent</th>';// (μ)
+					echo '</tr>';
+
+					echo $build_table;
+
+					echo '<tr>';
+						echo '<td colspan=1 class="end_row_options" style="text-align:left;">Totals:</td>';
+						echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_spent_amount, 2).'</td>';
+						//echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_budget_amount, 2).'</td>';
+						//$color = 'red';
+						//if ($total_over_under_amount >= 0) { $color = 'green'; }
+						//echo '<td class="end_row_options" style="text-align:right; color:'.$color.';">$'.number_format($total_over_under_amount, 2).'</td>';
+						echo '<td class="end_row_options"></td>';
+					echo '</tr>';
+
+			echo '</table>';
+		}
+} // end company spending table
+
+function library_detailed_company_spending_table($user_id, $date_search, $comp_id, $action, $current_page_num, $show_per_page) {
+		// add or subtract the page number depending on the action
+	  $get_current_page_num = 1;
+	  if ($action == "Next") {
+			$get_current_page_num = $current_page_num + 1;
+		} elseif ($action == "Prev") {
+			$get_current_page_num = $current_page_num - 1;
+		}
+	  echo '<p id="DetailedComp_current_page_num" style="text-align:center; display:none;" value="'.$get_current_page_num.'">'.$get_current_page_num.'</p>'; //style="display:none;"
+	  echo '<p id="DetailedComp_page_show" style="text-align:center; color:grey;">(Page '.$get_current_page_num.')</p>';
+		echo '<p id="DetailedComp_current_comp_id" style="text-align:center; display:none;" value="'.$comp_id.'">'.$comp_id.'</p>';
+
+	  $get_sql_limit_min = ($show_per_page * $get_current_page_num) - $show_per_page;
+
+		$sql = "
+				SELECT comp.*,
+								fe.*
+				FROM finance_expenses fe
+
+				LEFT JOIN users u ON fe.id_user = u.user_id
+				LEFT JOIN companies comp ON fe.fe_company = comp.comp_name
+
+				WHERE fe.is_active = 1
+				AND u.user_id = '".$user_id."'
+				AND comp.is_active = 1
+
+				AND YEAR(fe.fe_date)=YEAR('".$date_search."')
+				AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+
+				AND comp.comp_id = '".$comp_id."'
+
+				ORDER BY fe.fe_date DESC
+				LIMIT ".$get_sql_limit_min.",".$show_per_page .";
+		";
+	  $dbh = new Dbh();
+	  $stmt = $dbh->connect()->query($sql);
+
+		$build_header_for_table = '';
+		$build_main_content_for_table = '';
+
+	 	$build_header_for_table .= '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
+	    $build_header_for_table .= '<tr>';
+	      $build_header_for_table .= '<th>Company</th>';
+	      $build_header_for_table .= '<th>Name</th>';
+	      $build_header_for_table .= '<th>Date</th>';
+	      $build_header_for_table .= '<th style="text-align:right;">Amount</th>';
+	      //$build_header_for_table .= '<th class="end_row_options">';
+	      //$build_header_for_table .= '<a href="../includes/finances.inc.php?form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
+	      //$build_header_for_table .= '</th>';
+	    $build_header_for_table .= '</tr>';
+
+	    $total_expenses_amount = 0;
+	    $total_not_shown_expenses = 0;
+	    //$show_limit = 5;                      // this limit variable is helpful for make next and previous eventually...
+	    $counter = 1;
+	    $is_alternate_row = false;
+	    $add_alternating_class = '';
+	    while ($row = $stmt->fetch()) {
+          $build_main_content_for_table .= '<tr>';
+          if ($is_alternate_row == false) {
+            $add_alternating_class = '';
+            $is_alternate_row = true;
+          } else {
+            $add_alternating_class = 'class="alternating_row"';
+            $is_alternate_row = false;
+          }
+					$build_main_content_for_table .= '<td '.$add_alternating_class.' style="color:grey;">' .$row['comp_name']. '</td>';
+          $build_main_content_for_table .= '<td '.$add_alternating_class.'>' .$row['fe_name']. '</td>';
+          $date_string = strtotime($row['fe_date']);
+          $build_main_content_for_table .= '<td '.$add_alternating_class.' style="color:grey;">' .date('M, d', $date_string). '</td>';
+          $build_main_content_for_table .= '<td '.$add_alternating_class.' style="text-align:right;">' .number_format((float)$row['fe_amount'], 2). '</td>';
+          //echo '<td class="end_row_options">';
+            //echo '<span>'; //style="display:flex;"
+              //echo '<a href="../includes/finances.inc.php?selected_id='.$row['fe_id'].'&update_type=Edit&form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-pencil-fill"></p></i></a>';
+              //echo '<a href="../ajax/finances.ajax.php?selected_id='.$row['fe_id'].'&update_type=Delete&form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-trash-fill"></p></i></a>';
+            //echo '</span>';
+          //echo '</td>';
+        $build_main_content_for_table .= '</tr>';
+	      // get variables for savings:
+	      $total_expenses_amount += (float)$row['fe_amount'];
+	      // always add to the total amount for all the rows
+	      $total_not_shown_expenses += (float)$row['fe_amount'];
+	      $counter++;
+	    }
+
+			if ($build_main_content_for_table == '') {
+				echo '<p class="end_row_options" style="color:grey; text-align:center;">(Nothing to show)</p>';
+			} else {
+				echo $build_header_for_table;
+				echo $build_main_content_for_table;
+				// the rest:
+			    echo '<tr>';
+			      echo '<td colspan=5 class="end_row_options" style="text-align:left;">Total: <p style="float:right;">$'.number_format($total_expenses_amount, 2).'</p></td>';
+			      //echo '<td style="text-align:right; background-color:rgb(33, 37, 46);">$'.number_format($total_expenses_amount, 2).'</td>';
+			      echo '<td class="end_row_options"></td>';
+			    echo '</tr>';
+			    echo '<tr>';
+			    echo '</tr>';
+			  echo '</table>';
+			}
+}// end detailed company spending table
+
+// this method returns all of the company names that have expenses associated with them.
+function library_get_current_spending_company_buttons($user_id, $date_search) {
+	$sql = "
+		SELECT comp.comp_id,
+			comp.comp_name
+		FROM finance_expenses fe
+
+		LEFT JOIN users u ON fe.id_user = u.user_id
+		LEFT JOIN companies comp ON fe.fe_company = comp.comp_name
+
+		WHERE fe.is_active = 1
+		AND u.user_id = '".$user_id."'
+		AND comp.is_active = 1
+
+		AND YEAR(fe.fe_date)=YEAR('".$date_search."')
+		AND MONTH(fe.fe_date)=MONTH('".$date_search."')
+
+		GROUP BY comp.comp_name
+		ORDER BY comp.comp_name ASC;
+	";
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+
+  $first_comp_id_in_list = 0;
+	$default_style = 'primary';	// default
+	$current_style = $default_style;
+
+	while ($row = $stmt->fetch()) {
+			if ($first_comp_id_in_list == 0) {
+				$first_comp_id_in_list = $row['comp_id'];
+				$current_style = 'dark';
+			} else {
+				$current_style = $default_style;
+			}
+
+			echo '<button id="comp_button_'.$row['comp_id'].'" class="btn btn-'.$current_style.' btn-sm" onclick="select_comp('.$row['comp_id'].', \'DetailedComp\');" style="margin:5px;">';
+			echo $row['comp_name'];
+			echo '</button>';
+	}
+
+	return $first_comp_id_in_list;
+} // end get current spending company names
 ?>
