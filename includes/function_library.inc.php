@@ -912,9 +912,9 @@ function library_ious_table($user_id, $action, $current_page_num, $date_search, 
     }
     echo '<th style="text-align:right;">Paid</th>'; // echo '<th>Amount Paid</th>';
     if ($paid_off == false) {
-      echo '<th style="text-align:right;">Remaining</th>'; // echo '<th>Amount Left</th>';
+      //echo '<th style="text-align:right;">Remaining</th>'; // echo '<th>Amount Left</th>';
     }
-    echo '<th>Owe Date</th>';
+    //echo '<th>Owe Date</th>';
     if ($paid_off == true) {
       echo '<th>Paid Off Date</th>';  // this is only visible in the paid off tables
     }
@@ -951,11 +951,11 @@ function library_ious_table($user_id, $action, $current_page_num, $date_search, 
         }
         echo '<td '.$add_alternating_class.' style="color:green; text-align:right;">' .number_format((float)$row['iou_amount_paid'], 2). '</td>';
         if ($paid_off == false) {
-          $amount_left = ($row['iou_amount_owed'] - $row['iou_amount_paid']);
-          echo '<td '.$add_alternating_class.' style="'.$color.' text-align:right;">' .number_format($amount_left, 2). '</td>';
+          //$amount_left = ($row['iou_amount_owed'] - $row['iou_amount_paid']);
+          //echo '<td '.$add_alternating_class.' style="'.$color.' text-align:right;">' .number_format($amount_left, 2). '</td>';
         }
-        $date_string1 = strtotime($row['iou_owe_date']);
-        echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M d, Y', $date_string1). '</td>';
+        //$date_string1 = strtotime($row['iou_owe_date']);
+        //echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M d, Y', $date_string1). '</td>';
         if ($row['iou_is_paid_off'] == 1) {
           $date_string2 = strtotime($row['iou_paid_off_date']); // only visible when paid off is equal to true or 1
           echo '<td '.$add_alternating_class.' style="color:grey;">' .date('M d, Y', $date_string2). '</td>';
@@ -975,7 +975,7 @@ function library_ious_table($user_id, $action, $current_page_num, $date_search, 
       $total_owed_amount += (float)$row['iou_amount_owed'];
       $total_paid_amount += (float)$row['iou_amount_paid'];
       if ($paid_off == false) {
-        $total_left_amount += $amount_left;
+        //$total_left_amount += $amount_left;
       }
     }
     echo '<tr>';
@@ -985,7 +985,7 @@ function library_ious_table($user_id, $action, $current_page_num, $date_search, 
       }
       echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_paid_amount, 2).'</td>';
       if ($paid_off == false) {
-        echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_left_amount, 2).'</td>';
+        //echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_left_amount, 2).'</td>';
       }
       echo '<td class="end_row_options" colspan=3></td>';
     echo '</tr>';

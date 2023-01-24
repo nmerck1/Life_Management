@@ -63,6 +63,12 @@ while ($row = $stmt->fetch()) {
 	//use Style\Navbar;
 	$navbar = new Navbar();
 	$navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
+  
+  $secondary_tab = '';
+  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+
+  $finance_nav = new FinanceNavbar();
+  $finance_nav->show_header_nav('', $secondary_tab);
 ?>
 
 <script type="text/javascript">
@@ -159,6 +165,12 @@ while ($row = $stmt->fetch()) {
 		echo '<p id="action" value="'.$action.'" style="display:none;">'.$action.'</p>';
     echo '<p id="saved_old_password" value="'.$saved_old_password.'" style="display:none;">'.$saved_old_password.'</p>'; //
 
+
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
 		//echo '<br>';
 		//echo '<label>Old Password: </label>';
 		//echo '<input type="password" id="old_password" value="" onchange="update_element_value(this, this.value);"></input>';

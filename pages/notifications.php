@@ -59,6 +59,9 @@ while ($row = $stmt->fetch()) {
   $secondary_tab = '';
   $navbar->show_secondary_nav($loggedin, $secondary_tab);
 
+  $finance_nav = new FinanceNavbar();
+  $finance_nav->show_header_nav('', $secondary_tab);
+
 ?>
 
 <script type="text/javascript">
@@ -198,11 +201,14 @@ while ($row = $stmt->fetch()) {
     }
   </script>
 
+<?php
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
 
-
-<div class="container text-center">
-    <div class="container" style="height:600px; display:contents;">
-      <?php
+    echo '<div class="container text-center">';
       echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
       // this is for looking at previous finance dates in the system
       $date_search = date('Y-m-d');
@@ -233,9 +239,8 @@ while ($row = $stmt->fetch()) {
       echo '<br>';
       echo '<div class="container" id="display_message"></div>';
 
-      ?>
-    </div>
-</div>
+    echo '</div>';
+?>
 
 <?php
   $footer = new Footer();

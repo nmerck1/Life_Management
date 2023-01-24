@@ -57,8 +57,15 @@ while ($row = $stmt->fetch()) {
   $secondary_tab = '';
   $navbar->show_secondary_nav($loggedin, $secondary_tab);
 
+  $finance_nav = new FinanceNavbar();
+  $finance_nav->show_header_nav('', $secondary_tab);
 
-
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  
   echo '<div class="container" style="height:100%; text-align:center;">';
     echo '<br>';
     echo '<div class="div_element_block">';

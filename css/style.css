@@ -5,17 +5,6 @@
   /* background-color: rgb(25, 29, 32); */
 }
 
-/*
-.my_list {
-  list-style-type: square;
-  padding: 1px;
-  /* overflow: hidden;
-  background-color: rgb(25, 29, 32);
-  position: relative;
-  top: 0;
-}
-*/
-
 .my_paragraph {
   padding: 0;
   margin:0;
@@ -27,10 +16,6 @@ a {
 
 label {
   color: grey;
-}
-
-h1 {
-  /*color: rgb(47, 115, 152); */
 }
 
 .table-dark th {
@@ -114,21 +99,6 @@ body {
   height: 100%;
 }
 
-/* for my custom navbar */
-/*
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  /* overflow: hidden; */
-  /* background: rgb(25, 29, 32);
-  position: -webkit-sticky; /* Safari
-  position: sticky;
-  top: 0;
-
-}
-*/
-
 .navbar-brand {
   margin-right: 0;
   border-bottom: 2px solid rgb(47, 115, 152);
@@ -138,31 +108,12 @@ ul {
 	   -moz-box-shadow: 0 12px 10px -6px black;
 	        box-shadow: 0 12px 10px -6px black;
 }
-/*
-li {
-  float: left;
-  border-right:1px solid #bbb;
-}
 
-li:last-child {
-  border-right: none;
-}
-
-li a, .dropbtn, .dropnavbtn {
-  display: inline-block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-*/
 #diet_li_a {
   padding: 0;
 }
 
 /*       dropdowns          */
-
-
 .dropdown-content {
   right: 0px;
   display: none;
@@ -200,8 +151,6 @@ li a, .dropbtn, .dropnavbtn {
 .dropdown:hover .dropdown-content, .navdropdown:hover .navbar-content {
   display: block;
 }
-
-
 
 /* my custom popup styles */
 
@@ -271,12 +220,12 @@ li a, .dropbtn, .dropnavbtn {
   text-align: center;
   float: left;
   padding-left: 0px;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
 }
 
 .secondaryNavbarUL li {
   display: inline;
   text-align: center;
-  padding: 15px;
+  padding: 13px;
   float: left;
 }

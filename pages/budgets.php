@@ -91,12 +91,12 @@ while ($row = $stmt->fetch()) {
         //var_dump($months_of_year);
         // start the outer table
         echo '<div class="container">';
-          echo '<h1 style="text-align:center;">Budgets</h1>';
-          echo '<i style="color:grey;">';
-            echo '(This is where you can create your own monthly budgets.
-                  You can change or delete these at any time to reflect your
-                  current finance goals.)';
-          echo '</i>';
+          //echo '<h1 style="text-align:center;">Budgets</h1>';
+          //echo '<i style="color:grey;">';
+            //echo '(This is where you can create your own monthly budgets.
+            //      You can change or delete these at any time to reflect your
+            //      current finance goals.)';
+          //echo '</i>';
 
           echo '<div class="div_element_block">';// div for budgets
             echo '<h4 style="text-align:center;">Custom Budgets</h4>';

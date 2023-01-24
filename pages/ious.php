@@ -56,7 +56,7 @@ while ($row = $stmt->fetch()) {
   //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
-  
+
   $secondary_tab = 'Manage';
   $navbar->show_secondary_nav($loggedin, $secondary_tab);
 
@@ -165,12 +165,12 @@ while ($row = $stmt->fetch()) {
 
         // start the outer table
         echo '<div class="container">';
-          echo '<h1 style="text-align:center;">IOUs</h1>';
-          echo '<i style="color:grey;">';
-            echo '(This is where you can manage your loans to people.
-                    You can also view the debts that have been paid off to you.
-                    It will also show you what debts have been paid off both by you and your previous debtors.)';
-          echo '</i>';
+          //echo '<h1 style="text-align:center;">IOUs</h1>';
+          //echo '<i style="color:grey;">';
+          //  echo '(This is where you can manage your loans to people.
+          //          You can also view the debts that have been paid off to you.
+          //          It will also show you what debts have been paid off both by you and your previous debtors.)';
+          //echo '</i>';
 
           echo '<div class="div_element_block">'; // div for owed to you
             echo '<h4 style="text-align:center;">Your Loans</h4>';
