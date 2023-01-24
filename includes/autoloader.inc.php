@@ -7,7 +7,7 @@ spl_autoload_register(function($classname) {
 		$path = "../classes/";
 		$path2 = "classes/";
 
-		$is_server = false;
+		$is_server = true;
 
 		if ($is_server == true) {
 			$path = "/home3/lifement/public_html/classes/";
