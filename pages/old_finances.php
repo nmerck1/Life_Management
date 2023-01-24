@@ -97,7 +97,7 @@ while ($row = $stmt->fetch()) {
                 $show_month_year_title = date('F', strtotime($date_search));
                 echo '<h2 style="text-align:center;">'.$show_month_year_title.'</h2>';
                 // mini form for displaying different dates in history
-                echo '<form method="post" action="../pages/finances.php" style="text-align:center;">';
+                echo '<form method="post" action="../pages/manage.php" style="text-align:center;">';
                   //echo '<select>';
                   //foreach ($months_of_year as $month) {
                   //  echo '<option></option>';

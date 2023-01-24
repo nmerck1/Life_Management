@@ -498,5 +498,5 @@ if ($update_type == 'Delete') {
 
 
 
-header("Location: ../pages/finances.php");
+header("Location: ../pages/manage.php");
 exit();

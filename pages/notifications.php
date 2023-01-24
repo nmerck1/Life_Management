@@ -53,9 +53,12 @@ while ($row = $stmt->fetch()) {
 
 
 <?php
-  //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
+
+  $secondary_tab = '';
+  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+
 ?>
 
 <script type="text/javascript">
@@ -190,7 +193,7 @@ while ($row = $stmt->fetch()) {
         xhttp.send();
 
         // when the data is returned after ajax, it redirects back to inventory
-        //window.location = "../pages/finances.php";
+        //window.location = "../pages/manage.php";
       }
     }
   </script>

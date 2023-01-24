@@ -56,9 +56,12 @@ while ($row = $stmt->fetch()) {
   //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
+  
+  $secondary_tab = 'Manage';
+  $navbar->show_secondary_nav($loggedin, $secondary_tab);
 
   $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav('IOUs');
+  $finance_nav->show_header_nav('IOUs', $secondary_tab);
 ?>
   <script type="text/javascript">
   	function scroll_loans(next_prev_num, table_scroll){
@@ -102,7 +105,7 @@ while ($row = $stmt->fetch()) {
           xhttp.send();
 
           // when the data is returned after ajax, it redirects back to inventory
-          //window.location = "../pages/finances.php";
+          //window.location = "../pages/manage.php";
         }
   	}
     function scroll_debts(next_prev_num, table_scroll){
@@ -146,7 +149,7 @@ while ($row = $stmt->fetch()) {
           xhttp.send();
 
           // when the data is returned after ajax, it redirects back to inventory
-          //window.location = "../pages/finances.php";
+          //window.location = "../pages/manage.php";
         }
   	}
   </script>

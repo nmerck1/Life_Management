@@ -51,54 +51,70 @@ while ($row = $stmt->fetch()) {
 </head>
 <body>
 <?php
-  //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
+  $secondary_tab = '';
+  $navbar->show_secondary_nav($loggedin, $secondary_tab);
 
 
 
   echo '<div class="container" style="height:100%; text-align:center;">';
     echo '<br>';
-    $sql = "
-            SELECT *
-            FROM users u
-            LEFT JOIN user_roles ur ON u.id_role = ur.role_id
-            WHERE u.user_id = '".$user_id."'
-            AND u.is_active = 1;
-    ";
-    //echo $sql;
-    $dbh = new Dbh();
-    $stmt = $dbh->connect()->query($sql);
+    echo '<div class="div_element_block">';
+      echo '<br>';
+      $sql = "
+              SELECT *
+              FROM users u
+              LEFT JOIN user_roles ur ON u.id_role = ur.role_id
+              WHERE u.user_id = '".$user_id."'
+              AND u.is_active = 1;
+      ";
+      //echo $sql;
+      $dbh = new Dbh();
+      $stmt = $dbh->connect()->query($sql);
 
-    while ($row = $stmt->fetch()) {
-      $user_name = $row['user_name'];
-      $user_fname = $row['user_fname'];
-      $user_lname = $row['user_lname'];
-      $user_dob = $row['user_dob'];
-      $role_name = $row['role_name'];
-    }
+      while ($row = $stmt->fetch()) {
+        $user_name = $row['user_name'];
+        $user_fname = $row['user_fname'];
+        $user_lname = $row['user_lname'];
+        $user_dob = $row['user_dob'];
+        $role_name = $row['role_name'];
+      }
 
-    $today = date("Y-m-d");
-    $diff = date_diff(date_create($user_dob), date_create($today));
+      $today = date("Y-m-d");
+      $diff = date_diff(date_create($user_dob), date_create($today));
 
-    echo '<p>'.$user_fname.' '.$user_lname.'</p>';
-    echo '<p><span style="color:grey;">Username: </span>'.$user_name.'</p>';
-    echo '<p><span style="color:grey;">Role: </span>'.$role_name.'</p>';
-    echo '<p><span style="color:grey;">Age: </span>'.$diff->format('%y').'</p>';
+      echo '<p>'.$user_fname.' '.$user_lname.'</p>';
+      echo '<p><span style="color:grey;">Username: </span>'.$user_name.'</p>';
+      echo '<p><span style="color:grey;">Role: </span>'.$role_name.'</p>';
+      echo '<p><span style="color:grey;">Age: </span>'.$diff->format('%y').'</p>';
 
+    echo '</div>';
   echo '</div>';
 
   echo '<br>';
 
   echo '<div class="container" style="text-align:center;">';
-    echo '<p>(Actions)</p>';
-    echo '<a class="btn btn-primary" href="../includes/profile.inc.php?user_id='.$user_id.'&action=Password">Change Password</a>';
-    echo '<br>';
-    echo '<br>';
-    echo '<a class="btn btn-primary" href="../includes/theme.inc.php?user_id='.$user_id.'&action=Theme">Change Theme</a>';
+
+    echo '<div class="div_element_block">';
+      echo '<p>(Actions)</p>';
+      echo '<a class="btn btn-primary" href="../includes/profile.inc.php?user_id='.$user_id.'&action=Password">Change Password</a>';
+      echo '<br>';
+      echo '<br>';
+
+      echo '<a class="btn btn-primary" href="../includes/theme.inc.php?user_id='.$user_id.'&action=Theme">Change Theme</a>';
+      echo '<br>';
+      echo '<br>';
+
+      echo '<a class="btn btn-danger" href="../pages/logout.php">Logout</a>';
+      echo '<br>';
+      echo '<br>';
+    echo '</div>';
+
   echo '</div>';
 
+  echo '<br>';
   echo '<br>';
 
   $footer = new Footer();

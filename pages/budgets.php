@@ -54,12 +54,14 @@ while ($row = $stmt->fetch()) {
 
 
 <?php
-  //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
+  $secondary_tab = 'Manage';
+  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+
   $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav('Budgets');
+  $finance_nav->show_header_nav('Budgets', $secondary_tab);
 ?>
 
 

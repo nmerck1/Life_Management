@@ -26,7 +26,7 @@ $_SESSION['loggedin'] = false;
 //echo 'Session: '.$_SESSION['loggedin'].'<br>';
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-    header("location: ../pages/home.php");
+    header("location: ../pages/manage.php");
     exit;
 } else {
   //echo "<h1>Hello Friends. Website is still currently being worked on. Patience is a virtue! ~N</h2>";
@@ -93,7 +93,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
           //echo "user_id: ".$user_id."<br>";
           //echo "username: ".$username."<br>";
-          $date_now = date('Y-m-d H:i:s');  // Removed CURRENT_TIMESTAMP and put this instead 
+          $date_now = date('Y-m-d H:i:s');  // Removed CURRENT_TIMESTAMP and put this instead
           // update last logged in to current timestamp
           $sql = "
                   UPDATE users
@@ -108,7 +108,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           }
 
           // Redirect user to welcome page
-          header("location: ../pages/home.php");
+          header("location: ../pages/manage.php");
         } else {
             // Password is not valid, display a generic error message
             $login_err = "Invalid username or password.";

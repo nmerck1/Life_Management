@@ -165,7 +165,7 @@ while ($row = $stmt->fetch()) {
   		xhttp.send();
 
   		// when the data is returned after ajax, it redirects back to inventory
-  		window.location = "../pages/finances.php";
+  		window.location = "../pages/manage.php";
     } else {
       alert('Form needs to be filled out');
     }

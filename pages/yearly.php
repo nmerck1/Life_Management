@@ -57,8 +57,11 @@ while ($row = $stmt->fetch()) {
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
+  $secondary_tab = 'View';
+  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+
   $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav('Yearly');
+  $finance_nav->show_header_nav('Yearly', $secondary_tab);
 ?>
 
 <script type="text/javascript">
@@ -104,7 +107,7 @@ while ($row = $stmt->fetch()) {
         xhttp.send();
 
         // when the data is returned after ajax, it redirects back to inventory
-        //window.location = "../pages/finances.php";
+        //window.location = "../pages/manage.php";
       }
 	}
 </script>
@@ -121,7 +124,7 @@ while ($row = $stmt->fetch()) {
 
         // start the outer table
         echo '<div class="container">';
-          echo '<h1 style="text-align:center;">Yearly</h1>';
+          //echo '<h1 style="text-align:center;">Yearly</h1>';
           $show_month_year_title = date('F', strtotime($date_search));
 
           echo '<br>';
