@@ -76,9 +76,14 @@ while ($row = $stmt->fetch()) {
 <body>
 
 <?php
-	//use Style\Navbar;
 	$navbar = new Navbar();
 	$navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
+
+  $secondary_tab = '';
+  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+
+  $finance_nav = new FinanceNavbar();
+  $finance_nav->show_header_nav('', $secondary_tab);
 ?>
 
 <script type="text/javascript">
@@ -151,10 +156,6 @@ while ($row = $stmt->fetch()) {
     		query_string += "&date=" + date.value;
     		query_string += "&notes=" + notes_string;
       }
-      //if (form_type.innerHTML == "Bill") {
-        //query_string += "&freq=" + freq_value;
-      //}
-  		//alert(query_string);
 
   		xhttp.onreadystatechange = function() {
   			if (this.readyState == 4 && this.status == 200) {
@@ -302,9 +303,9 @@ while ($row = $stmt->fetch()) {
 								$update_type = 'Insert';
 							}
 							echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
-              echo '<i style="color:grey;">
-              (If the company you are looking for doesn\'t show up in the company dropdown list, then set the Company to \'Other\' and leave the company name in the notes section so I can add it later.)
-              </i>';
+              //echo '<i style="color:grey;">
+              //(If the company you are looking for doesn\'t show up in the company dropdown list, then set the Company to \'Other\' and leave the company name in the notes section so I can add it later.)
+              //</i>';
               echo '<br><br>';
 
 							// print the form type here
@@ -377,9 +378,9 @@ while ($row = $stmt->fetch()) {
 									$update_type = 'Insert';
 								}
 								echo '<p id="update_type" value="'.$update_type.'" style="display:none;">'.$update_type.'</p>';
-                echo '<i style="color:grey;">
-                (If the company you are looking for doesn\'t show up in the company dropdown list, then set the Company to \'Other\' and leave the company name in the notes section so I can add it later.)
-                </i>';
+                //echo '<i style="color:grey;">
+                //(If the company you are looking for doesn\'t show up in the company dropdown list, then set the Company to \'Other\' and leave the company name in the notes section so I can add it later.)
+                //</i>';
                 echo '<br><br>';
 
 								// print the form type here

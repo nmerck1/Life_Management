@@ -71,9 +71,14 @@ while ($row = $stmt->fetch()) {
 <body>
 
 <?php
-	//use Style\Navbar;
 	$navbar = new Navbar();
 	$navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
+
+  $secondary_tab = '';
+  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+
+  $finance_nav = new FinanceNavbar();
+  $finance_nav->show_header_nav('', $secondary_tab);
 ?>
 
 <script type="text/javascript">
