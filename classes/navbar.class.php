@@ -21,6 +21,9 @@ class Navbar {
               echo '<span style="width:50px;"></span>';
               echo '<a href="../pages/profile.php">  '.$user_fname.' </a>';
           echo '</li>';
+        } else {
+          echo '<li>';  // I do this so that the style for last child doesn't make the main Life Management title on the right... 
+          echo '</li>';
         }
 
       echo '</ul>';
@@ -39,7 +42,7 @@ class Navbar {
       $manage = $active_style;
     } elseif ($active_tab == 'View') {
       $view = $active_style;
-    } 
+    }
 
     if ($loggedin) {
       //echo '<div class="divSecondaryNavbar">';

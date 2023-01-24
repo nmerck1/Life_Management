@@ -10,7 +10,7 @@ $g_password = "";
 $g_database = "lifement_life_management";
 $g_port = 3306;
 
-$is_server = true;
+$is_server = false;
 
 if ($is_server == true) {
 	$g_username = "lifement_test";

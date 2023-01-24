@@ -148,6 +148,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
       echo '<div class="alert alert-danger">' . $login_err . '</div>';
   }
 
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+
   echo '<div class="container text-center">';
 
     echo '<h1>Login</h1>';
@@ -165,6 +171,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         echo '<button style="margin:auto; display:inherit;" name="login_button" value="Login" class="btn btn-success btn-md">Login</button>';
       echo '</form>';
   echo '</div>';
+
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
+  echo '<br>';
 
   $footer = new Footer();
   $footer->show_footer();

@@ -8,7 +8,7 @@ class Dbh {
 	private $pass = "";
 	private $db = "lifement_life_management";
 
-	private $is_server = true;
+	private $is_server = false;
 
 	public function connect(){
 		if ($this->is_server == true) {
