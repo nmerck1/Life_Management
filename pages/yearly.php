@@ -122,34 +122,37 @@ while ($row = $stmt->fetch()) {
 
         $this_year = get_this_year($date_search);
 
-        // start the outer table
-        echo '<div class="container">';
-          //echo '<h1 style="text-align:center;">Yearly</h1>';
-          $show_month_year_title = date('F', strtotime($date_search));
+        echo '<div class="mainContentContainer">';
+          // start the outer table
+          echo '<div class="container">';
 
-          echo '<br>';
-          echo '<br>';
+            //echo '<h1 style="text-align:center;">Yearly</h1>';
+            $show_month_year_title = date('F', strtotime($date_search));
 
-          echo '<div class="div_element_block">';// div for yearly savings overview
-          //  echo '<h2 style="text-align:center;">'.$this_year.'</h2>';
-            echo '<p style="width:100%; margin:0px; text-align:center;">';
-              echo '<button name="prev_button" onclick="scroll_table(0, \'Yearly\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>'; // -box-arrow-left
-              echo '</button>';
-              echo '<button name="next_button" onclick="scroll_table(1, \'Yearly\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
-              echo '</button>';
-            echo '</p>';
+            echo '<br>';
+            echo '<br>';
+
+            echo '<div class="div_element_block">';// div for yearly savings overview
+            //  echo '<h2 style="text-align:center;">'.$this_year.'</h2>';
+              echo '<p style="width:100%; margin:0px; text-align:center;">';
+                echo '<button name="prev_button" onclick="scroll_table(0, \'Yearly\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+                  echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>'; // -box-arrow-left
+                echo '</button>';
+                echo '<button name="next_button" onclick="scroll_table(1, \'Yearly\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+                  echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+                echo '</button>';
+              echo '</p>';
 
 
-            echo '<p id="date_search" style="display:none;" value="'.$date_search.'">'.$date_search.'</p>';
+              echo '<p id="date_search" style="display:none;" value="'.$date_search.'">'.$date_search.'</p>';
 
-            echo '<div id="Yearly_scroll_div">';
-                library_yearly_table($user_id, "First", $this_year, $date_search, 5);
+              echo '<div id="Yearly_scroll_div">';
+                  library_yearly_table($user_id, "First", $this_year, $date_search, 5);
+              echo '</div>';
             echo '</div>';
+            
           echo '</div>';
         echo '</div>';
-
         echo '<br>';
 
 /*     //     DO NOT REMOVE COMMENTED OUT CODE    //
