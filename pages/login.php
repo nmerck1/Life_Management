@@ -154,29 +154,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   echo '<br>';
   echo '<br>';
 
-  echo '<div class="container text-center">';
+echo '<div class="mainContentContainer">';
+    echo '<div class="container text-center">';
 
-    echo '<h1>Login</h1>';
-      echo '<form method="post" action="../pages/login.php">';
+      echo '<h1>Login</h1>';
+        echo '<form method="post" action="../pages/login.php">';
 
-        echo '<label>Username: </label>';
-        echo '<input type="text" id="username" name="username"></input>';
-        echo '<br>';
-        echo '<label>Password: </label>';
-        echo '<input type="password" id="password" name="password"></input>';
-        echo '<br>';
-        echo '<input type="checkbox" onclick="show_hide_password()">Show Password';
-        echo '<br>';
+          echo '<label>Username: </label>';
+          echo '<input type="text" id="username" name="username"></input>';
+          echo '<br>';
+          echo '<label>Password: </label>';
+          echo '<input type="password" id="password" name="password"></input>';
+          echo '<br>';
+          echo '<input type="checkbox" onclick="show_hide_password()">Show Password';
+          echo '<br>';
 
-        echo '<button style="margin:auto; display:inherit;" name="login_button" value="Login" class="btn btn-success btn-md">Login</button>';
-      echo '</form>';
+          echo '<button style="margin:auto; display:inherit;" name="login_button" value="Login" class="btn btn-success btn-md">Login</button>';
+        echo '</form>';
+
+      echo '</div>';
   echo '</div>';
-
-  echo '<br>';
-  echo '<br>';
-  echo '<br>';
-  echo '<br>';
-  echo '<br>';
 
   $footer = new Footer();
   $footer->show_footer();

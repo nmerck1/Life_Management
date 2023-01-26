@@ -156,23 +156,25 @@ while ($row = $stmt->fetch()) {
   echo '<br>';
   echo '<br>';
 
-  echo '<div class="container text-center"  style="height:600px;">';
+  echo '<div class="mainContentContainer">';
+    echo '<div class="container text-center"  style="height:600px;">';
 
-    echo '<div class="div_element_block">';
-      echo '<label>Themes: </label>';
-      echo '<br>';
-      // get values from selected id in table:
-      $sql = "SELECT * FROM themes WHERE theme_is_active = 1; ";
-      $dbh = new Dbh();
-      $stmt = $dbh->connect()->query($sql);
-      // should only populate one row of data
-      while ($row = $stmt->fetch()) {
-          echo '<a class="btn btn-primary" href="../ajax/theme.ajax.php?user_id='.$user_id.'&theme_file='.$row['theme_file'].'">'.$row['theme_name'].'</a>';
-          echo '<br>';
-          echo '<br>';
-      }
+      echo '<div class="div_element_block">';
+        echo '<label>Themes: </label>';
+        echo '<br>';
+        // get values from selected id in table:
+        $sql = "SELECT * FROM themes WHERE theme_is_active = 1; ";
+        $dbh = new Dbh();
+        $stmt = $dbh->connect()->query($sql);
+        // should only populate one row of data
+        while ($row = $stmt->fetch()) {
+            echo '<a class="btn btn-primary" href="../ajax/theme.ajax.php?user_id='.$user_id.'&theme_file='.$row['theme_file'].'">'.$row['theme_name'].'</a>';
+            echo '<br>';
+            echo '<br>';
+        }
+      echo '</div>';
+
     echo '</div>';
-
   echo '</div>';
 
   $footer = new Footer();

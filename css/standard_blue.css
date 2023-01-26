@@ -215,3 +215,33 @@ body {
 #mainNavFirstLI {
   color: white; /* change this based on style sheet */
 }
+
+.firstSecondaryLI {
+  background: var(--body_base_color);  /* theme based */
+}
+
+.footerUL {
+  background-color: var(--show_table_header_color);
+}
+/*
+.secondaryNavbarUL {
+  background-color: #343a40;
+  border-color: #343a40 !important;
+  height: 100%;
+}
+
+.secondSecondaryLI {
+  background-color: #343a40;
+  border-color: #343a40 !important;
+}
+
+#mainNavFirstLI {
+  color: white;   /* theme based
+}
+
+.firstSecondaryLI, .firstSecondaryLI a {
+  background-color: var(--body_base_color);  /* theme based
+  border-color: white !important;   /* theme based
+  color: black;   /* theme based
+}
+*/

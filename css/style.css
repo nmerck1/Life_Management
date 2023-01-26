@@ -183,7 +183,7 @@ body {
   margin: auto;
   display: inline;
   width: 100%;
-  height: 60px;
+  height: 90px; /* originally 60px */
   font-size: 17px;
   text-align: center;
   float: left;
@@ -193,14 +193,31 @@ body {
 .mainNavbarUL li {
   display: inline;
   text-align: center;
-  padding-top: 15px;
-  padding-bottom: 15px;
   float: left;
+}
+
+#mainNavFirstLI {
+  height: 100%;
+  padding-left: 15px;
+}
+
+#mainNavSecondLI {
+  padding: 15px;
+  height: 100%;
+}
+
+#userLinksDiv a, #userLinksDiv span {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+#userLinksDiv {
+  height: 100%;
+  display: table;
 }
 
 .mainNavbarUL li:last-child {
   float: right;
-  padding-right: 15px;
 }
 
 /* secondary navbar */
@@ -228,4 +245,39 @@ body {
   text-align: center;
   padding: 13px;
   float: left;
+}
+
+#mainLogo {
+  height: 100%;
+}
+
+/* new footer update */
+.footerUL {
+  margin: auto;
+  display: inline;
+  width: 100%;
+  height: 90px;
+  font-size: 15px;
+  text-align: center;
+  float: left;
+  padding: 10px;
+  color: white;
+  bottom: 0;
+}
+
+.footerUL li {
+  display: inline;
+  text-align: center;
+  float: left;
+  padding: 15px;
+}
+
+.footerUL li:last-child {
+  float: right;
+}
+
+/* making footer at the bottom of every page */
+
+.mainContentContainer {
+  min-height: 900px;
 }

@@ -63,7 +63,7 @@ while ($row = $stmt->fetch()) {
 	//use Style\Navbar;
 	$navbar = new Navbar();
 	$navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
-  
+
   $secondary_tab = '';
   $navbar->show_secondary_nav($loggedin, $secondary_tab);
 
@@ -150,40 +150,41 @@ while ($row = $stmt->fetch()) {
 
 	echo '<p id="test"></p>';
 
+  echo '<div class="mainContentContainer">';
+    echo '<div class="container text-center"  style="height:600px;">';
 
-  echo '<div class="container text-center"  style="height:600px;">';
+      // get values from selected id in table:
+      $sql = "SELECT * FROM users WHERE user_id = '".$user_id."' ";
+      $dbh = new Dbh();
+      $stmt = $dbh->connect()->query($sql);
+      // should only populate one row of data
+      while ($row = $stmt->fetch()) {
+        $saved_old_password = $row['pass_word'];
+      }
 
-    // get values from selected id in table:
-    $sql = "SELECT * FROM users WHERE user_id = '".$user_id."' ";
-    $dbh = new Dbh();
-    $stmt = $dbh->connect()->query($sql);
-    // should only populate one row of data
-    while ($row = $stmt->fetch()) {
-      $saved_old_password = $row['pass_word'];
-    }
-
-		echo '<p id="action" value="'.$action.'" style="display:none;">'.$action.'</p>';
-    echo '<p id="saved_old_password" value="'.$saved_old_password.'" style="display:none;">'.$saved_old_password.'</p>'; //
-
-
-    echo '<br>';
-    echo '<br>';
-    echo '<br>';
-    echo '<br>';
-    echo '<br>';
-		//echo '<br>';
-		//echo '<label>Old Password: </label>';
-		//echo '<input type="password" id="old_password" value="" onchange="update_element_value(this, this.value);"></input>';
-    echo '<br>';
-    echo '<label>New Password: </label>';
-    echo '<input type="password" id="new_password" value="" onchange="update_element_value(this, this.value);"></input>';
-    echo '<br>';
-    echo '<label>Confirm Password: </label>';
-    echo '<input type="password" id="confirm_password" value="" onchange="update_element_value(this, this.value);"></input>';
+  		echo '<p id="action" value="'.$action.'" style="display:none;">'.$action.'</p>';
+      echo '<p id="saved_old_password" value="'.$saved_old_password.'" style="display:none;">'.$saved_old_password.'</p>'; //
 
 
-		echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+      echo '<br>';
+      echo '<br>';
+      echo '<br>';
+      echo '<br>';
+      echo '<br>';
+  		//echo '<br>';
+  		//echo '<label>Old Password: </label>';
+  		//echo '<input type="password" id="old_password" value="" onchange="update_element_value(this, this.value);"></input>';
+      echo '<br>';
+      echo '<label>New Password: </label>';
+      echo '<input type="password" id="new_password" value="" onchange="update_element_value(this, this.value);"></input>';
+      echo '<br>';
+      echo '<label>Confirm Password: </label>';
+      echo '<input type="password" id="confirm_password" value="" onchange="update_element_value(this, this.value);"></input>';
 
+
+  		echo '<button style="margin:auto; display:inherit;" name="save_button" onclick="send_to_ajax();" value="Save" class="btn btn-success btn-md">Save</button>';
+
+    echo '</div>';
   echo '</div>';
 
   $footer = new Footer();

@@ -208,37 +208,40 @@ while ($row = $stmt->fetch()) {
     echo '<br>';
     echo '<br>';
 
-    echo '<div class="container text-center">';
-      echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
-      // this is for looking at previous finance dates in the system
-      $date_search = date('Y-m-d');
-      if (isset($_POST['date_search'])) {
-        $date_search = $_POST['date_search'];
-      }
+    echo '<div class="mainContentContainer">';
+      echo '<div class="container">';
+      
+          echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
+          // this is for looking at previous finance dates in the system
+          $date_search = date('Y-m-d');
+          if (isset($_POST['date_search'])) {
+            $date_search = $_POST['date_search'];
+          }
 
-      echo '<p id="date_search" style="display:none;" value="'.$date_search.'">'.$date_search.'</p>';
+          echo '<p id="date_search" style="display:none;" value="'.$date_search.'">'.$date_search.'</p>';
 
-      echo '<p id="test" name="test"></p>';//style="display:none;"
-      echo '<p style="display:none;" id="update_type" name="update_type" value="Update">Update</p>';
+          echo '<p id="test" name="test"></p>';//style="display:none;"
+          echo '<p style="display:none;" id="update_type" name="update_type" value="Update">Update</p>';
 
-      echo '<div class="div_element_block">';
-        echo '<h4 style="text-align:center;"><i class="bi-mailbox"> </i>Inbox</h4>';
-        echo '<p style="width:95%; margin:0px; text-align:center;">';
-          echo '<button name="prev_button" onclick="scroll_notifications(0, \'Notifications\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-            echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
-          echo '</button>';
-          echo '<button name="next_button" onclick="scroll_notifications(1, \'Notifications\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-            echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
-          echo '</button>';
-        echo '</p>';
+          echo '<div class="div_element_block">';
+            echo '<h4 style="text-align:center;"><i class="bi-mailbox"> </i>Inbox</h4>';
+            echo '<p style="width:95%; margin:0px; text-align:center;">';
+              echo '<button name="prev_button" onclick="scroll_notifications(0, \'Notifications\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
+                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+              echo '</button>';
+              echo '<button name="next_button" onclick="scroll_notifications(1, \'Notifications\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
+                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+              echo '</button>';
+            echo '</p>';
 
-        echo '<div id="Notifications_scroll_div">';
-            library_notifications_table($user_id, "First", 1, $date_search, 5, $conn);
-        echo '</div>';
+            echo '<div id="Notifications_scroll_div">';
+                library_notifications_table($user_id, "First", 1, $date_search, 5, $conn);
+            echo '</div>';
+          echo '</div>';
+          echo '<br>';
+          echo '<div class="container" id="display_message"></div>';
+
       echo '</div>';
-      echo '<br>';
-      echo '<div class="container" id="display_message"></div>';
-
     echo '</div>';
 ?>
 

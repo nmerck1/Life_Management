@@ -214,3 +214,12 @@ body {
 #mainNavFirstLI {
   color: white; /* change this based on style sheet */
 }
+
+.footerUL {
+  background-color: var(--show_table_header_color);
+}
+/*
+.firstSecondaryLI {
+  background: var(--body_base_color);  /* theme based
+}
+*/

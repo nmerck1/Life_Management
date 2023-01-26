@@ -169,7 +169,7 @@ while ($row = $stmt->fetch()) {
 
 	echo '<p id="test"></p>';
 
-
+  echo '<div class="mainContentContainer">';
 ?>
 <div class="container" style="height:600px; text-align:right; width:390px;">
     <div>
@@ -345,6 +345,9 @@ while ($row = $stmt->fetch()) {
 </div>
 
 <?php
+
+  echo '</div>';  // ends the main content container for making footer always display at bottom
+
   $footer = new Footer();
   $footer->show_footer();
 ?>
