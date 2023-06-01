@@ -247,6 +247,23 @@ body {
   float: left;
 }
 
+.sectionNavbarUL {
+  display: inline;
+  width: 100%;
+  font-size: 17px;
+  text-align: center;
+  float: left;
+  padding-left: 0px;
+  margin: 0px;
+}
+
+.sectionNavbarUL li {
+  display: inline;
+  text-align: center;
+  padding: 13px;
+  float: left;
+}
+
 #mainLogo {
   height: 100%;
 }

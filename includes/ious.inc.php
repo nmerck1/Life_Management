@@ -81,6 +81,8 @@ while ($row = $stmt->fetch()) {
 	$navbar = new Navbar();
 	$navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
+  $navbar->show_section_nav($loggedin, '', $id_role);
+
   $secondary_tab = '';
   $navbar->show_secondary_nav($loggedin, $secondary_tab);
 

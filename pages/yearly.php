@@ -57,6 +57,8 @@ while ($row = $stmt->fetch()) {
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
+  $navbar->show_section_nav($loggedin, 'Finances', $id_role);
+
   $secondary_tab = 'View';
   $navbar->show_secondary_nav($loggedin, $secondary_tab);
 
@@ -74,6 +76,7 @@ while ($row = $stmt->fetch()) {
       var date_search = document.getElementById('date_search');
       var show_per_page = 5;
       var scroll_div_name = table_scroll + "_scroll_div";
+      var current_year = new Date().getFullYear();
 
   		var action = 'Next';
       if (next_prev_num == 0) {
@@ -83,6 +86,12 @@ while ($row = $stmt->fetch()) {
       var can_scroll = true;
       if (action == 'Prev') {
         if (current_year_num.innerHTML == '2019') { // I first made the life management system back in 2019
+          can_scroll = false;
+        }
+
+      }
+      if (action == 'Next') {
+        if (current_year_num.innerHTML == current_year) { // I first made the life management system back in 2019
           can_scroll = false;
         }
       }
@@ -150,7 +159,7 @@ while ($row = $stmt->fetch()) {
                   library_yearly_table($user_id, "First", $this_year, $date_search, 5);
               echo '</div>';
             echo '</div>';
-            
+
           echo '</div>';
         echo '</div>';
         echo '<br>';
@@ -189,6 +198,8 @@ while ($row = $stmt->fetch()) {
         //var_dump($expense_months);
         //var_dump($expense_totals);
 */
+
+/*
         if ($id_role == 0){   // this graph works but i updated this script to work with the the new functions in library so now its broken...  //
           echo $year_data_string;
           // the new library method to generate the graph
@@ -294,7 +305,43 @@ while ($row = $stmt->fetch()) {
 
 
         }
+        // Graphs for average daily prices
+        // get data from user
+        $sql = "
+              SELECT
+                cat.cat_name,
+                SUM(fe.fe_amount) AS 'total category amount',
+                fe.fe_date,
+                fe.id_user,
+                DAY(LAST_DAY(fe.fe_date)) AS 'days in this month',
+                SUM(fe.fe_amount)/DAY(LAST_DAY(fe.fe_date)) AS 'average cost per day'
 
+              FROM finance_expenses fe
+              LEFT JOIN categories cat ON cat.cat_id = fe.id_category
+
+              WHERE fe.id_user = '".$user_id."'
+              AND MONTH(fe.fe_date) = MONTH('".$date_search."')
+              AND YEAR(fe.fe_date) = YEAR('".$date_search."')
+
+              GROUP BY cat.cat_name;
+        ";
+        echo $sql;
+        $dbh = new Dbh();
+        $stmt = $dbh->connect()->query($sql);
+
+        $graph_data = array();
+        while ($row = $stmt->fetch()) {
+          $cat_name = $row['cat_name'];
+          $average_amount = $row['average_amount'];
+          $graph_data[] = array($cat_name, $average_amount);
+        }
+        var_dump($graph_data);
+        //$graph_data_json = json_encode($graph_data);
+        // output graph using data
+        echo '<div id="category_averages_chart">';
+          library_generate_category_averages($graph_data);
+        echo '</div>';
+        */
       ?>
 
 <?php

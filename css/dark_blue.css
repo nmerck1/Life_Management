@@ -211,6 +211,12 @@ body {
   border-color: black !important;
 }
 
+.divSectionNavbar, .sectionNavbarUL, .sectionNavbarUL li, .sectionNavbarUL li a {
+  background-color: black;
+  /* border-color: white !important; */
+  border: none;
+}
+
 #mainNavFirstLI {
   color: white; /* change this based on style sheet */
 }
@@ -223,3 +229,7 @@ body {
   background: var(--body_base_color);  /* theme based
 }
 */
+
+.card-body {
+  background-color: black;
+}

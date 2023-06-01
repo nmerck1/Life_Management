@@ -54,11 +54,8 @@ while ($row = $stmt->fetch()) {
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
-  $secondary_tab = '';
-  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+  $navbar->show_section_nav($loggedin, '', $id_role);
 
-  $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav('', $secondary_tab);
 
   echo '<br>';
   echo '<br>';
@@ -69,6 +66,8 @@ while ($row = $stmt->fetch()) {
   echo '<div class="mainContentContainer">';
       echo '<div class="container" style="height:100%; text-align:center;">';
 
+        echo '<br>';
+        echo '<br>';
         echo '<br>';
         echo '<div class="div_element_block">';
           echo '<br>';
@@ -89,12 +88,14 @@ while ($row = $stmt->fetch()) {
             $user_lname = $row['user_lname'];
             $user_dob = $row['user_dob'];
             $role_name = $row['role_name'];
+            $user_icon = $row['user_icon'];
           }
 
           $today = date("Y-m-d");
           $diff = date_diff(date_create($user_dob), date_create($today));
 
-          echo '<p>'.$user_fname.' '.$user_lname.'</p>';
+          echo '<img src="../pics/profile/'.$user_icon.'" style="border: 2px solid black; border-radius: 10px;" />';
+          echo '<h2>'.$user_fname.' '.$user_lname.'</h2>';
           echo '<p><span style="color:grey;">Username: </span>'.$user_name.'</p>';
           echo '<p><span style="color:grey;">Role: </span>'.$role_name.'</p>';
           echo '<p><span style="color:grey;">Age: </span>'.$diff->format('%y').'</p>';
@@ -116,13 +117,20 @@ while ($row = $stmt->fetch()) {
           echo '<br>';
           echo '<br>';
 
+          echo '<a class="btn btn-primary" href="../includes/icon.inc.php?user_id='.$user_id.'&action=Icon">Change Icon</a>';
+          echo '<br>';
+          echo '<br>';
+
           echo '<a class="btn btn-danger" href="../pages/logout.php">Logout</a>';
           echo '<br>';
           echo '<br>';
         echo '</div>';
-
+        echo '<br>';
+        echo '<br>';
       echo '</div>';
-
+      echo '<br>';
+      echo '<br>';echo '<br>';
+      echo '<br>';
   echo '</div>';
 
   $footer = new Footer();

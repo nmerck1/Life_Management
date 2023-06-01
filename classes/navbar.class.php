@@ -66,4 +66,46 @@ class Navbar {
     }
   }
 
+  public function show_section_nav($loggedin, $active_tab, $id_role) {
+
+    $current_style = 'primary';
+    $active_style = 'dark';
+
+    // section names/titles
+    $financesTab = $goalsTab = $adminTab = $current_style;
+
+    if ($active_tab == 'Finances') {
+      $financesTab = $active_style;
+    } elseif ($active_tab == 'Goals') {
+      $goalsTab = $active_style;
+    } elseif ($active_tab == 'Admin') {
+      $adminTab = $active_style;
+    }
+
+    if ($loggedin) {
+      //$pipeline = ' | ';
+      //echo '<div class="divSecondaryNavbar">';
+        echo '<ul class="sectionNavbarUL">';
+          echo '<li class="firstSectionLI">';
+            echo '<a href="../pages/manage.php" class="btn btn-'.$financesTab.' btn-sm">Finances</a>';
+          echo '</li>';
+          //echo $pipeline;
+          if ($id_role == 1) {
+          echo '<li class="secondSectionLI">';
+            echo '<a href="../pages/goals.php" class="btn btn-'.$goalsTab.' btn-sm">Goals</a>';
+          echo '</li>';
+          //echo $pipeline;
+
+            echo '<li class="thirdSectionLI">';
+              echo '<a href="../pages/admin.php" class="btn btn-'.$adminTab.' btn-sm"><span style="color:red;">Admin</span></a>';
+            echo '</li>';
+          }
+
+
+        echo '</ul>';
+
+      //echo '</div>';
+    }
+  }
+
 }

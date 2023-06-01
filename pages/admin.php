@@ -60,29 +60,22 @@ while ($row = $stmt->fetch()) {
 
 
 <?php
+  $navbar = new Navbar();
+  $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
-  $secondary_tab = 'Manage';
-  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+  $navbar->show_section_nav($loggedin, 'Admin', $id_role);
 
-  $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav('Monthly', $secondary_tab);
+  //$secondary_tab = '';
+  //$navbar->show_secondary_nav($loggedin, $secondary_tab);
+
+  //$admin_nav = new AdminNavbar();
+  //$admin_nav->show_header_nav('Monthly', $secondary_tab);
 
 
 
-  echo '<div class="container" style="height:100%; text-align:center;">';
-    echo '<h1>User Activity & Overview</h1>';
-    echo '<br>';
-    echo '<table class="table table-dark" style="background-color:#3a5774; text-align:center;">';
-    echo '<tr>';
-      echo '<th>Username</th>';
-      echo '<th>Role</th>';
-      echo '<th>First & Last</th>';
-      echo '<th>Last Logged In</th>';
-      echo '<th>Number Finance Income Records</th>';
-      echo '<th>Number Finance Expense Records</th>';
-      echo '<th>Number Diet Food Log Records</th>';
-    echo '</tr>';
+  echo '<div class="container" style="height:100%;">';
 
+    echo '<div class="row">';
     // first select each user that is active and then loop through each one
     $user_ids = array();
     $sql = "
@@ -91,6 +84,7 @@ while ($row = $stmt->fetch()) {
                   u.user_fname,
                   u.user_lname,
                   u.user_last_logged,
+                  u.user_icon,
 
                   ur.role_name,
                   ur.role_color
@@ -99,7 +93,7 @@ while ($row = $stmt->fetch()) {
             LEFT JOIN user_roles ur ON u.id_role = ur.role_id
             WHERE u.is_active = 1
 
-            ORDER BY u.user_last_logged DESC;
+            ORDER BY u.user_fname ASC;
     ";
     //echo $sql;
     $dbh = new Dbh();
@@ -108,7 +102,7 @@ while ($row = $stmt->fetch()) {
     $is_alternate_row = false;
     $add_alternating_class = '';
     while ($row = $stmt->fetch()) {
-        echo '<tr>';
+        //echo '<tr>';
 
         if ($is_alternate_row == false) {
           $add_alternating_class = '';
@@ -121,47 +115,69 @@ while ($row = $stmt->fetch()) {
 
         $role_color = $row['role_color'];
         //echo 'this_user_id: '.$this_user_id.'<br>';
-        echo '<td '.$add_alternating_class.'>'.$row['user_name'].'</td>';
-        echo '<td '.$add_alternating_class.' style="color:'.$role_color.';">'.$row['role_name'].'</td>';
-        echo '<td '.$add_alternating_class.'>'.$row['user_fname'].' '.$row['user_lname'].'</td>';
+        //echo '<td '.$add_alternating_class.'>'.$row['user_name'].'</td>';
+        //echo '<td '.$add_alternating_class.' style="color:'.$role_color.';">'.$row['role_name'].'</td>';
+        //echo '<td '.$add_alternating_class.'>'.$row['user_fname'].' '.$row['user_lname'].'</td>';
 
         $date_string = strtotime($row['user_last_logged']);
-        echo '<td '.$add_alternating_class.' style="color:grey;">'.date('m-d-Y h:iA', $date_string).'</td>';
+        //echo '<td '.$add_alternating_class.' style="color:grey;">'.date('m-d-Y h:iA', $date_string).'</td>';
 
-        $build_rows = '';
-        // now for each row and each user, let's print out their stats
-        $sql_stats = "
-              SELECT u.user_id,
+        //echo '<div class="row d-flex justify-content-center align-items-center h-100">';
+        //echo '<div class="card">';
+          //echo '<div class="col-lg-4">';
+            //echo '<div class="card-body">';
 
-                    COUNT(DISTINCT fi.fi_id) AS 'num_incomes',
-                    COUNT(DISTINCT fe.fe_id) AS 'num_expenses',
-                    COUNT(DISTINCT fl.fl_id) AS 'num_food_logs'
+                  //echo '<div class="col-md-4 gradient-custom text-center text-white" style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">';
 
-              FROM users u
-              LEFT JOIN finance_incomes fi ON u.user_id = fi.id_user AND fi.fi_id <> ''
-              LEFT JOIN finance_expenses fe ON u.user_id = fe.id_user AND fe.fe_id <> ''
-              LEFT JOIN food_logs fl ON u.user_id = fl.id_user AND fl.fl_id <> ''
+                        //echo '</div>';
+                      //echo '</div>';
 
-              WHERE u.user_id = '".$this_user_id."'
-              AND fi.is_active = 1
-              AND fe.is_active = 1
-              AND fl.is_active = 1;
-        ";
-        //echo $sql_stats.'<br><br>';
-        $dbh = new Dbh();
-        $stmt_stats = $dbh->connect()->query($sql_stats);
+              //echo '</div>';
+        //  echo '</div>'; // card group divs
+        //echo '</div>';
 
-        while ($row = $stmt_stats->fetch()) {
-          echo '<td '.$add_alternating_class.'>'.$row['num_incomes'].'</td>';
-          echo '<td '.$add_alternating_class.'>'.$row['num_expenses'].'</td>';
-          echo '<td '.$add_alternating_class.'>'.$row['num_food_logs'].'</td>';
-        }
+        echo '<div class="col-md-4">';
+          echo '<div class="card" style="margin-bottom: 20px;">';
+            echo '<div class="card-body" style="border: 2px solid '.$row['role_color'].'; border-radius: 10px;">';
 
-      echo '</tr>';
-    }
+            echo '<img src="../pics/profile/'.$row['user_icon'].'" alt="Avatar" class="img-fluid my-5" style="width: 80px;" />';
+            echo '<h5>'.$row['user_fname'].' '.$row['user_lname'].'</h5>';
+            echo '<p>'.$row['user_name'].'</p>';
+            echo '<i class="far fa-edit mb-5"></i>';
+          //echo '</div>';
+          //echo '<div class="col-md-8">';
+            //echo '<div class="card-body p-4">';
+              echo '<h6>Information</h6>';
+              echo '<hr class="mt-0 mb-4">';
+              //echo '<div class="row pt-1">';
+                //echo '<div class="col-6 mb-3">';
+                  echo '<h6>Role</h6>';
+                  echo '<p class="text-muted">'.$row['role_name'].'</p>';
+                //echo '</div>';
+                //echo '<div class="col-6 mb-3">';
+                  echo '<h6>Last Logged</h6>';
+                  echo '<p class="text-muted">'.date('M d, Y h:iA', $date_string).'</p>';
+                //echo '</div>';
+              //echo '</div>';
+              echo '<h6>Actions</h6>';
+              echo '<hr class="mt-0 mb-4">';
+              //echo '<div class="row pt-1">';
+                //echo '<div class="col-6 mb-3">';
+                echo '<p><i>(In Progress)</i></p>';
+                  echo '<button href="../includes/admin.inc.php?form_type=View&user_id='.$user_id.'" class="btn btn-secondary">View</a>'; //btn btn-info
+              //  echo '</div>';
+                //echo '<div class="col-6 mb-3">';
+                  echo '<button href="../includes/admin.inc.php?form_type=Edit&user_id='.$user_id.'" class="btn btn-secondary" style="margin: 10px;">Edit</a>';// btn btn-primary
 
-    echo '</table>';
-  echo '</div>';
+            echo '</div>';
+          echo '</div>';
+        echo '</div>';
+
+
+      }
+    echo '</div>';// div for card group
+
+  echo '</div>'; // main container div
 
 
 

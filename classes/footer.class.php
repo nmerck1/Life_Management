@@ -4,7 +4,7 @@
 class Footer {
 
   public function show_footer(){
-    $current_version = '1.37.53.16';
+    $current_version = '1.37.58.17';
 
     echo '<div>';
       echo '<ul class="footerUL">';

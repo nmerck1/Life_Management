@@ -56,6 +56,10 @@ while ($row = $stmt->fetch()) {
   //use Style\Navbar;
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
+
+
+  $navbar->show_section_nav($loggedin, '', $id_role);
+
 ?>
 
 <script type="text/javascript">

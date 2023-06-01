@@ -57,6 +57,7 @@ while ($row = $stmt->fetch()) {
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
+  $navbar->show_section_nav($loggedin, 'Finances', $id_role);
   //echo '<h1 style="text-align:center;">Life Overview</h1>';
   echo '<div class="container" style="height:600px;">';
 

@@ -209,7 +209,14 @@ body {
 
 .divSecondaryNavbar, .secondaryNavbarUL, .secondaryNavbarUL li, .secondaryNavbarUL li a {
   background-color: #343a40;
-  border-color: #343a40 !important;
+  /* border-color: #343a40 !important; */
+  /* border-color: white !important; */
+  border: none;
+}
+
+.divSectionNavbar, .sectionNavbarUL, .sectionNavbarUL li, .sectionNavbarUL li a {
+  background-color: black;
+  /* border-color: white !important; */
 }
 
 #mainNavFirstLI {

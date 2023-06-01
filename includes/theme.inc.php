@@ -64,85 +64,10 @@ while ($row = $stmt->fetch()) {
 	$navbar = new Navbar();
 	$navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
-  $secondary_tab = '';
-  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+  $navbar->show_section_nav($loggedin, '', $id_role);
 
-  $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav('', $secondary_tab);
 ?>
 
-<script type="text/javascript">
-	function send_to_ajax(){
-    // first check form is good
-    if (check_form() == 1) {
-      alert('Form is good, sending to ajax.');
-  		// setup the ajax request
-  		var xhttp = new XMLHttpRequest();
-  		// get variables from inputs below:
-  		var action = document.getElementById('action');
-  		var user_id = document.getElementById('user_id');
-
-      var new_password = document.getElementById('new_password');
-
-  		// create link to send GET variables through
-  		var query_string = "../ajax/profile.ajax.php";
-  		query_string += "?user_id=" + user_id.innerHTML;
-  		query_string += "&action=" + action.innerHTML;
-
-      query_string += "&new_password=" + new_password.value;
-
-  		xhttp.onreadystatechange = function() {
-  			if (this.readyState == 4 && this.status == 200) {
-  			 document.getElementById("test").innerHTML = this.responseText;
-  			}
-  		};
-  		xhttp.open("GET", query_string, true);
-  		xhttp.send();
-
-  		// when the data is returned after ajax, it redirects back to inventory
-  		window.location = "../pages/profile.php";
-
-    } else if (check_form() == 0) {
-      alert('Form needs to be filled out.');
-    } else if (check_form() == 2) {
-      alert('New password cannot be old password.');
-    } else if (check_form() == 3) {
-      alert('New password inputs do not match.');
-    } else if (check_form() == 4) {
-      alert('New password needs to have at least 1 special character, uppercase letter, and a number.');
-    } else if (check_form() == 5) {
-      alert('Incorrect old password.');
-    } else {
-      alert('Unknown return number code.');
-    }
-	}
-
-  function check_form(){
-    //var old_password = document.getElementById('old_password');
-		var new_password = document.getElementById("new_password");
-    var confirm_password = document.getElementById("confirm_password");
-    //var saved_old_password = document.getElementById("saved_old_password");
-
-    if (new_password.value == '' || confirm_password.value == '') {
-      return 0;
-    }
-    //if (old_password.value == new_password.value) {
-    //  return 2;
-    //}
-    if (new_password.value != confirm_password.value) {
-      return 3;
-    }
-    //if (old_password.value != saved_old_password.value) {
-    //  return 5;
-    //}
-
-    return 1;
-  }
-
-  function update_element_value(element, value){
-    element.value = value;
-  }
-</script>
 
 <?php
 	//echo '<p id="selected_id" style="display:none;" value="'.$selected_id.'">'.$selected_id.'</p>';

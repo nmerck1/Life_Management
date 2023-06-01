@@ -64,11 +64,8 @@ while ($row = $stmt->fetch()) {
 	$navbar = new Navbar();
 	$navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
-  $secondary_tab = '';
-  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+  $navbar->show_section_nav($loggedin, '', $id_role);
 
-  $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav('', $secondary_tab);
 ?>
 
 <script type="text/javascript">
@@ -145,12 +142,15 @@ while ($row = $stmt->fetch()) {
 </script>
 
 <?php
+
 	//echo '<p id="selected_id" style="display:none;" value="'.$selected_id.'">'.$selected_id.'</p>';
 	echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
 
 	echo '<p id="test"></p>';
-
-  echo '<div class="mainContentContainer">';
+  echo '<br>';
+  echo '<div class="mainContentContainer" style="padding: 20px;">';
+  echo '<br>';
+  echo '<br>';
     echo '<div class="container text-center"  style="height:600px;">';
 
       // get values from selected id in table:

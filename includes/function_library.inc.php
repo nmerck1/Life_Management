@@ -10,7 +10,7 @@ $g_password = "";
 $g_database = "lifement_life_management";
 $g_port = 3306;
 
-$is_server = false;
+$is_server = false;	// remember to change this before pushing to production.
 
 if ($is_server == true) {
 	$g_username = "lifement_test";
@@ -470,7 +470,10 @@ function library_category_spending_table($user_id, $date_search) {
 					SELECT cat.cat_name,
 					SUM(fe.fe_amount) AS 'fe_amount',
 					IF (bud.bud_amount IS NULL, NULL, bud.bud_amount)  AS 'bud_amount',
+					SUM(fe.fe_amount)/DAY(LAST_DAY(fe.fe_date)) AS 'average_cost',
+    			DAY(LAST_DAY(fe.fe_date)) AS 'days_in_month',
 					fe.is_active
+
 					FROM finance_expenses fe
 
 					LEFT JOIN users u ON fe.id_user = u.user_id
@@ -492,44 +495,51 @@ function library_category_spending_table($user_id, $date_search) {
 
 	$build_table = '';
 	$total_spent_amount = 0;
+	$total_avg_amount = 0;
 	$total_budget_amount = 0;
 	$total_over_under_amount = 0;
 	$is_alternate_row = false;
 	$add_alternating_class = '';
 	while ($row = $stmt->fetch()) {
-		$build_table .= '<tr>';
+			$build_table .= '<tr>';
 
-		if ($is_alternate_row == false) {
-			$add_alternating_class = '';
-			$is_alternate_row = true;
-		} else {
-			$add_alternating_class = 'class="alternating_row"';
-			$is_alternate_row = false;
-		}
-
-		$build_table .= '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
-		$build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['fe_amount'], 2). '</td>';
-		if ($row['bud_amount'] == NULL) {
-				$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">~</td>';
-				$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">~</td>';
-		} else {
-			$show_budget = "~";
-			if ($row['bud_amount'] != NULL) {
-					$show_budget = number_format($row['bud_amount'], 2);
+			if ($is_alternate_row == false) {
+				$add_alternating_class = '';
+				$is_alternate_row = true;
+			} else {
+				$add_alternating_class = 'class="alternating_row"';
+				$is_alternate_row = false;
 			}
-			$build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .$show_budget. '</td>';
-			// get the difference:
-			$bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
-			$color = 'red';
-			if ($bud_diff >= 0) { $color = 'green'; }
-			$total_over_under_amount += $bud_diff;
-			$total_budget_amount += $row['bud_amount'];
-			$total_spent_amount += $row['fe_amount'];
-			$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
-		}
-		$build_table .= '</tr>';
 
-	}
+			$build_table .= '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
+			$build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['fe_amount'], 2). '</td>';
+			$build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['average_cost'], 2). '</td>';
+
+			if ($row['bud_amount'] == NULL) {
+					$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">~</td>';
+					$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:grey;">~</td>';
+			} else {
+				$show_budget = "~";
+				if ($row['bud_amount'] != NULL) {
+						$show_budget = number_format($row['bud_amount'], 2);
+				}
+				$build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .$show_budget. '</td>';
+				// get the difference:
+				$bud_diff = (float)($row['bud_amount'] - $row['fe_amount']);
+				$color = 'red';
+				if ($bud_diff >= 0) { $color = 'green'; }
+				$total_over_under_amount += $bud_diff;
+				$total_budget_amount += $row['bud_amount'];
+
+				$build_table .= '<td '.$add_alternating_class.' style="text-align:right; color:'.$color.';">$' .number_format($bud_diff, 2). '</td>';
+			}
+			// add these specific totals regardless of budget being null
+			$total_spent_amount += $row['fe_amount'];
+			$total_avg_amount += $row['average_cost'];
+			// finish the row:
+			$build_table .= '</tr>';
+
+		}
 
 		// check if there was anything to show:
 		if ($build_table == '') {
@@ -543,7 +553,8 @@ function library_category_spending_table($user_id, $date_search) {
 			echo '<table class="table table-dark" style="text-align:center;">';
 					echo '<tr>';
 						echo '<th>Category</th>';
-						echo '<th style="text-align:right;">Spent</th>';// (μ)
+						echo '<th style="text-align:right;">Spent</th>';
+						echo '<th style="text-align:right;">(μ)</th>';// (μ)
 						echo '<th style="text-align:right;">Budget</th>';
 						echo '<th style="text-align:right;">Over/Under</th>';
 					echo '</tr>';
@@ -553,6 +564,7 @@ function library_category_spending_table($user_id, $date_search) {
 					echo '<tr>';
 						echo '<td colspan=1 class="end_row_options" style="text-align:left;">Totals:</td>';
 						echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_spent_amount, 2).'</td>';
+						echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_avg_amount, 2).'</td>';
 						echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_budget_amount, 2).'</td>';
 						$color = 'red';
 						if ($total_over_under_amount >= 0) { $color = 'green'; }
@@ -563,6 +575,87 @@ function library_category_spending_table($user_id, $date_search) {
 			echo '</table>';
 		}
 } // end category spending table
+
+function library_average_category_table($user_id, $date_search) {
+	// Graphs for average daily prices
+	// get data from user
+	$sql = "
+				SELECT
+					cat.cat_name,
+					SUM(fe.fe_amount) AS 'total category amount',
+					fe.fe_date,
+					fe.id_user,
+					DAY(LAST_DAY(fe.fe_date)) AS 'days_in_month',
+					SUM(fe.fe_amount)/DAY(LAST_DAY(fe.fe_date)) AS 'average_cost'
+
+				FROM finance_expenses fe
+				LEFT JOIN categories cat ON cat.cat_id = fe.id_category
+
+				WHERE fe.id_user = '".$user_id."'
+				AND MONTH(fe.fe_date) = MONTH('".$date_search."')
+				AND YEAR(fe.fe_date) = YEAR('".$date_search."')
+
+				GROUP BY cat.cat_name;
+	";
+	//echo $sql .'<br>';
+	$dbh = new Dbh();
+	$stmt = $dbh->connect()->query($sql);
+
+	$build_table = '';
+	$total_spent_amount = 0;
+	$total_budget_amount = 0;
+	$total_over_under_amount = 0;
+	$is_alternate_row = false;
+	$add_alternating_class = '';
+	while ($row = $stmt->fetch()) {
+			$build_table .= '<tr>';
+
+			if ($is_alternate_row == false) {
+				$add_alternating_class = '';
+				$is_alternate_row = true;
+			} else {
+				$add_alternating_class = 'class="alternating_row"';
+				$is_alternate_row = false;
+			}
+
+			$build_table .= '<td '.$add_alternating_class.'>' .$row['cat_name']. '</td>';
+			$build_table .= '<td '.$add_alternating_class.' style="text-align:right;">$' .number_format($row['average_cost'], 2). '</td>';
+			$build_table .= '<td '.$add_alternating_class.'>' .$row['days_in_month']. '</td>';
+
+			$build_table .= '</tr>';
+
+		}
+
+		// check if there was anything to show:
+		if ($build_table == '') {
+			echo '<p class="end_row_options" style="color:grey; text-align:center;">(Nothing to show)</p>';
+		} else {
+			//echo '<i style="color:grey;">';
+				//echo '(The "μ" symbol in parenthesis next to the column for "Spent" amounts, represents the average amount
+								//spent per day in this category.)';
+			//echo '</i>';
+
+			echo '<table class="table table-dark" style="text-align:center;">';
+					echo '<tr>';
+						echo '<th>Category</th>';
+						echo '<th style="text-align:right;">Average Per Day</th>';// (μ)
+						echo '<th>Days in Month</th>';
+					echo '</tr>';
+
+					echo $build_table;
+
+					echo '<tr>';
+						echo '<td colspan=1 class="end_row_options" style="text-align:left;">Totals:</td>';
+						echo '<td class="end_row_options" style="text-align:right;">$'.number_format($total_spent_amount, 2).'</td>';
+						$color = 'red';
+						if ($total_over_under_amount >= 0) { $color = 'green'; }
+						echo '<td class="end_row_options" style="text-align:right; color:'.$color.';">$'.number_format($total_over_under_amount, 2).'</td>';
+						echo '<td class="end_row_options"></td>';
+					echo '</tr>';
+
+			echo '</table>';
+		}
+} // end average category spending table
 
 function library_yearly_table($user_id, $action, $current_year_num, $date_search, $show_per_page) {
 
@@ -1304,6 +1397,13 @@ function library_monthly_tables($action, $date_search_time, $user_id, $secondary
 			library_category_spending_table($user_id, $get_date_normal);
 		echo '</div>';
 
+		//echo '<br>';
+
+		//echo '<div class="div_element_block">';// div for category spending
+		//	echo '<h4 style="text-align:center;"><i class="bi-cup-hot"> </i>Averages Per Day</h4>';
+		//	library_average_category_table($user_id, $get_date_normal);
+		//echo '</div>';
+
 		echo '<br>';
 
 		// detail category spending
@@ -1755,4 +1855,59 @@ function library_get_current_spending_company_buttons($user_id, $date_search) {
 
 	return $first_comp_id_in_list;
 } // end get current spending company names
+/*
+// function for generating a google line chart used for averages
+function library_generate_category_averages($data) {
+  // Set the chart data
+  $chart_data = "['Category', 'Average Amount']";
+	foreach ($data as $row) {
+	  $category = $row[0];
+	  $amount = $row[1];
+	  $chart_data .= ", ['" . $category . "', " . $amount . "]";
+	}
+	$chart_data = ltrim($chart_data, ", "); // remove the leading comma
+
+  // Generate the URL for the chart API
+  $api_url = 'https://chart.googleapis.com/chart?cht=lc&chs=500x300&chd=t:' . urlencode($chart_data);
+
+  // Output the HTML with the chart embedded in an img element
+  echo '<img src="' . $api_url . '">';
+} // end function for generating a google line chart used for averages
+*/
+
+function library_generate_category_averages($chart_data) {
+    echo '<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>';
+		?>
+		<script type="text/javascript">
+		    google.charts.load('current', {'packages':['corechart']});
+		    google.charts.setOnLoadCallback(drawChart);
+
+		    function drawChart() {
+		        var data = new google.visualization.DataTable();
+		        data.addColumn('string', 'Category');
+		        data.addColumn('number', 'Amount');
+
+		        var chart_data = <?php echo json_encode($chart_data); ?>;
+		        for (var i = 0; i < chart_data.length; i++) {
+		            var row = [];
+		            row.push(chart_data[i]['category']);
+		            row.push(chart_data[i]['amount']);
+		            data.addRow(row);
+		        }
+
+		        var options = {
+		            title: 'Category Averages',
+		            backgroundColor: 'black',
+		            legend: { position: 'none' }
+		        };
+
+		        var chart = new google.visualization.LineChart(document.getElementById('category_averages_chart'));
+		        chart.draw(data, options);
+		    }
+		</script>
+		<?php
+    echo '<div id="category_averages_chart" style="width: 800px; height: 400px;"></div>';
+}
+
+
 ?>

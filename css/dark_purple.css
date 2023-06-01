@@ -207,9 +207,10 @@ body {
   background-color: var(--show_table_header_color);
 }
 
-.divSecondaryNavbar, .secondaryNavbarUL, .secondaryNavbarUL li, .secondaryNavbarUL li a {
+.divSectionNavbar, .sectionNavbarUL, .sectionNavbarUL li, .sectionNavbarUL li a {
   background-color: black;
-  border-color: black !important;
+  /* border-color: white !important; */
+  border: none;
 }
 
 #mainNavFirstLI {
@@ -220,7 +221,11 @@ body {
   background-color: var(--show_table_header_color);
 }
 /*
-.firstSecondaryLI, .firstSecondaryLI a {
-  background: var(--body_base_color) !important;  /* theme based
+.firstSecondaryLI {
+  background: var(--body_base_color);  /* theme based
 }
 */
+
+.card-body {
+  background-color: black;
+}

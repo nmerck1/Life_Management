@@ -56,11 +56,8 @@ while ($row = $stmt->fetch()) {
   $navbar = new Navbar();
   $navbar->show_header_nav($loggedin, $user_fname, $id_role, $messages);
 
-  $secondary_tab = '';
-  $navbar->show_secondary_nav($loggedin, $secondary_tab);
+  $navbar->show_section_nav($loggedin, '', $id_role);
 
-  $finance_nav = new FinanceNavbar();
-  $finance_nav->show_header_nav('', $secondary_tab);
 
 ?>
 
@@ -207,10 +204,16 @@ while ($row = $stmt->fetch()) {
     echo '<br>';
     echo '<br>';
     echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
+    echo '<br>';
 
     echo '<div class="mainContentContainer">';
       echo '<div class="container">';
-      
+
           echo '<p id="user_id" style="display:none;" value="'.$user_id.'">'.$user_id.'</p>';
           // this is for looking at previous finance dates in the system
           $date_search = date('Y-m-d');
