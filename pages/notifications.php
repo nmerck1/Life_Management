@@ -230,10 +230,10 @@ while ($row = $stmt->fetch()) {
             echo '<h4 style="text-align:center;"><i class="bi-mailbox"> </i>Inbox</h4>';
             echo '<p style="width:95%; margin:0px; text-align:center;">';
               echo '<button name="prev_button" onclick="scroll_notifications(0, \'Notifications\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-left-square-fill"></p></i>';
               echo '</button>';
               echo '<button name="next_button" onclick="scroll_notifications(1, \'Notifications\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-right-square-fill"></p></i>';
               echo '</button>';
             echo '</p>';
 

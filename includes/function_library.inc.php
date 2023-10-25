@@ -332,7 +332,7 @@ function library_incomes_table($user_id, $action, $current_page_num, $date_searc
 			echo '<th>Date</th>';
 			echo '<th style="text-align:right;">Amount</th>';
 			echo '<th class="end_row_options">';
-				echo '<a href="../includes/finances.inc.php?form_type=Income&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
+				echo '<a href="../includes/finances.inc.php?form_type=Income&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle-fill"></p></i></a>';
 			echo '</th>';
 		echo '</tr>';
 		$total_incomes_amount = 0;
@@ -414,7 +414,7 @@ function library_expenses_table($user_id, $action, $current_page_num, $date_sear
       echo '<th>Date</th>';
       echo '<th style="text-align:right;">Amount</th>';
       echo '<th class="end_row_options">';
-        echo '<a href="../includes/finances.inc.php?form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
+        echo '<a href="../includes/finances.inc.php?form_type=Expense&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle-fill"></p></i></a>';
       echo '</th>';
     echo '</tr>';
     $total_expenses_amount = 0;
@@ -1013,7 +1013,7 @@ function library_ious_table($user_id, $action, $current_page_num, $date_search, 
     }
     echo '<th class="end_row_options">';
     if ($paid_off == false) {
-      echo '<a href="../includes/ious.inc.php?form_type='.$form_type.'&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
+      echo '<a href="../includes/ious.inc.php?form_type='.$form_type.'&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle-fill"></p></i></a>';
     }
     echo '</th>';
   echo '</tr>';
@@ -1261,13 +1261,13 @@ function library_monthly_tables($action, $date_search_time, $user_id, $secondary
 	echo '<span>';
 		echo '<h2 style="text-align:center;">';
 			echo '<button class="prev_button" onclick="scroll_month(0, '.$current_date_set.', \'Monthly\', \''.$secondary_tab.'\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-				echo '<i class="monthly_action"><p class="bi-arrow-left-square"></p></i>';
+				echo '<i class="monthly_action"><p class="bi-arrow-left-square-fill"></p></i>';
 			echo '</button>';
 
 			echo '<i class="bi-calendar"> </i>'.$show_month.' <span style="color: grey;">(\''. $show_year.')</span>';
 
 			echo '<button class="next_button" onclick="scroll_month(1, '.$current_date_set.', \'Monthly\', \''.$secondary_tab.'\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-				echo '<i class="monthly_action"><p class="bi-arrow-right-square"></p></i>';
+				echo '<i class="monthly_action"><p class="bi-arrow-right-square-fill"></p></i>';
 			echo '</button>';
 		echo '</h2>';
 	echo '</span>';
@@ -1279,10 +1279,10 @@ function library_monthly_tables($action, $date_search_time, $user_id, $secondary
 			echo '<h4 style="text-align:center;"><i class="bi-plus-square"> </i>Incomes</h4>';
 			echo '<p style="width:95%; margin:0px; text-align:center;">';
 				echo '<button name="prev_button" onclick="scroll_table(0, \'Incomes\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-					echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+					echo '<i class="actions"><p class="bi-arrow-left-square-fill"></p></i>';
 				echo '</button>';
 				echo '<button name="next_button" onclick="scroll_table(1, \'Incomes\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-					echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+					echo '<i class="actions"><p class="bi-arrow-right-square-fill"></p></i>';
 				echo '</button>';
 			echo '</p>';
 
@@ -1297,10 +1297,10 @@ function library_monthly_tables($action, $date_search_time, $user_id, $secondary
 			echo '<h4 style="text-align:center;"><i class="bi-dash-square"> </i>Expenses</h4>';
 			echo '<p style="width:95%; margin:0px; text-align:center;">';
 				echo '<button name="prev_button" onclick="scroll_table(0, \'Expenses\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-					echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+					echo '<i class="actions"><p class="bi-arrow-left-square-fill"></p></i>';
 				echo '</button>';
 				echo '<button name="next_button" onclick="scroll_table(1, \'Expenses\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-					echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+					echo '<i class="actions"><p class="bi-arrow-right-square-fill"></p></i>';
 				echo '</button>';
 			echo '</p>';
 
@@ -1350,7 +1350,7 @@ function library_monthly_tables($action, $date_search_time, $user_id, $secondary
 					echo '<th style="text-align:right;">Amount</th>';
 					echo '<th>Frequency</th>';
 					echo '<th class="end_row_options">';
-						echo '<a href="../includes/finances.inc.php?form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
+						echo '<a href="../includes/finances.inc.php?form_type=Bill&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle-fill"></p></i></a>';
 					echo '</th>';
 				echo '</tr>';
 				$total_bills_amount = 0;
@@ -1416,10 +1416,10 @@ function library_monthly_tables($action, $date_search_time, $user_id, $secondary
 
 			echo '<p style="width:95%; margin:0px; text-align:center;">';
 				echo '<button name="prev_button" onclick="scroll_table(0, \'DetailedCat\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-					echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+					echo '<i class="actions"><p class="bi-arrow-left-square-fill"></p></i>';
 				echo '</button>';
 				echo '<button name="next_button" onclick="scroll_table(1, \'DetailedCat\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-					echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+					echo '<i class="actions"><p class="bi-arrow-right-square-fill"></p></i>';
 				echo '</button>';
 			echo '</p>';
 
@@ -1448,10 +1448,10 @@ function library_monthly_tables($action, $date_search_time, $user_id, $secondary
 
 			echo '<p style="width:95%; margin:0px; text-align:center;">';
 				echo '<button name="prev_button" onclick="scroll_table(0, \'DetailedComp\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-					echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+					echo '<i class="actions"><p class="bi-arrow-left-square-fill"></p></i>';
 				echo '</button>';
 				echo '<button name="next_button" onclick="scroll_table(1, \'DetailedComp\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-					echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+					echo '<i class="actions"><p class="bi-arrow-right-square-fill"></p></i>';
 				echo '</button>';
 			echo '</p>';
 

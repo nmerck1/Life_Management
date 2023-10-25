@@ -67,7 +67,7 @@ h4 {
 }
 
 .actions {
-  color: var(--editable_table_header_color) !important;
+  color: var(--body_text_color) !important;
 }
 
 .table-dark th {
@@ -212,9 +212,11 @@ body {
 }
 
 .divSectionNavbar, .sectionNavbarUL, .sectionNavbarUL li, .sectionNavbarUL li a {
-  background-color: black;
-  /* border-color: white !important; */
+/* border-color: white !important; */
   border: none;
+}
+.divSectionNavbar, .sectionNavbarUL, .sectionNavbarUL li{
+  background-color: black;
 }
 
 #mainNavFirstLI {

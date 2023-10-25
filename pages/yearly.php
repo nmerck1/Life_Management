@@ -145,10 +145,10 @@ while ($row = $stmt->fetch()) {
             //  echo '<h2 style="text-align:center;">'.$this_year.'</h2>';
               echo '<p style="width:100%; margin:0px; text-align:center;">';
                 echo '<button name="prev_button" onclick="scroll_table(0, \'Yearly\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-                  echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>'; // -box-arrow-left
+                  echo '<i class="actions"><p class="bi-arrow-left-square-fill"></p></i>'; // -box-arrow-left
                 echo '</button>';
                 echo '<button name="next_button" onclick="scroll_table(1, \'Yearly\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-                  echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+                  echo '<i class="actions"><p class="bi-arrow-right-square-fill"></p></i>';
                 echo '</button>';
               echo '</p>';
 

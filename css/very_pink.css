@@ -67,7 +67,7 @@ h4 {
 }
 
 .actions {
-  color: var(--editable_table_header_color) !important;
+  color: var(--body_text_color) !important;
 }
 
 .table-dark th {
@@ -206,15 +206,12 @@ body {
   background-color: var(--show_table_header_color);
 }
 
-.divSecondaryNavbar, .secondaryNavbarUL, .secondaryNavbarUL li, .secondaryNavbarUL li a {
-  background-color: #343a40;
-  border-color: #343a40 !important;
-}
-
 .divSectionNavbar, .sectionNavbarUL, .sectionNavbarUL li, .sectionNavbarUL li a {
-  background-color: black;
-  /* border-color: white !important; */
+/* border-color: white !important; */
   border: none;
+}
+.divSectionNavbar, .sectionNavbarUL, .sectionNavbarUL li{
+  background-color: black;
 }
 
 #mainNavFirstLI {

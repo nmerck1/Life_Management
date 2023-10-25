@@ -107,7 +107,7 @@ while ($row = $stmt->fetch()) {
                   echo '<th>Name</th>';
                   echo '<th style="text-align:right;">Amount</th>';
                   echo '<th class="end_row_options">';
-                    echo '<a href="../includes/finances.inc.php?form_type=Budget&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle"></p></i></a>';
+                    echo '<a href="../includes/finances.inc.php?form_type=Budget&user_id='.$user_id.'"><i class="actions"><p class="bi-plus-circle-fill"></p></i></a>';
                   echo '</th>';
                 echo '</tr>';
                 $sql = "

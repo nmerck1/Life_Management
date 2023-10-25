@@ -69,10 +69,12 @@ class Navbar {
   public function show_section_nav($loggedin, $active_tab, $id_role) {
 
     $current_style = 'primary';
+    $current_admin_style = 'danger';
     $active_style = 'dark';
 
     // section names/titles
-    $financesTab = $goalsTab = $adminTab = $current_style;
+    $financesTab = $goalsTab = $current_style;
+    $adminTab = $current_admin_style;
 
     if ($active_tab == 'Finances') {
       $financesTab = $active_style;
@@ -96,8 +98,8 @@ class Navbar {
           echo '</li>';
           //echo $pipeline;
 
-            echo '<li class="thirdSectionLI">';
-              echo '<a href="../pages/admin.php" class="btn btn-'.$adminTab.' btn-sm"><span style="color:red;">Admin</span></a>';
+            echo '<li>';
+              echo '<a href="../pages/admin.php" class="btn btn-'.$adminTab.' btn-sm">Admin</a>';
             echo '</li>';
           }
 

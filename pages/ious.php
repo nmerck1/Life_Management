@@ -178,10 +178,10 @@ while ($row = $stmt->fetch()) {
             echo '<h4 style="text-align:center;">Your Loans</h4>';
             echo '<p style="width:95%; margin:0px; text-align:center;">';
               echo '<button name="prev_button" onclick="scroll_loans(0, \'Loans\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-left-square-fill"></p></i>';
               echo '</button>';
               echo '<button name="next_button" onclick="scroll_loans(1, \'Loans\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-right-square-fill"></p></i>';
               echo '</button>';
             echo '</p>';
 
@@ -197,10 +197,10 @@ while ($row = $stmt->fetch()) {
             echo '<h4 style="text-align:center;">Your Debts</h4>';
             echo '<p style="width:95%; margin:0px; text-align:center;">';
               echo '<button name="prev_button" onclick="scroll_debts(0, \'Debts\');" style="float:left; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-arrow-left-square"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-left-square-fill"></p></i>';
               echo '</button>';
               echo '<button name="next_button" onclick="scroll_debts(1, \'Debts\');" style="float:right; background:none; border:none; font-size:20px; height:32px;">';
-                echo '<i class="actions"><p class="bi-arrow-right-square"></p></i>';
+                echo '<i class="actions"><p class="bi-arrow-right-square-fill"></p></i>';
               echo '</button>';
             echo '</p>';
 
