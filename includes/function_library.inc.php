@@ -1,23 +1,5 @@
 <?php
-
-date_default_timezone_set('America/New_York');
-
-// "global variables"
-$g_servername = "localhost";
-//$g_servername = "lifemanagement.me";
-$g_username = "root";
-$g_password = "";
-$g_database = "lifement_life_management";
-$g_port = 3306;
-
-$is_server = false;	// remember to change this before pushing to production.
-
-if ($is_server == true) {
-	$g_username = "lifement_test";
-	$g_password = "poopy";
-	$g_database = "lifement_life_management";
-	$g_port = 3306;
-}
+require '../includes/globals.inc.php';
 // Create connection
 $conn = mysqli_connect(
 	$g_servername,
@@ -467,27 +449,37 @@ function library_expenses_table($user_id, $action, $current_page_num, $date_sear
 
 function library_category_spending_table($user_id, $date_search) {
 	$sql = "
-					SELECT cat.cat_name,
-					SUM(fe.fe_amount) AS 'fe_amount',
-					IF (bud.bud_amount IS NULL, NULL, bud.bud_amount)  AS 'bud_amount',
-					SUM(fe.fe_amount)/DAY(LAST_DAY(fe.fe_date)) AS 'average_cost',
-    			DAY(LAST_DAY(fe.fe_date)) AS 'days_in_month',
-					fe.is_active
-
-					FROM finance_expenses fe
-
-					LEFT JOIN users u ON fe.id_user = u.user_id
-					LEFT JOIN categories cat ON fe.id_category = cat.cat_id
-					LEFT JOIN budgets bud ON fe.id_category = bud.id_category
-
-					WHERE fe.is_active = 1
-					AND u.user_id = ".$user_id."
-					AND (bud.id_user = '".$user_id."' OR bud.id_user IS NULL)
-					AND YEAR(fe.fe_date)=YEAR('".$date_search."')
-					AND MONTH(fe.fe_date)=MONTH('".$date_search."')
-
-					GROUP BY cat.cat_name
-					ORDER BY cat.cat_name ASC;
+	SELECT
+		cat.cat_name,
+		SUM(fe.fe_amount) AS 'fe_amount',
+		user_budgets.bud_amount AS 'bud_amount',
+		SUM(fe.fe_amount)/DAY(LAST_DAY(fe.fe_date)) AS 'average_cost',
+		DAY(LAST_DAY(fe.fe_date)) AS 'days_in_month',
+		fe.is_active
+		FROM
+		finance_expenses fe
+		LEFT JOIN users u ON fe.id_user = u.user_id
+		LEFT JOIN categories cat ON fe.id_category = cat.cat_id
+		LEFT JOIN (
+			SELECT
+					bud.id_category,
+					SUM(bud.bud_amount) AS 'bud_amount'
+			FROM
+					budgets bud
+			WHERE
+					bud.id_user = '1'
+			GROUP BY
+					bud.id_category
+		) AS user_budgets ON fe.id_category = user_budgets.id_category
+		WHERE
+		fe.is_active = '".$user_id."'
+		AND u.user_id = '".$user_id."'
+		AND YEAR(fe.fe_date) = YEAR('".$date_search."')
+		AND MONTH(fe.fe_date) = MONTH('".$date_search."')
+		GROUP BY
+		cat.cat_name
+		ORDER BY
+		cat.cat_name ASC;
 	";
 	//echo $sql .'<br>';
 	$dbh = new Dbh();
