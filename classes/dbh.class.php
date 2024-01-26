@@ -1,7 +1,5 @@
 <?php
 
-//namespace Database;
-
 class Dbh {
 	private $host = "localhost";
 	private $user = "root";
