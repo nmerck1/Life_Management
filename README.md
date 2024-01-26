@@ -1,1 +1,1 @@
-![Project Icon](../pics/LMS_Fox_03_Small_Trans.png)
+![Project Icon](../pics/fox.png)
