@@ -95,7 +95,7 @@ while ($row = $stmt->fetch()) {
         while ($row = $stmt->fetch()) {
           echo '<div class="col-sm-6">';
             echo '<a class="btn btn-primary" href="../ajax/icon.ajax.php?user_id='.$user_id.'&icon_file='.$row['icon_file_name'].'">';
-              echo '<img src="../pics/profile/'.$row['icon_file_name'].'" />';
+              echo '<img src="../assets/img/profile-icons/'.$row['icon_file_name'].'" />';
               echo '<br>';
               echo $row['icon_name'];
             echo '</a>';

@@ -94,7 +94,7 @@ while ($row = $stmt->fetch()) {
           $today = date("Y-m-d");
           $diff = date_diff(date_create($user_dob), date_create($today));
 
-          echo '<img src="../pics/profile/'.$user_icon.'" style="border: 2px solid black; border-radius: 10px;" />';
+          echo '<img src="../assets/img/profile-icons/'.$user_icon.'" style="border: 2px solid black; border-radius: 10px;" />';
           echo '<h2>'.$user_fname.' '.$user_lname.'</h2>';
           echo '<p><span style="color:grey;">Username: </span>'.$user_name.'</p>';
           echo '<p><span style="color:grey;">Role: </span>'.$role_name.'</p>';

@@ -1,7 +1,27 @@
 <?php
+require '../includes/globals.inc.php';
+
+class Dbh {
+    private $dbh;
+
+    public function __construct() {
+        try {
+            // Assuming you have constants for DB connection
+            $this->dbh = new PDO("mysql:host=".$g_servername.";dbname=".$g_database, $g_username, $g_password);
+            $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            // Handle error
+            echo "Connection failed: " . $e->getMessage();
+        }
+    }
+
+    public function getDbh() {
+        return $this->dbh;
+    }
+}
 
 //namespace Database;
-
+/*
 class Dbh {
 	private $host = "localhost";
 	private $user = "root";
@@ -23,3 +43,4 @@ class Dbh {
 	}
 
 }
+*/

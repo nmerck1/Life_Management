@@ -140,7 +140,7 @@ while ($row = $stmt->fetch()) {
           echo '<div class="card" style="margin-bottom: 20px;">';
             echo '<div class="card-body" style="border: 2px solid '.$row['role_color'].'; border-radius: 10px;">';
 
-            echo '<img src="../pics/profile/'.$row['user_icon'].'" alt="Avatar" class="img-fluid my-5" style="width: 80px;" />';
+            echo '<img src="../assets/img/profile-icons/'.$row['user_icon'].'" alt="Avatar" class="img-fluid my-5" style="width: 80px;" />';
             echo '<h5>'.$row['user_fname'].' '.$row['user_lname'].'</h5>';
             echo '<p>'.$row['user_name'].'</p>';
             echo '<i class="far fa-edit mb-5"></i>';
