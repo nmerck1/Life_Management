@@ -649,7 +649,7 @@ function library_average_category_table($user_id, $date_search) {
 		}
 } // end average category spending table
 
-function library_yearly_table($user_id, $action, $current_year_num, $date_search, $show_per_page) {
+function library_old_yearly_table($user_id, $action, $current_year_num, $date_search, $show_per_page) {
 
 	// add or subtract the page number depending on the action
 	if ($action == "Next") {
@@ -678,7 +678,7 @@ function library_yearly_table($user_id, $action, $current_year_num, $date_search
 			echo '<th><i class="bi-plus-square"></i></th>'; // Incomes
 			echo '<th><i class="bi-dash-square"></i></th>'; // Expenses
 			echo '<th><i class="bi-currency-dollar"></i></th>'; // Savings // <i class="bi-piggy-bank"></i>
-			echo '<th><i class="bi-currency-dollar"></i> (+Loans)</th>'; // <i class="bi-piggy-bank"></i>
+			//echo '<th><i class="bi-currency-dollar"></i> (+Loans)</th>'; // <i class="bi-piggy-bank"></i>
 		echo '</tr>';
 		//echo '<tr>';
 
@@ -868,13 +868,13 @@ function library_yearly_table($user_id, $action, $current_year_num, $date_search
 					if ($month_savings_with_loans >= 0) {
 						$save_color2 = 'green';
 					}
-					echo '<td '.$add_alternating_class.' style="color:'.$save_color2.';">$'.number_format($month_savings_with_loans, 2).'</td>';
+					//echo '<td '.$add_alternating_class.' style="color:'.$save_color2.';">$'.number_format($month_savings_with_loans, 2).'</td>';
 
 				} else {
 					//$savings_total_string .= '<td style="color:grey;">~</td>';
 					echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
 					echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
-					echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
+					//echo '<td '.$add_alternating_class.' style="color:grey;">~</td>';
 					if ($end_year_data == false) {
 						$year_data_string .= "0, 0], ";
 					}
@@ -894,7 +894,7 @@ function library_yearly_table($user_id, $action, $current_year_num, $date_search
 			if ($total_yearly_savings >= 0) {
 				$save_color = 'green';
 			}
-			echo '<td class="end_row_options" style="color:'.$save_color.';">$'.number_format($total_yearly_savings, 2).'</td>';
+			//echo '<td class="end_row_options" style="color:'.$save_color.';">$'.number_format($total_yearly_savings, 2).'</td>';
 			$save_color = 'red';
 			if ($total_yearly_loan_savings >= 0) {
 				$save_color = 'green';
@@ -905,6 +905,138 @@ function library_yearly_table($user_id, $action, $current_year_num, $date_search
 
 	echo '</table>';
 } // end yearly table
+
+function library_yearly_table($user_id, $action, $current_year_num, $date_search, $show_per_page) {
+
+    // Initialize database connection
+    $dbh = new Dbh();
+
+    // Update the year based on user action
+    if ($action == "Next") {
+        $current_year_num += 1;
+    } elseif ($action == "Prev") {
+        $current_year_num -= 1;
+    }
+
+    $new_date_string = $current_year_num.'-01-01';
+    $date_search = date('Y-m-d', strtotime($new_date_string));
+
+    // Get variables
+    $months_of_year = get_short_name_months_of_year($date_search);
+    $this_year = get_this_year($date_search);
+    $last_day_of_year = get_last_day_this_year();
+    $this_month = get_this_month();
+
+    echo '<h3 id="Yearly_current_year_num" style="text-align:center;" value="'.$this_year.'">'.$this_year.'</h3>';
+    echo '<p id="date_search" style="display:none;" value="'.$date_search.'">'.$date_search.'</p>';
+
+    // Set the current month and year
+    $current_month = date('n');
+    $current_year = date('Y');
+
+    // Retrieve and process financial data
+    // SQL query for incomes
+    $income_monthly_totals = array();
+    $sql = "
+        SELECT SUM(fi_amount) AS 'fi_amount',
+							 MONTH(fi_date) AS 'month'
+        FROM finance_incomes
+        WHERE is_active = 1
+        AND id_user = ".$user_id."
+        AND YEAR(fi_date) = YEAR('".$date_search."')
+        GROUP BY MONTH(fi_date)
+				ORDER BY fi_date ASC;
+    ";
+    $stmt = $dbh->connect()->query($sql);
+    while ($row = $stmt->fetch()) {
+        $income_monthly_totals[$row['month']] = $row['fi_amount'];
+    }
+
+    // SQL query for expenses
+    $expense_monthly_totals = array();
+    $sql = "
+        SELECT SUM(fe_amount) AS 'fe_amount', MONTH(fe_date) AS 'month'
+        FROM finance_expenses
+        WHERE is_active = 1
+        AND id_user = ".$user_id."
+        AND YEAR(fe_date) = YEAR('".$date_search."')
+        GROUP BY MONTH(fe_date);
+    ";
+    $stmt = $dbh->connect()->query($sql);
+    while ($row = $stmt->fetch()) {
+        $expense_monthly_totals[$row['month']] = $row['fe_amount'];
+    }
+
+    // SQL query for total bills (assuming it's constant for all months)
+    $sql = "
+			SELECT bl.bl_id_bill, bl.bl_amount, bl.bl_valid_date
+			FROM bill_logs bl
+			INNER JOIN (
+				SELECT bl_id_bill, MAX(bl_valid_date) as latest_date
+				FROM bill_logs
+				WHERE bl_valid_date BETWEEN 'start_date_of_range' AND 'end_date_of_range'
+				AND is_active = 1
+				GROUP BY bl_id_bill
+			) latest_bills ON bl.bl_id_bill = latest_bills.bl_id_bill AND bl.bl_valid_date = latest_bills.latest_date
+			WHERE bl.bl_valid_date BETWEEN 'start_date_of_range' AND 'end_date_of_range'
+			AND bl.is_active = 1;
+
+    ";
+    $stmt = $dbh->connect()->query($sql);
+		$total_history_bills = 0;
+		while ($row = $stmt->fetch()) {
+			$total_history_bills += $row['bl_amount'];
+		}
+
+    // Iterate over each month of the year
+    foreach ($months_of_year as $month_index => $month) {
+        // Check if the month is within the current year and before or equal to the current month
+        if ($current_year_num < $current_year || ($current_year_num == $current_year && $month_index <= $current_month)) {
+            // Print the month's name
+            echo '<h4>'.$month.'</h4>';
+            // Start a new table for the month
+            echo '<table class="table table-dark" style="text-align:center;">';
+                echo '<tr>';
+                    echo '<th>Category</th>';
+                    echo '<th>Amount</th>';
+                echo '</tr>';
+
+                // Incomes row
+                echo '<tr>';
+                    echo '<td>Incomes</td>';
+                    $income_amount = array_key_exists($month_index, $income_monthly_totals) ? $income_monthly_totals[$month_index] : 0;
+                    echo '<td>$'.number_format($income_amount, 2).'</td>';
+                echo '</tr>';
+
+                // Expenses row
+                echo '<tr>';
+                    echo '<td>Expenses</td>';
+                    $expense_amount = array_key_exists($month_index, $expense_monthly_totals) ? $expense_monthly_totals[$month_index] : 0;
+                    echo '<td>$'.number_format($expense_amount, 2).'</td>';
+                echo '</tr>';
+
+                // Bills row
+                echo '<tr>';
+                    echo '<td>Bills</td>';
+                    echo '<td>$'.number_format($total_history_bills, 2).'</td>';
+                echo '</tr>';
+
+                // Total Savings row
+                echo '<tr>';
+                    echo '<td>Total Savings</td>';
+                    $total_savings = $income_amount - $expense_amount - $total_history_bills;
+                    echo '<td>$'.number_format($total_savings, 2).'</td>';
+                echo '</tr>';
+
+            echo '</table>';
+        }
+    }
+
+    // Additional code, if any, related to the functionality of the library_yearly_table
+    // ...
+
+} // end of library_yearly_table function
+
 
 // for debts and loans
 function library_ious_table($user_id, $action, $current_page_num, $date_search, $show_per_page, $current_user_owes = false, $paid_off = false) {
