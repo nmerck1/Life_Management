@@ -1,4 +1,4 @@
-![Project Icon](https://github.com/nmerck1/Life_Management/blob/main/fox.png)
+
 Life Management - Personal Finance Tracker
 A comprehensive PHP-based web application designed to help individuals and friend groups easily monitor and manage their personal finances. Built over several years of development to provide practical financial oversight and budgeting tools with a modern, interactive interface.
 Features
@@ -29,3 +29,5 @@ Customizable user profiles with icon selection
 
 Purpose
 Created to simplify personal finance management for myself and friends, providing an accessible way to track expenses, monitor budgets, manage bills, and maintain better financial awareness through detailed reporting and intuitive design.
+
+![Project Icon](https://github.com/nmerck1/Life_Management/blob/main/fox.png)
